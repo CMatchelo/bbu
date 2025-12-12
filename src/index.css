@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #0b1b2b;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 1.8em;
+  line-height: 1.1;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 1.3em;
+  line-height: 1.1;
+  font-weight: 500;
+}
+button {
+  border: 1px solid transparent;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+@theme {
+  --color-mainbg: #0b1b2b;
+  --color-mainbglight: #143147;
+  --color-mainbgdark: #07121f;
+
+  --color-cardbg: #1e2a36;
+  --color-cardbglight: #32465a;
+  --color-cardbgdark: #151e27;
+
+  --color-highlights1: #0ead69;
+  --color-highlights1light: #29d68b;
+  --color-highlights1dark: #0a7d4e;
+
+  --color-highlights2: #ffc145;
+  --color-highlights2light: #ffd57a;
+  --color-highlights2dark: #e5a634;
+  
+  --color-text1: #e5e5e5;
+  --color-text2: #9aa0a6;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}

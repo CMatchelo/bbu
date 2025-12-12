@@ -1,0 +1,98 @@
+[
+  {
+    "id": "usp",
+    "city": "São Paulo",
+    "state": "SP",
+    "name": "Universidade de São Paulo",
+    "nickname": "Jaçanãs",
+    "facilitiesLevel": 85,
+    "academicPrestige": 95,
+    "budget": 1200000,
+    "fanbase": 90,
+    "leagueId": "sp_league",
+    "roster": [
+      "p00001",
+      "p00002",
+      "p00003",
+      "p00004",
+      "p00005",
+      "p00006",
+      "p00007",
+      "p00008",
+      "p00009",
+      "p00010"
+    ]
+  },
+  {
+    "id": "ufc",
+    "city": "Fortaleza",
+    "state": "CE",
+    "name": "Universidade Federal do Ceará",
+    "nickname": "Praieiros",
+    "facilitiesLevel": 70,
+    "academicPrestige": 80,
+    "budget": 850000,
+    "fanbase": 75,
+    "leagueId": "ce_league",
+    "roster": [
+      "p00011",
+      "p00012",
+      "p00013",
+      "p00014",
+      "p00015",
+      "p00016",
+      "p00017",
+      "p00018",
+      "p00019",
+      "p00020"
+    ]
+  },
+  {
+    "id": "ufpe",
+    "city": "Recife",
+    "state": "PE",
+    "name": "Universidade Federal de Pernambuco",
+    "nickname": "Tubarões",
+    "facilitiesLevel": 78,
+    "academicPrestige": 88,
+    "budget": 900000,
+    "fanbase": 82,
+    "leagueId": "pe_league",
+    "roster": [
+      "p00021",
+      "p00022",
+      "p00023",
+      "p00024",
+      "p00025",
+      "p00026",
+      "p00027",
+      "p00028",
+      "p00029",
+      "p00030"
+    ]
+  },
+  {
+    "id": "ufpr",
+    "city": "Curitiba",
+    "state": "PR",
+    "name": "Universidade Federal do Paraná",
+    "nickname": "Pinheirais",
+    "facilitiesLevel": 76,
+    "academicPrestige": 86,
+    "budget": 880000,
+    "fanbase": 79,
+    "leagueId": "pr_league",
+    "roster": [
+      "p00031",
+      "p00032",
+      "p00033",
+      "p00034",
+      "p00035",
+      "p00036",
+      "p00037",
+      "p00038",
+      "p00039",
+      "p00040"
+    ]
+  }
+]
