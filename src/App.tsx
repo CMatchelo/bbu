@@ -21,8 +21,8 @@ function App() {
     <UserProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route element={<Layout />}>
-            <Route path="/" element={<Home />} />
             <Route path="/team" element={<Team />} />
             <Route path="/teamSelection" element={<TeamSelection />} />
           </Route>

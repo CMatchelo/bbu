@@ -1,3 +1,5 @@
+import { User } from "./types/User";
+
 export {};
 
 declare global {
@@ -5,7 +7,10 @@ declare global {
     api: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       loadJson: (string) => Promise<any>;
-      // adicione outras funções expostas pelo preload aqui
+      saveGame: (user: User) => Promise<void>;
+      loadGame: (userId: string) => Promise<User | null>;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      loadFolders: () => Promise<any>;
     };
   }
 }

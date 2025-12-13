@@ -1,23 +1,16 @@
-import { useNavigate } from "react-router-dom";
-import { useUser } from "../../Context/UserContext";
 import { TableHeader } from "./Components/tableHeader";
 import { TableTD } from "./Components/tableTd";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
+import { useAuthUser } from "../../hooks/useAuthUser";
 
 
 export default function Team() {
-  const { user } = useUser();
-  const navigate = useNavigate();
+  const user = useAuthUser()
 
   const universities = useSelector(
     (state: RootState) => state.data.universities
   );
-
-  if (!user) {
-    navigate("/");
-    return null; // prevent render
-  }
 
   const uni = universities.find((u) => u.id === user.currentUniversity.id);
   const playersSorted = uni?.players

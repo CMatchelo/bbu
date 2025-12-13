@@ -5,7 +5,9 @@ export type User = {
   name: string
   currentUniversity: University
   //championships: CompletedTournament[]
-  reputation: number    // 0–100 (influencia propostas, recrutamento, IAs respeitarem mais o técnico)
+  reputation: number;
+  currentSeason: number;
+  isStartSeason: boolean;
 }
 
 export type UserContextType = {
@@ -13,4 +15,5 @@ export type UserContextType = {
   login: (data: User) => void;
   updateUser: (changes: Partial<User>) => void;
   logout: () => void;
+  loadUser: (data: User) => void;
 };

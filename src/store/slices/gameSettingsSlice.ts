@@ -4,8 +4,8 @@ import { Player } from "../../types/Player";
 export type AttackType = "threept" | "twopt" | "layup";
 
 interface GameSettingsState {
-  attackPreferences: AttackType[];   // sempre 3 itens em ordem
-  starters: Player[];               // ids dos 5 titulares
+  attackPreferences: AttackType[];
+  starters: Player[];
 }
 
 const initialState: GameSettingsState = {

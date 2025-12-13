@@ -1,7 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSelector, useDispatch } from "react-redux";
-import { useUser } from "../../Context/UserContext";
-import { useNavigate } from "react-router-dom";
 import {
   AttackType,
   setAttackPreferences,
@@ -9,6 +6,7 @@ import {
 } from "../../store/slices/gameSettingsSlice";
 import { RootState } from "../../store";
 import { Player } from "../../types/Player";
+import { useAuthUser } from "../../hooks/useAuthUser";
 
 const attackOptions = [
   { label: "Three Points", value: "threept" },
@@ -18,23 +16,20 @@ const attackOptions = [
 
 export default function TeamSelection() {
   const dispatch = useDispatch();
-  const { user } = useUser();
-  const navigate = useNavigate();
+  const user = useAuthUser();
 
   const universities = useSelector(
     (state: RootState) => state.data.universities
   );
 
   const attackPreferences = useSelector(
-    (state: any) => state.gameSettings.attackPreferences
+    (state: RootState) => state.gameSettings.attackPreferences
   );
 
-  const starters = useSelector((state: any) => state.gameSettings.starters);
+  const starters = useSelector(
+    (state: RootState) => state.gameSettings.starters
+  );
 
-  if (!user) {
-    navigate("/");
-    return null; // prevent render
-  }
 
   const university = universities.find(
     (u) => u.id === user.currentUniversity.id
@@ -42,7 +37,6 @@ export default function TeamSelection() {
 
   const players = university?.players ?? [];
 
-  // selecionar starters
   const toggleStarter = (player: Player) => {
     let newStarters = [...starters];
 
@@ -57,14 +51,15 @@ export default function TeamSelection() {
 
   const updateAttackPref = (index: number, newValue: string) => {
     const updated = [...attackPreferences];
-    updated[index] = newValue as any;
 
-    // garantir que não repita
-    const unique = Array.from(new Set(updated));
+    const oldIndex = updated.indexOf(newValue as AttackType);
 
-    if (unique.length === 3) {
-      dispatch(setAttackPreferences(updated as any));
+    if (oldIndex !== -1) {
+      [updated[index], updated[oldIndex]] = [updated[oldIndex], updated[index]];
+    } else {
+      updated[index] = newValue as AttackType;
     }
+    dispatch(setAttackPreferences(updated as AttackType[]));
   };
 
   return (
@@ -95,8 +90,6 @@ export default function TeamSelection() {
           ))}
         </div>
       </div>
-
-      {/* Selecionar titulares */}
       <div className="bg-cardbg p-4 rounded-lg shadow">
         <h2 className="text-xl mb-3 text-highlights1 font-bold">
           Selecionar Titulares
@@ -128,7 +121,7 @@ export default function TeamSelection() {
           Titulares selecionados: {starters.length}/5
         </p>
       </div>
-      <button onClick={() => console.log(starters)}>
+      <button onClick={() => console.log(attackPreferences)}>
         Ver titulares
       </button>
     </div>

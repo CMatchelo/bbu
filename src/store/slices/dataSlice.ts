@@ -17,7 +17,6 @@ const initialState: DataState = {
 export const loadGameData = createAsyncThunk("data/loadGameData", async () => {
   const universities = await window.api.loadJson("universities");
   const players = await window.api.loadJson("players");
-  console.log(universities, players)
   return { universities, players };
 });
 

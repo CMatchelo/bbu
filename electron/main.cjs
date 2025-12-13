@@ -1,6 +1,9 @@
+
+
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const { saveGame, loadGame, loadFolders } = require('./saveManager.cjs');
 
 const isDev = !app.isPackaged;
 
@@ -41,3 +44,15 @@ ipcMain.handle("load-json", async (_event, fileName) => {
   const content = await fs.promises.readFile(filePath, "utf8");
   return JSON.parse(content);
 });
+
+ipcMain.handle("save-game", (_, user) => {
+  saveGame(user)
+})
+
+ipcMain.handle("load-game", (_, userId) => {
+  return loadGame(userId)
+})
+
+ipcMain.handle("load-folders", (_) => {
+  return loadFolders()
+})

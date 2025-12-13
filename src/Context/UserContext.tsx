@@ -31,8 +31,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     setUser(null)
   }
 
+  function loadUser(data: User) {
+  setUser(data);
+}
+
   return (
-    <UserContext.Provider value={{ user, login, updateUser, logout }}>
+    <UserContext.Provider value={{ user, login, updateUser, logout, loadUser }}>
       {children}
     </UserContext.Provider>
   );
