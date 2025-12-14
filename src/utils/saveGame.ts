@@ -1,4 +1,4 @@
-import { User } from "../types/User";
+/* import { User } from "../types/User";
 
 export function saveGame(user: User) {
   const data = JSON.stringify(user, null, 2);
@@ -11,3 +11,4 @@ export function saveGame(user: User) {
   a.click();
   URL.revokeObjectURL(url);
 }
+ */

@@ -9,7 +9,7 @@ export const TableHeader = ({
 
   return (
     <th
-      className="px-4 py-2 text-left font-medium text-gray-700 cursor-pointer select-none"
+      className="px-4 py-2 text-left font-medium text-text1 cursor-pointer select-none"
     >
       {children}
     </th>

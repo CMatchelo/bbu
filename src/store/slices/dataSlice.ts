@@ -1,16 +1,17 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Player } from "../../types/Player";
 import { University } from "../../types/University";
+import { Skill } from "../../types/Skill";
 
 interface DataState {
-  universities: University[];
-  players: Player[];
+  universitiesById: Record<string, University>;
+  playersById: Record<string, Player>;
   loading: boolean;
 }
 
 const initialState: DataState = {
-  universities: [],
-  players: [],
+  universitiesById: {},
+  playersById: {},
   loading: false,
 };
 
@@ -23,8 +24,30 @@ export const loadGameData = createAsyncThunk("data/loadGameData", async () => {
 const dataSlice = createSlice({
   name: "data",
   initialState,
-  reducers: {},
+  reducers: {
+    updatePlayer(
+      state,
+      action: PayloadAction<{ id: string; changes: Partial<Player> }>
+    ) {
+      const player = state.playersById[action.payload.id];
 
+      if (!player) return;
+
+      Object.assign(player, action.payload.changes);
+    },
+    updatePlayerSkill(
+      state,
+      action: PayloadAction<{
+        id: string;
+        skill: keyof Skill;
+        value: number;
+      }>
+    ) {
+      const player = state.playersById[action.payload.id];
+      if (!player) return;
+      player.skills[action.payload.skill] = action.payload.value;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(loadGameData.pending, (state) => {
@@ -32,20 +55,14 @@ const dataSlice = createSlice({
       })
       .addCase(loadGameData.fulfilled, (state, action) => {
         state.loading = false;
-        const universities = action.payload.universities;
-        const players = action.payload.players;
 
-        const playerMap: Record<string, Player> = {};
-        for (const p of players) playerMap[p.id] = p;
+        for (const uni of action.payload.universities) {
+          state.universitiesById[uni.id] = uni;
+        }
 
-        const uniWithPlayers = universities.map((uni: University) => {
-          return {
-            ...uni,
-            players: uni.roster.map((id: string) => playerMap[id]),
-          };
-        });
-        state.universities = uniWithPlayers;
-        state.players = players;
+        for (const player of action.payload.players) {
+          state.playersById[player.id] = player;
+        }
       })
       .addCase(loadGameData.rejected, (state) => {
         state.loading = false;
@@ -53,4 +70,5 @@ const dataSlice = createSlice({
   },
 });
 
+export const { updatePlayer, updatePlayerSkill } = dataSlice.actions;
 export default dataSlice.reducer;

@@ -1,43 +1,122 @@
-
 import { Match } from "../types/Match";
 import { University } from "../types/University";
 
-export function GenerateSchedule(universities: University[]): Match[] {
-  const firstRound: Match[] = [];
-  const secondRound: Match[] = [];
-  let round1 = 1;
-  let round2 = universities.length
-  for (let i = 0; i < universities.length; i++) {
-    for (let j = 0; j < universities.length; j++) {
-      const home = universities[i]
-      const away = universities[j]
-      firstRound.push({
-        id: crypto.randomUUID(),
-        homeId: home.id,
-        awayId: away.id,
-        round: round1,
-        played: false
-      })
+type Streak = {
+  last: "home" | "away" | null;
+  count: number;
+};
 
-      secondRound.push({
-        id: crypto.randomUUID(),
-        homeId: away.id,
-        awayId: home.id,
-        round: round2,
-        played: false
-      })
-      round1 += 1;
-      round2 += 1;
-    }
+export function GenerateSchedule(universities: University[]): Match[] {
+  if (universities.length % 2 !== 0) {
+    throw new Error("Number of teams must be even");
   }
 
-  const matches =  [...firstRound, ...secondRound];
+  const roundsCount = universities.length - 1;
+  const half = universities.length / 2;
 
-  const duplicatedGames = matches.map(m => ({
-    ...m,
-    id: crypto.randomUUID(),
-    round: m.round + matches.length
-  }))
+  const streaks = new Map<string, Streak>();
+  universities.forEach((u) => streaks.set(u.id, { last: null, count: 0 }));
 
-  return [...matches, ...duplicatedGames]
+  const baseRounds: Match[][] = [];
+
+  for (let r = 0; r < roundsCount; r++) {
+    const matches: Match[] = [];
+
+    for (let i = 0; i < half; i++) {
+      let home = universities[i];
+      let away = universities[universities.length - 1 - i];
+
+      // balance here
+      const balanced = balanceHomeAway(home, away, streaks);
+      home = balanced.home;
+      away = balanced.away;
+
+      matches.push({
+        id: crypto.randomUUID(),
+        home: home.id,
+        away: away.id,
+        played: false,
+        round: r + 1,
+      });
+
+      updateStreak(streaks.get(home.id)!, "home");
+      updateStreak(streaks.get(away.id)!, "away");
+    }
+
+    baseRounds.push(matches);
+
+    // rotate teams
+    const fixed = universities[0];
+    const rest = universities.slice(1);
+    rest.unshift(rest.pop()!);
+    universities.splice(0, universities.length, fixed, ...rest);
+  }
+
+  // Expand to 4 legs (same logic as before)
+  const schedule: Match[] = [];
+  const total = roundsCount;
+
+  baseRounds.forEach((r) => schedule.push(...r));
+  baseRounds.forEach((r, i) =>
+    r.forEach((m) =>
+      schedule.push({
+        id: crypto.randomUUID(),
+        home: m.away,
+        away: m.home,
+        played: false,
+        round: total + i + 1,
+      })
+    )
+  );
+  baseRounds.forEach((r, i) =>
+    r.forEach((m) =>
+      schedule.push({
+        ...m,
+        round: total * 2 + i + 1,
+      })
+    )
+  );
+  baseRounds.forEach((r, i) =>
+    r.forEach((m) =>
+      schedule.push({
+        id: crypto.randomUUID(),
+        home: m.away,
+        away: m.home,
+        played: false,
+        round: total * 3 + i + 1,
+      })
+    )
+  );
+
+  return schedule;
+}
+
+function balanceHomeAway(
+  home: University,
+  away: University,
+  streaks: Map<string, Streak>
+): { home: University; away: University } {
+  const h = streaks.get(home.id)!;
+  const a = streaks.get(away.id)!;
+
+  // Prefer giving home to the one coming from away games
+  if (h.last === "home" && a.last === "away") {
+    return { home: away, away: home };
+  }
+
+  // Prefer giving home to the one with longer streak
+  if (h.count > a.count) {
+    return { home: away, away: home };
+  }
+
+  return { home, away };
+}
+
+function updateStreak(streak: Streak, current: "home" | "away") {
+  if (streak.last === current) {
+    streak.count++;
+  } else {
+    streak.last = current;
+    streak.count = 1;
+  }
 }

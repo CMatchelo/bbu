@@ -5,11 +5,15 @@ import { useNavigate } from "react-router-dom";
 import { User } from "../../../types/User";
 import { University } from "../../../types/University";
 import { useUser } from "../../../Context/UserContext";
+import { GenerateSchedule } from "../../../utils/generateSchedule";
+import { selectUniversitiesArray } from "../../../selectors/data.selectors";
 
 export default function NewGame() {
   const universities = useSelector(
-    (state: RootState) => state.data.universities
+    (state: RootState) => state.data.universitiesById
   );
+
+  const universitiesArray = useSelector(selectUniversitiesArray);
 
   const { login } = useUser();
   const navigate = useNavigate();
@@ -18,7 +22,7 @@ export default function NewGame() {
   const [uni, setUni] = useState<University | null>(null);
 
   const selectUni = (id: string) => {
-    const selectedUni = universities.find((u) => u.id === id);
+    const selectedUni = Object.values(universities).find((u) => u.id === id);
     if (selectedUni) {
       setUni(selectedUni);
     }
@@ -32,11 +36,12 @@ export default function NewGame() {
       currentUniversity: uni,
       reputation: 50,
       currentSeason: 2025,
-      isStartSeason: true,
+      isStartSeason: false,
     };
-    await window.api.saveGame(newUser);
-    login(newUser);
-    navigate("/team");
+    //await window.api.saveGame(newUser);
+    console.log(GenerateSchedule(universitiesArray))
+    //login(newUser);
+    //navigate("/team");
   };
 
   return (
@@ -49,7 +54,7 @@ export default function NewGame() {
       />
       <span>Selecione uma universidade para treinar</span>
       <select onChange={(e) => selectUni(e.target.value)}>
-        {universities.map((uni) => (
+        {Object.values(universities).map((uni) => (
           <option key={uni.id} value={uni.id}>
             {uni.name} {uni.nickname}
           </option>

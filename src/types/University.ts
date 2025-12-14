@@ -23,9 +23,3 @@ export type TeamSimInfo = {
   offenseAvg: number;
   defenseAvg: number;
 };
-
-/* function calculateOffenseAvg(players: Player[]): number {
-  return players.reduce((sum, p) => {
-    return sum + (p.skills.pass + p.skills.dribble) / 2;
-  }, 0);
-} */
