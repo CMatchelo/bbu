@@ -10,7 +10,11 @@ export type University = {
   roster: string[];
   players?: Player[];
   playersOnCourt?: Player[];
-  facilitiesLevel: number;
+  courtLevel: 1 | 2 | 3 | 4 | 5;
+  gymLevel: 1 | 2 | 3 | 4 | 5;
+  medicalCenterLevel: 1 | 2 | 3 | 4 | 5;
+  physioLevel: 1 | 2 | 3 | 4 | 5;
+  educationSupportLevel: 1 | 2 | 3 | 4 | 5;
   academicPrestige: number;
   budget: number;
   fanbase: number;

@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import dataReducer from "../store/slices/dataSlice";
-import gameSettingsReducer from "../store/slices/gameSettingsSlice"
+import dataReducer from "./slices/dataSlice";
+import gameSettingsReducer from "./slices/gameSettingsSlice"
+import scheduleReducer from "./slices/scheduleSlice"
 
 export const store = configureStore({
   reducer: {
     data: dataReducer,
-    gameSettings: gameSettingsReducer
+    gameSettings: gameSettingsReducer,
+    schedule: scheduleReducer
   }
 })
 

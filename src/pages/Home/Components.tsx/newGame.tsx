@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { User } from "../../../types/User";
 import { University } from "../../../types/University";
 import { useUser } from "../../../Context/UserContext";
-import { GenerateSchedule } from "../../../utils/generateSchedule";
 import { selectUniversitiesArray } from "../../../selectors/data.selectors";
+import { GenerateSchedule } from "../../../utils/managerSchedule";
 
 export default function NewGame() {
   const universities = useSelector(
@@ -15,7 +15,7 @@ export default function NewGame() {
 
   const universitiesArray = useSelector(selectUniversitiesArray);
 
-  const { login } = useUser();
+  const { loadUser } = useUser();
   const navigate = useNavigate();
 
   const [name, setName] = useState<string>("");
@@ -38,10 +38,16 @@ export default function NewGame() {
       currentSeason: 2025,
       isStartSeason: false,
     };
-    //await window.api.saveGame(newUser);
-    console.log(GenerateSchedule(universitiesArray))
-    //login(newUser);
-    //navigate("/team");
+    await window.api.saveGame(newUser);
+    const schedule = GenerateSchedule(universitiesArray)
+    const newSchedule = {
+      matches: schedule,
+      currentRound: 1
+    }
+    const folderName = `${newUser.name}_${newUser.id}`
+    await window.api.saveSchedule(folderName, newSchedule)
+    loadUser(newUser);
+    navigate("/team");
   };
 
   return (

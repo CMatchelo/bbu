@@ -1,20 +1,20 @@
-import { TableHeader } from "./Components/tableHeader";
-import { TableTD } from "./Components/tableTd";
 import { useSelector } from "react-redux";
 import { useAuthUser } from "../../hooks/useAuthUser";
 import { selectUniversitiesWithPlayers } from "../../selectors/data.selectors";
 import { updatePlayerSkill } from "../../store/slices/dataSlice";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../../hooks/useAppDispatch";
+import { TableHeader } from "../../Components/tableHeader";
+import { TableTD } from "../../Components/tableTd";
 
 export default function Team() {
   const user = useAuthUser();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const universities = useSelector(selectUniversitiesWithPlayers);
 
   const uni = universities.find((u) => u.id === user.currentUniversity.id);
   const playersSorted = uni?.players
-    ?.slice() // opcional, para não mutar o original
+    ?.slice()
     .sort((a, b) => a.inCourtPosition.localeCompare(b.inCourtPosition));
 
   const testFunc = () => {
@@ -25,7 +25,6 @@ export default function Team() {
         value: 2,
       })
     );
-    console.log("ajustou")
   };
 
   return (
@@ -33,7 +32,7 @@ export default function Team() {
       <button onClick={testFunc}>Atualizar o jogador teste</button>
       <h1>TEAM AND STRATEGY</h1>
       <div className="overflow-x-auto w-full">
-        <table className="min-w-full divide-y divide-highlights1  shadow rounded-lg">
+        <table className="min-w-full divide-y divide-highlights1 shadow rounded-lg">
           <thead className="bg-gray-cardbg bg-cardbglight">
             <tr>
               <TableHeader>Player</TableHeader>

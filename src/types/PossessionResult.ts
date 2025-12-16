@@ -1,9 +1,9 @@
-export type PossessionResult = {
-  possessionId: number;
-  attackingTeamId: string;
-  defendingTeamId: string;
+import { PlayType } from "./PlayType";
 
-  shotType: "three" | "two" | "layup" | "turnover";
+export type PossessionResult = {
+  result: string;
+  
+  shotType: PlayType;
   selectedPlayerId?: string;
 
   success: boolean;

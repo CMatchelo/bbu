@@ -4,12 +4,7 @@ import { User, UserContextType } from "../types/User";
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
-
-  const [user, setUser] = useState<User | null>(() => {
-    if (typeof window === "undefined") return null;
-    const saved = localStorage.getItem("user");
-    return saved ? JSON.parse(saved) : null;
-  });
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -19,24 +14,16 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user]);
 
-  function login(data: User) {
-    setUser(data);
-  }
-
   function updateUser(changes: Partial<User>) {
     setUser((prev) => (prev ? { ...prev, ...changes } : prev));
   }
 
-  function logout() {
-    setUser(null)
+  function loadUser(data: User | null) {
+    setUser(data);
   }
 
-  function loadUser(data: User) {
-  setUser(data);
-}
-
   return (
-    <UserContext.Provider value={{ user, login, updateUser, logout, loadUser }}>
+    <UserContext.Provider value={{ user, updateUser, loadUser }}>
       {children}
     </UserContext.Provider>
   );

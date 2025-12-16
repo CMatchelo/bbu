@@ -17,3 +17,10 @@ export const selectUniversitiesWithPlayers = createSelector(
 
 export const selectUniversitiesArray = (state: RootState): University[] =>
   Object.values(state.data.universitiesById);
+
+export const selectUniversityById =
+  (uniId: string | null) =>
+  (state: RootState): University => {
+    if (!uniId) throw new Error("University not found");
+    return state.data.universitiesById[uniId];
+  };

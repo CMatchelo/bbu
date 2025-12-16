@@ -9,6 +9,8 @@ import { loadGameData } from "./store/slices/dataSlice";
 import { UserProvider } from "./Context/UserContext";
 import Layout from "./Components/Layout";
 import TeamSelection from "./pages/TeamSelection";
+import Calendar from "./pages/calendar";
+import UniversityPage from "./pages/university";
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -25,6 +27,8 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/team" element={<Team />} />
             <Route path="/teamSelection" element={<TeamSelection />} />
+            <Route path="/calendar" element={<Calendar />} />
+            <Route path="/university" element={<UniversityPage />}/>
           </Route>
         </Routes>
       </BrowserRouter>

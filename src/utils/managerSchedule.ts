@@ -72,6 +72,7 @@ export function GenerateSchedule(universities: University[]): Match[] {
     r.forEach((m) =>
       schedule.push({
         ...m,
+        id: crypto.randomUUID(),
         round: total * 2 + i + 1,
       })
     )

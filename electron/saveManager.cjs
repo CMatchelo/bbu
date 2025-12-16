@@ -40,8 +40,37 @@ function loadFolders() {
     .map(dirent => dirent.name)
 }
 
+function saveSchedule(userId, scheduleState) {
+  if (!fs.existsSync(savesDir)) {
+    fs.mkdirSync(savesDir, { recursive: true });
+  }
+
+  const userDir = path.join(savesDir, userId);
+
+  if (!fs.existsSync(userDir)) {
+    fs.mkdirSync(userDir, { recursive: true });
+  }
+
+  const filePath = path.join(userDir, "schedule.json");
+
+  fs.writeFileSync(
+    filePath,
+    JSON.stringify(scheduleState, null, 2),
+    "utf-8"
+  );
+
+  return true;
+}
+
+function loadSchedule(userId) {
+  const filePath = path.join(savesDir, userId, "schedule.json")
+  return JSON.parse(fs.readFileSync(filePath, "utf-8"))
+}
+
 module.exports = {
   saveGame,
   loadGame,
-  loadFolders
+  loadFolders,
+  saveSchedule,
+  loadSchedule
 }

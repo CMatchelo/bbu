@@ -1,4 +1,4 @@
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   AttackType,
   setAttackPreferences,
@@ -7,6 +7,8 @@ import {
 import { RootState } from "../../store";
 import { Player } from "../../types/Player";
 import { useAuthUser } from "../../hooks/useAuthUser";
+import { useAppDispatch } from "../../hooks/useAppDispatch";
+import { selectUniversitiesWithPlayers } from "../../selectors/data.selectors";
 
 const attackOptions = [
   { label: "Three Points", value: "threept" },
@@ -15,12 +17,10 @@ const attackOptions = [
 ];
 
 export default function TeamSelection() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const user = useAuthUser();
 
-  const universities = useSelector(
-    (state: RootState) => state.data.universities
-  );
+  const universities = useSelector(selectUniversitiesWithPlayers);
 
   const attackPreferences = useSelector(
     (state: RootState) => state.gameSettings.attackPreferences
@@ -30,12 +30,10 @@ export default function TeamSelection() {
     (state: RootState) => state.gameSettings.starters
   );
 
+  const university = universities.find((u) => u.id === user.currentUniversity.id);
 
-  const university = universities.find(
-    (u) => u.id === user.currentUniversity.id
-  );
-
-  const players = university?.players ?? [];
+  const players = university?.players?.slice()
+    .sort((a, b) => a.inCourtPosition.localeCompare(b.inCourtPosition)) || [];
 
   const toggleStarter = (player: Player) => {
     let newStarters = [...starters];
