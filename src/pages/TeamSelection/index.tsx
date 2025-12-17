@@ -1,6 +1,5 @@
 import { useSelector } from "react-redux";
 import {
-  AttackType,
   setAttackPreferences,
   setStarters,
 } from "../../store/slices/gameSettingsSlice";
@@ -9,16 +8,19 @@ import { Player } from "../../types/Player";
 import { useAuthUser } from "../../hooks/useAuthUser";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { selectUniversitiesWithPlayers } from "../../selectors/data.selectors";
+import { useNavigate } from "react-router-dom";
+import { PlayType } from "../../types/PlayType";
 
 const attackOptions = [
-  { label: "Three Points", value: "threept" },
-  { label: "Two Points", value: "twopt" },
-  { label: "Layup", value: "layup" },
+  { label: "Three Points", value: "THREE" },
+  { label: "Two Points", value: "TWO" },
+  { label: "Layup", value: "LAYUP" },
 ];
 
 export default function TeamSelection() {
   const dispatch = useAppDispatch();
   const user = useAuthUser();
+  const navigate = useNavigate()
 
   const universities = useSelector(selectUniversitiesWithPlayers);
 
@@ -50,15 +52,23 @@ export default function TeamSelection() {
   const updateAttackPref = (index: number, newValue: string) => {
     const updated = [...attackPreferences];
 
-    const oldIndex = updated.indexOf(newValue as AttackType);
+    const oldIndex = updated.indexOf(newValue as PlayType);
 
     if (oldIndex !== -1) {
       [updated[index], updated[oldIndex]] = [updated[oldIndex], updated[index]];
     } else {
-      updated[index] = newValue as AttackType;
+      updated[index] = newValue as PlayType;
     }
-    dispatch(setAttackPreferences(updated as AttackType[]));
+    dispatch(setAttackPreferences(updated as PlayType[]));
   };
+
+  const startGame = () => {
+    if(starters.length < 5) {
+      console.log("Select all players")
+      return
+    }
+    navigate("/gameScreen")
+  }
 
   return (
     <div className="p-4 space-y-6">
@@ -68,7 +78,7 @@ export default function TeamSelection() {
         </h2>
 
         <div className="space-y-3">
-          {attackPreferences.map((atk: AttackType, idx: number) => (
+          {attackPreferences.map((atk: PlayType, idx: number) => (
             <div key={idx} className="flex items-center gap-4">
               <span className="w-32 font-semibold">
                 {idx + 1}ª preferência:
@@ -119,8 +129,8 @@ export default function TeamSelection() {
           Titulares selecionados: {starters.length}/5
         </p>
       </div>
-      <button onClick={() => console.log(attackPreferences)}>
-        Ver titulares
+      <button onClick={startGame}>
+        Start game
       </button>
     </div>
   );

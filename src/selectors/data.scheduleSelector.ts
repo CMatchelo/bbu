@@ -22,20 +22,42 @@ export const selectMatchesByTeam =
     );
   };
 
-  export const selectTeamSchedule = (teamId: string) =>
-    createSelector([
+export const selectTeamSchedule = (teamId: string) =>
+  createSelector(
+    [
       (state: RootState) => selectMatchesByTeam(teamId)(state),
-      (state: RootState) => selectUniversitiesArray(state)
+      (state: RootState) => selectUniversitiesArray(state),
     ],
     (matches, universities) => {
       const uniById = Object.fromEntries(
         universities.map((uni) => [uni.id, uni])
-      )
-      console.log(uniById)
+      );
+      console.log(uniById);
       return matches.map((match) => ({
         ...match,
         homeTeam: uniById[match.home],
-        awayTeam: uniById[match.away]
-      }))
+        awayTeam: uniById[match.away],
+      }));
     }
-  )
+  );
+
+export const selectCurrentRoundMatchByUniversity = createSelector(
+  [
+    (state: RootState) => state.schedule.currentRound,
+    (state: RootState) => state.schedule.matchesByRound,
+    (state: RootState) => state.schedule.matchesById,
+    (_: RootState, universityId: string) => universityId,
+  ],
+  (currentRound, matchesByRound, matchesById, universityId) => {
+    const roundMatchIds = matchesByRound[currentRound];
+    if (!roundMatchIds) return null;
+
+    return (
+      roundMatchIds
+        .map((id) => matchesById[id])
+        .find(
+          (match) => match.home === universityId || match.away === universityId
+        ) ?? null
+    );
+  }
+);

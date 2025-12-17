@@ -1,15 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Player } from "../../types/Player";
-
-export type AttackType = "threept" | "twopt" | "layup";
+import { PlayType } from "../../types/PlayType";
 
 interface GameSettingsState {
-  attackPreferences: AttackType[];
+  attackPreferences: PlayType[];
   starters: Player[];
 }
 
 const initialState: GameSettingsState = {
-  attackPreferences: ["threept", "twopt", "layup"],
+  attackPreferences: ["THREE", "TWO", "LAYUP"],
   starters: [],
 };
 
@@ -17,7 +16,7 @@ export const gameSettingsSlice = createSlice({
   name: "gameSettings",
   initialState,
   reducers: {
-    setAttackPreferences(state, action: PayloadAction<AttackType[]>) {
+    setAttackPreferences(state, action: PayloadAction<PlayType[]>) {
       state.attackPreferences = action.payload;
     },
     setStarters(state, action: PayloadAction<Player[]>) {

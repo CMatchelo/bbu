@@ -1,16 +1,19 @@
+import { Player } from "./Player";
 import { PlayType } from "./PlayType";
 
 export type PossessionResult = {
   result: string;
   
   shotType: PlayType;
-  selectedPlayerId?: string;
+  selectedPlayer: Player;
+
+  assistBy?: Player;
 
   success: boolean;
   points: number;
 
   reboundWonBy?: string;
-  reboundWinnerPlayerId?: string;
+  reboundWinnerPlayer?: Player;
 
   log: string;
 };

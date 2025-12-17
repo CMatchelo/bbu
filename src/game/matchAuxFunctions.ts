@@ -39,7 +39,7 @@ export function calcOffAvg(players: Player[]): number {
   players.forEach((p) => {
     avg = avg + p.skills.dribble + p.skills.pass + p.skills.speedBall;
   });
-  avg = avg / 15;
+  avg = avg / (players.length * 3);
   return Math.round(avg);
 }
 
@@ -48,6 +48,6 @@ export function calcDefAvg(players: Player[]): number {
   players.forEach((p) => {
     avg = avg + p.skills.block + p.skills.defense + p.skills.steal;
   });
-  avg = avg / 15;
+  avg = avg / (players.length * 3);
   return Math.round(avg);
 }

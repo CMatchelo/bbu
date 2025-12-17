@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import NewGame from "./Components.tsx/newGame";
-import { LoadGame } from "./Components.tsx/loadGame";
+import NewGame from "./Components/newGame";
+import { LoadGame } from "./Components/loadGame";
 import { useUser } from "../../Context/UserContext";
 import { useNavigate } from "react-router-dom";
 

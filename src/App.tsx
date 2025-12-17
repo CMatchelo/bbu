@@ -11,6 +11,7 @@ import Layout from "./Components/Layout";
 import TeamSelection from "./pages/TeamSelection";
 import Calendar from "./pages/calendar";
 import UniversityPage from "./pages/university";
+import GameScreen from "./pages/gameScreen";
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -29,6 +30,7 @@ function App() {
             <Route path="/teamSelection" element={<TeamSelection />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/university" element={<UniversityPage />}/>
+            <Route path="/gameScreen" element={<GameScreen />}/>
           </Route>
         </Routes>
       </BrowserRouter>
