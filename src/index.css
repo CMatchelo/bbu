@@ -17,12 +17,13 @@
 
 a {
   font-weight: 500;
+  scrollbar-gutter: stable;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  /*display: flex;
+  place-items: center;*/
   min-width: 320px;
   min-height: 100vh;
 }
@@ -45,6 +46,14 @@ button {
   font-family: inherit;
   cursor: pointer;
   transition: border-color 0.25s;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE */
+  scrollbar-width: none;    /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;            /* Chrome / Safari */
 }
 
 @theme {

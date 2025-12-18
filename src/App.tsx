@@ -25,12 +25,12 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/gameScreen" element={<GameScreen />}/>
           <Route element={<Layout />}>
             <Route path="/team" element={<Team />} />
             <Route path="/teamSelection" element={<TeamSelection />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/university" element={<UniversityPage />}/>
-            <Route path="/gameScreen" element={<GameScreen />}/>
           </Route>
         </Routes>
       </BrowserRouter>
