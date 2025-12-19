@@ -3,6 +3,7 @@ import { PlayType } from "../types/PlayType";
 import { PossessionResult } from "../types/PossessionResult";
 import {
   calcOffAvg,
+  calculateTurnoverChance,
   clamp,
   get2Best,
   getPoints,
@@ -35,12 +36,12 @@ export function simulatePossession(
   // ====================================================
   // 2. Escolher o jogador que arremessa
   // ====================================================
-  const players = offenseTeam;
-  if (!players) throw new Error("University missing players");
-  const weights = players.map(
+
+  if (!offenseTeam) throw new Error("University missing players");
+  const weights = offenseTeam.map(
     (p) => p.skills[skillKey] * (0.8 + Math.random() * 0.4)
   );
-  const shooter = weightedRandom(players, weights);
+  const shooter = weightedRandom(offenseTeam, weights);
 
   // ====================================================
   // 3. Base Accuracy
@@ -74,6 +75,34 @@ export function simulatePossession(
       : 1.2 - defAvg * 0.5;
 
   // ====================================================
+  // 5. Verifies if turnover
+  // ====================================================
+  const turnover = Math.random() < calculateTurnoverChance(offAvg, defAvg);
+
+  if (turnover) {
+    const weightsSteal = offenseTeam.map(
+      (p) => p.skills["steal"] * (0.8 + Math.random() * 0.4)
+    );
+    const stealer = weightedRandom(defenseTeam, weightsSteal);
+
+    const weightsTurnover = offenseTeam.map(
+      (p) => p.skills["dribble"] * (0.8 + Math.random() * 0.4)
+    );
+    const turnoverBy = weightedRandom(offenseTeam, weightsTurnover);
+
+    return {
+      result: "turnover",
+      shotType: playType,
+      selectedPlayer: shooter,
+      stealedBy: stealer,
+      turnoverBy: turnoverBy,
+      success: false,
+      points: getPoints(playType),
+      log: `turnover`,
+    };
+  }
+
+  // ====================================================
   // 6. Fator casa
   // ====================================================
   let homeAdv = 0;
@@ -100,7 +129,11 @@ export function simulatePossession(
     const weightsAssist = offenseTeam.map(
       (p) => p.skills["pass"] * (0.8 + Math.random() * 0.4)
     );
-    const assistBy = weightedRandom(players, weightsAssist);
+    const filteredPlayers = offenseTeam.filter((p) => p.id !== shooter.id);
+    const filteredWeights = weightsAssist.filter(
+      (_, i) => offenseTeam[i].id !== shooter.id
+    );
+    const assistBy = weightedRandom(filteredPlayers, filteredWeights);
     return {
       result: "points",
       shotType: playType,
@@ -115,20 +148,20 @@ export function simulatePossession(
   // ====================================================
   // 10. Rebote
   // ====================================================
-  const bestAtk = get2Best(offenseTeam, "rebound");
-  const bestDef = get2Best(defenseTeam, "rebound");
+  const bestAtkReb = get2Best(offenseTeam, "rebound");
+  const bestDefReb = get2Best(defenseTeam, "rebound");
 
-  const atkRebScore = (bestAtk[0] + bestAtk[1]) / 2;
-  const defRebScore = ((bestDef[0] + bestDef[1]) / 2) * 1.15; // vantagem defensiva
+  const atkRebScore = (bestAtkReb[0] + bestAtkReb[1]) / 2;
+  const defRebScore = ((bestDefReb[0] + bestDefReb[1]) / 2) * 1.15; // vantagem defensiva
 
-  const atkFinal = atkRebScore * randomFloat(0.85, 1.15);
-  const defFinal = defRebScore * randomFloat(0.85, 1.15);
+  const atkFinalReb = atkRebScore * randomFloat(0.85, 1.15);
+  const defFinalReb = defRebScore * randomFloat(0.85, 1.15);
 
-  if (atkFinal > defFinal) {
+  if (atkFinalReb > defFinalReb) {
     const weightsRebOff = offenseTeam.map(
       (p) => p.skills["rebound"] * (0.8 + Math.random() * 0.4)
     );
-    const reboundBy = weightedRandom(players, weightsRebOff);
+    const reboundBy = weightedRandom(offenseTeam, weightsRebOff);
     return {
       result: "off_rebound",
       shotType: playType,
@@ -140,9 +173,9 @@ export function simulatePossession(
     };
   }
   const weightsRebDef = defenseTeam.map(
-      (p) => p.skills["rebound"] * (0.8 + Math.random() * 0.4)
-    );
-    const reboundBy = weightedRandom(players, weightsRebDef);
+    (p) => p.skills["rebound"] * (0.8 + Math.random() * 0.4)
+  );
+  const reboundBy = weightedRandom(defenseTeam, weightsRebDef);
   return {
     result: "def_rebound",
     shotType: playType,
@@ -153,18 +186,3 @@ export function simulatePossession(
     log: `Defense rebound`,
   };
 }
-
-export type PossessionResult2 = {
-  result: string;
-
-  shotType: PlayType;
-  selectedPlayerId?: string;
-
-  success: boolean;
-  points: number;
-
-  reboundWonBy?: string;
-  reboundWinnerPlayerId?: string;
-
-  log: string;
-};

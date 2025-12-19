@@ -51,3 +51,10 @@ export function calcDefAvg(players: Player[]): number {
   avg = avg / (players.length * 3);
   return Math.round(avg);
 }
+
+export function calculateTurnoverChance(offAvg: number, defAvg: number) {
+  const base = 0.12;
+  const impact = (defAvg - offAvg) * 0.01;
+
+  return clamp(base + impact, 0.05, 0.35);
+}

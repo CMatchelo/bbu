@@ -10,9 +10,40 @@ export const PlayLineRow = ({ play, team }: PlayLineRowProps) => {
   const isTeam = play.team === team;
   const isSuccess = play.result.success;
 
-  const secondaryPlayer = isSuccess
-    ? play.result.assistBy?.firstName
-    : play.result.reboundWinnerPlayer?.firstName;
+  const formatPlayerName = (player?: { firstName: string; lastName: string }) =>
+    player ? `${player.firstName[0]}. ${player.lastName}` : "";
+
+  const primaryPlayer = play.result.turnoverBy
+    ? formatPlayerName(play.result.turnoverBy)
+    : formatPlayerName(play.result.selectedPlayer);
+
+  const secondaryPlayer =
+    isSuccess && play.result.assistBy
+      ? formatPlayerName(play.result.assistBy)
+      : !isSuccess && play.result.reboundWinnerPlayer
+      ? formatPlayerName(play.result.reboundWinnerPlayer)
+      : !isSuccess && play.result.stealedBy
+      ? formatPlayerName(play.result.stealedBy)
+      : "";
+
+  let secondaryLabel = "";
+
+  if (isSuccess && play.result.assistBy) {
+    secondaryLabel = "Assist by";
+  } else if (!isSuccess && play.result.reboundWinnerPlayer) {
+    secondaryLabel = "Rebound by";
+  } else if (!isSuccess && play.result.stealedBy) {
+    secondaryLabel = "Steal by";
+  }
+
+  let boxLabel = ""
+  if (isSuccess) {
+    boxLabel = play.result.points.toString()
+  } else if (!isSuccess && play.result.reboundWinnerPlayer) {
+    boxLabel = "X"
+  } else if (!isSuccess && play.result.turnoverBy) {
+    boxLabel = "TO"
+  }
 
   return (
     <div
@@ -31,20 +62,24 @@ export const PlayLineRow = ({ play, team }: PlayLineRowProps) => {
         >
           {secondaryPlayer && (
             <span className="text-xs">
-              {isSuccess ? "Assist by" : "Rebound by"} {secondaryPlayer}
+              {secondaryLabel} {secondaryPlayer}
             </span>
           )}
 
-          <span className={`w-20 ${isHome ? "text-end" : "text-start"}`}>
-            {play.result.selectedPlayer.firstName}
-          </span>
+          <div
+            className={`w-30 gap-2 flex ${
+              isHome ? "flex-row-reverse" : "flex-row"
+            }`}
+          >
+            <span>{primaryPlayer}</span>
+          </div>
 
           <div
-            className={`h-full w-8 p-2 text-gray-800 ${
+            className={`h-full flex justify-center w-8 p-2 text-gray-800 ${
               isSuccess ? "bg-green-400" : "bg-red-400"
             }`}
           >
-            {isSuccess ? play.result.points : "X"}
+            {boxLabel}
           </div>
         </div>
       )}

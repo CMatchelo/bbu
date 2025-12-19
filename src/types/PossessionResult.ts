@@ -9,6 +9,9 @@ export type PossessionResult = {
 
   assistBy?: Player;
 
+  turnoverBy?: Player;
+  stealedBy?: Player;
+
   success: boolean;
   points: number;
 

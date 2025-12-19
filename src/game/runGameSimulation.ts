@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { University } from "../types/University";
 import { PlayLog } from "../types/PlayLog";
 import { PlayerGameStats } from "../types/PlayerGameStats";
@@ -54,6 +54,8 @@ export function useGameSimulation({
   const homeLineup = isPlayerHome ? playerStarters : cpuStarters;
   const awayLineup = isPlayerHome ? cpuStarters : playerStarters;
 
+  const quarterAdvancedRef = useRef(false);
+
   // ─────────────────────────────────────────────
   // Initialization
   // ─────────────────────────────────────────────
@@ -103,17 +105,39 @@ export function useGameSimulation({
 
     const isThree = possession.shotType === "THREE";
 
-    const updatedStats: Record<string, PlayerGameStats> = {
-      ...stats,
-      [shooterId]: {
+    const updatedStats: Record<string, PlayerGameStats> = { ...stats };
+
+    if (!possession.turnoverBy) {
+      updatedStats[shooterId] = {
         ...shooter,
         fga: shooter.fga + 1,
         fgm: shooter.fgm + (possession.success ? 1 : 0),
         tpa: shooter.tpa + (isThree ? 1 : 0),
         tpm: shooter.tpm + (possession.success && isThree ? 1 : 0),
         points: shooter.points + possession.points,
-      },
-    };
+      };
+    }
+
+    if (possession.turnoverBy && possession.stealedBy) {
+      console.log("UPDATING TURNOVER", possession.turnoverBy, possession.stealedBy)
+      const turnoverId = possession.turnoverBy.id;
+      const stealId = possession.stealedBy.id;
+      const turnover = stats[turnoverId];
+      const stealer = stats[stealId];
+
+      if (turnover) {
+        updatedStats[turnoverId] = {
+          ...turnover,
+          turnovers: turnover.turnovers + 1,
+        };
+      }
+      if (stealer) {
+        updatedStats[stealId] = {
+          ...stealer,
+          steals: stealer.steals + 1,
+        };
+      }
+    }
 
     // Assist
     if (possession.assistBy) {
@@ -154,13 +178,9 @@ export function useGameSimulation({
 
     const offenseIsHome = currentPoss === homeUniversity.id;
 
-    const offensePlayers = offenseIsHome
-      ? homeLineup!
-      : awayLineup!;
+    const offensePlayers = offenseIsHome ? homeLineup! : awayLineup!;
 
-    const defensePlayers = offenseIsHome
-      ? awayLineup!
-      : homeLineup!;
+    const defensePlayers = offenseIsHome ? awayLineup! : homeLineup!;
 
     const possessionResult = simulatePossession(
       offensePlayers,
@@ -203,16 +223,22 @@ export function useGameSimulation({
           setIsGameOver(true);
           return 0;
         }
-
-        setQuarter((q) => q + 1);
+        if (!quarterAdvancedRef.current) {
+          quarterAdvancedRef.current = true;
+          setQuarter((q) => q + 1);
+        }
         return QUARTER_DURATION;
       }
-
+      quarterAdvancedRef.current = false;
       return next;
     });
 
     // 5️⃣ Switch possession
-    if (possessionResult.success || possessionResult.result === "def_rebound") {
+    if (
+      possessionResult.success ||
+      possessionResult.result === "def_rebound" ||
+      possessionResult.result === "turnover"
+    ) {
       setCurrentPoss((prev) => (prev ? getNextPossession(prev) : prev));
     }
   }
@@ -230,11 +256,11 @@ export function useGameSimulation({
 
     playerTeam,
     cpuTeam,
-    isPlayerHome,
     cpuStarters,
     playerStarters,
     homeLineup,
     awayLineup,
+    isPlayerHome,
 
     currentPoss,
     playerState,
