@@ -17,6 +17,8 @@ export const PlayLineRow = ({ play, team }: PlayLineRowProps) => {
     ? formatPlayerName(play.result.turnoverBy)
     : formatPlayerName(play.result.selectedPlayer);
 
+  const blocker = play.result.blockBy && formatPlayerName(play.result.blockBy);
+
   const secondaryPlayer =
     isSuccess && play.result.assistBy
       ? formatPlayerName(play.result.assistBy)
@@ -36,19 +38,19 @@ export const PlayLineRow = ({ play, team }: PlayLineRowProps) => {
     secondaryLabel = "Steal by";
   }
 
-  let boxLabel = ""
+  let boxLabel = "";
   if (isSuccess) {
-    boxLabel = play.result.points.toString()
+    boxLabel = play.result.points.toString();
   } else if (!isSuccess && play.result.reboundWinnerPlayer) {
-    boxLabel = "X"
+    boxLabel = "X";
   } else if (!isSuccess && play.result.turnoverBy) {
-    boxLabel = "TO"
+    boxLabel = "TO";
   }
 
   return (
     <div
       className={`
-        h-10 w-full flex items-center
+        h-12 w-full flex items-center mt-1
         ${isHome ? "flex-row-reverse" : "flex-row"}
         ${isTeam ? "border-b" : ""}
         ${isSuccess ? "border-green-400" : "border-red-400"}
@@ -56,14 +58,17 @@ export const PlayLineRow = ({ play, team }: PlayLineRowProps) => {
     >
       {isTeam && (
         <div
-          className={`flex gap-4 w-full justify-end items-center ${
+          className={`flex gap-4 h-full w-full justify-end items-center ${
             isHome ? "flex-row" : "flex-row-reverse"
           }`}
         >
           {secondaryPlayer && (
-            <span className="text-xs">
-              {secondaryLabel} {secondaryPlayer}
-            </span>
+            <div className="flex flex-col gap-1">
+              {blocker && <span className="text-xs">Blocked by {blocker}</span>}
+              <span className="text-xs">
+                {secondaryLabel} {secondaryPlayer}
+              </span>
+            </div>
           )}
 
           <div
@@ -75,7 +80,7 @@ export const PlayLineRow = ({ play, team }: PlayLineRowProps) => {
           </div>
 
           <div
-            className={`h-full flex justify-center w-8 p-2 text-gray-800 ${
+            className={`h-full flex justify-center w-10 p-2 text-gray-800 ${
               isSuccess ? "bg-green-400" : "bg-red-400"
             }`}
           >

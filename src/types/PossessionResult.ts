@@ -18,5 +18,7 @@ export type PossessionResult = {
   reboundWonBy?: string;
   reboundWinnerPlayer?: Player;
 
+  blockBy?: Player;
+
   log: string;
 };

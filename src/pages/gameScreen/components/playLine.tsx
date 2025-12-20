@@ -1,12 +1,12 @@
 import { PlayLog } from '../../../types/PlayLog';
 import { PlayLineRow } from './playLineRow'
 
-interface PlayLineProps {
+interface TeamPlayColProps {
   logPlays: PlayLog[];
   team: "HOME" | "AWAY";
 }
 
-export const PlayLine = ({ logPlays, team }: PlayLineProps) => {
+export const TeamPlayCol = ({ logPlays, team }: TeamPlayColProps) => {
   return (
     <div className="col-span-3 flex flex-col-reverse">
       {logPlays.map((play, i) => (

@@ -2,7 +2,7 @@ import { useAppSelector } from "../../hooks/useAppDispatch";
 import { useUser } from "../../Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import formatTime from "../../utils/formatTime";
-import { PlayLine } from "./components/playLine";
+import { TeamPlayCol } from "./components/playLine";
 import { selectGameContext } from "../../selectors/inGameTeam.selector";
 import { useGameSimulation } from "../../game/runGameSimulation";
 import { PlayerTable } from "./components/PlayersTable";
@@ -82,14 +82,14 @@ export default function GameScreen() {
         </div>
 
         <button onClick={runNextPossession} disabled={isGameOver}>
-            Posse
-          </button>
+          Posse
+        </button>
 
-          <button onClick={() => navigate("/team")}>Voltar</button>
+        <button onClick={() => navigate("/team")}>Voltar</button>
         <div className="flex-1 overflow-y-auto px-20 scrollbar-hide">
           <div className="flex flex-row justify-center gap-8">
-            <PlayLine logPlays={logPlays} team="HOME" />
-            <PlayLine logPlays={logPlays} team="AWAY" />
+            <TeamPlayCol logPlays={logPlays} team="HOME" />
+            <TeamPlayCol logPlays={logPlays} team="AWAY" />
           </div>
         </div>
       </div>

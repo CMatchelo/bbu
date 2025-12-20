@@ -33,6 +33,7 @@ export function initializePlayerState(
         steals: 0,
         turnovers: 0,
         rebounds: 0,
+        blocks: 0,
       },
     ])
   );

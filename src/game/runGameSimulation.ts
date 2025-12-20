@@ -118,8 +118,16 @@ export function useGameSimulation({
       };
     }
 
+    if (possession.blockBy) {
+      const blockerId = possession.blockBy.id;
+      const blocker = stats[blockerId]
+      updatedStats[blockerId] = {
+        ...blocker,
+        blocks: shooter.blocks + 1,
+      };
+    }
+
     if (possession.turnoverBy && possession.stealedBy) {
-      console.log("UPDATING TURNOVER", possession.turnoverBy, possession.stealedBy)
       const turnoverId = possession.turnoverBy.id;
       const stealId = possession.stealedBy.id;
       const turnover = stats[turnoverId];

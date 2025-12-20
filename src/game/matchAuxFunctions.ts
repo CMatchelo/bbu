@@ -58,3 +58,20 @@ export function calculateTurnoverChance(offAvg: number, defAvg: number) {
 
   return clamp(base + impact, 0.05, 0.35);
 }
+
+export function checkIfBlocked(
+  shooter: Player,
+  blockBy: Player,
+  playType: PlayType
+) {
+  const skill =
+    playType === "THREE"
+      ? shooter.skills.threept
+      : playType === "TWO"
+      ? shooter.skills.twopt
+      : shooter.skills.layup;
+
+  const diff = skill - blockBy.skills.block;
+  const chance = 0.04 + 0.08 / (1 + Math.exp(-diff / 8));
+  return Math.min(Math.max(chance, 0.01), 0.12);
+}

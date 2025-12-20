@@ -34,8 +34,9 @@ export const PlayerTable = ({ players, playerStats }: PlayerTableProps) => {
         <PlayerLine classname="col-span-3">Player</PlayerLine>
         <PlayerLine>PTS</PlayerLine>
         <PlayerLine>REB</PlayerLine>
-        <PlayerLine>STL</PlayerLine>
         <PlayerLine>ASS</PlayerLine>
+        <PlayerLine>BLK</PlayerLine>
+        <PlayerLine>STL</PlayerLine>
         <PlayerLine>FGM</PlayerLine>
         <PlayerLine>FGA</PlayerLine>
         <PlayerLine>3PM</PlayerLine>
@@ -58,8 +59,9 @@ export const PlayerTable = ({ players, playerStats }: PlayerTableProps) => {
               </PlayerLine>
               <PlayerLine>{stats?.points}</PlayerLine>
               <PlayerLine>{stats?.rebounds}</PlayerLine>
-              <PlayerLine>{stats?.steals}</PlayerLine>
               <PlayerLine>{stats?.assists}</PlayerLine>
+              <PlayerLine>{stats?.blocks}</PlayerLine>
+              <PlayerLine>{stats?.steals}</PlayerLine>
               <PlayerLine>{stats?.fgm}</PlayerLine>
               <PlayerLine>{stats?.fga}</PlayerLine>
               <PlayerLine>{stats?.tpm}</PlayerLine>

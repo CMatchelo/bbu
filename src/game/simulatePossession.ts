@@ -4,6 +4,7 @@ import { PossessionResult } from "../types/PossessionResult";
 import {
   calcOffAvg,
   calculateTurnoverChance,
+  checkIfBlocked,
   clamp,
   get2Best,
   getPoints,
@@ -19,7 +20,7 @@ export function simulatePossession(
   playOrder: PlayType[] = ["THREE", "TWO", "LAYUP"]
 ): PossessionResult {
   // ====================================================
-  // 1. Escolher jogada (50%, 35%, 15%)
+  // Pick play (50%, 35%, 15%)
   // ====================================================
 
   const r = Math.random() * 100;
@@ -29,12 +30,12 @@ export function simulatePossession(
   else if (r < 85) playType = playOrder[1];
   else playType = playOrder[2];
 
-  // Skill que importa
+  // Skill used
   const skillKey =
     playType === "THREE" ? "threept" : playType === "TWO" ? "twopt" : "layup";
 
   // ====================================================
-  // 2. Escolher o jogador que arremessa
+  // 2. Pick shooter
   // ====================================================
 
   if (!offenseTeam) throw new Error("University missing players");
@@ -58,13 +59,13 @@ export function simulatePossession(
   const shooterFactor = 0.6 + skillValue * 0.8;
 
   // ====================================================
-  // 4. Bonus de ataque
+  // 4. ATK Average
   // ====================================================
   const offAvg = calcOffAvg(offenseTeam) / 100;
   const offFactor = 0.9 + offAvg * 0.3; // 0.9 – 1.2
 
   // ====================================================
-  // 5. Penalidade da defesa
+  // 5. DEF Average
   // ====================================================
   const defAvg = calcOffAvg(defenseTeam) / 100;
   const defFactor =
@@ -75,7 +76,7 @@ export function simulatePossession(
       : 1.2 - defAvg * 0.5;
 
   // ====================================================
-  // 5. Verifies if turnover
+  // 5. Check if turnover
   // ====================================================
   const turnover = Math.random() < calculateTurnoverChance(offAvg, defAvg);
 
@@ -103,7 +104,7 @@ export function simulatePossession(
   }
 
   // ====================================================
-  // 6. Fator casa
+  // 6. Home advantage
   // ====================================================
   let homeAdv = 0;
   if (isHomeTeam) {
@@ -116,37 +117,47 @@ export function simulatePossession(
   const rng = randomFloat(0.95, 1.05);
 
   // ====================================================
-  // 8. Probabilidade final
+  // 8. Final Prov
   // ====================================================
   let finalProb =
     baseAccuracy * shooterFactor * offFactor * defFactor * rng + homeAdv;
   finalProb = clamp(finalProb, 0.05, 0.92);
 
   // ====================================================
-  // 9. Verificar se caiu
+  // 9. Check if points
   // ====================================================
+  let blockBy;
   if (Math.random() <= finalProb) {
-    const weightsAssist = offenseTeam.map(
-      (p) => p.skills["pass"] * (0.8 + Math.random() * 0.4)
+    const weightsBlock = defenseTeam.map(
+      (p) => p.skills["block"] * (0.8 + Math.random() * 0.4)
     );
-    const filteredPlayers = offenseTeam.filter((p) => p.id !== shooter.id);
-    const filteredWeights = weightsAssist.filter(
-      (_, i) => offenseTeam[i].id !== shooter.id
-    );
-    const assistBy = weightedRandom(filteredPlayers, filteredWeights);
-    return {
-      result: "points",
-      shotType: playType,
-      assistBy: assistBy,
-      selectedPlayer: shooter,
-      success: true,
-      points: getPoints(playType),
-      log: `Points made`,
-    };
+    blockBy = weightedRandom(defenseTeam, weightsBlock);
+    const isBlocked =
+      Math.random() < checkIfBlocked(shooter, blockBy, playType);
+
+    if (!isBlocked) {
+      const weightsAssist = offenseTeam.map(
+        (p) => p.skills["pass"] * (0.8 + Math.random() * 0.4)
+      );
+      const filteredPlayers = offenseTeam.filter((p) => p.id !== shooter.id);
+      const filteredWeights = weightsAssist.filter(
+        (_, i) => offenseTeam[i].id !== shooter.id
+      );
+      const assistBy = weightedRandom(filteredPlayers, filteredWeights);
+      return {
+        result: "points",
+        shotType: playType,
+        assistBy: assistBy,
+        selectedPlayer: shooter,
+        success: true,
+        points: getPoints(playType),
+        log: "Points made",
+      };
+    }
   }
 
   // ====================================================
-  // 10. Rebote
+  // 10. Rebound if not points
   // ====================================================
   const bestAtkReb = get2Best(offenseTeam, "rebound");
   const bestDefReb = get2Best(defenseTeam, "rebound");
@@ -169,7 +180,8 @@ export function simulatePossession(
       success: false,
       points: 0,
       reboundWinnerPlayer: reboundBy,
-      log: `Offense rebound`,
+      blockBy: blockBy,
+      log: "Offense rebound",
     };
   }
   const weightsRebDef = defenseTeam.map(
@@ -183,6 +195,7 @@ export function simulatePossession(
     success: false,
     points: 0,
     reboundWinnerPlayer: reboundBy,
+    blockBy: blockBy,
     log: `Defense rebound`,
   };
 }

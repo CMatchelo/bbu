@@ -12,4 +12,5 @@ export type PlayerGameStats = {
   steals: number;
   turnovers: number;
   rebounds: number;
+  blocks: number;
 };
