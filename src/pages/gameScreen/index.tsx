@@ -94,7 +94,7 @@ export default function GameScreen() {
         </div>
       </div>
 
-      <div className="flex flex-row justify-center p-4 gap-10 border-t border-highlights2 w-full bg-mainbglight">
+      <div className="flex flex-row justify-center p-4 gap-5 border-t border-highlights2 w-full bg-mainbglight">
         <div className="flex-1">
           {isPlayerHome && (
             <div className="flex flex-col gap-4">

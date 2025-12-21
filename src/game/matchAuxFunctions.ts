@@ -75,3 +75,26 @@ export function checkIfBlocked(
   const chance = 0.04 + 0.08 / (1 + Math.exp(-diff / 8));
   return Math.min(Math.max(chance, 0.01), 0.12);
 }
+
+const randomFactor = (min = 0.95, max = 1.05) =>
+  1 + Math.random() * (max - min) - (1 - min);
+
+export const calculateStaminaSpent = (
+  duration: number,
+  staminaSkill: number
+) => {
+  const baseCostPerSecond = 0.08;
+  const fatigueFactor = (100 - staminaSkill) / 100;
+
+  const base = duration * baseCostPerSecond * (1 + fatigueFactor);
+
+  return base * randomFactor(0.95, 1.05);
+};
+
+export const calculateBenchRecovery = (duration: number) => {
+  const recoveryPerSecond = 0.12;
+
+  const base = duration * recoveryPerSecond;
+
+  return base * randomFactor(0.9, 1.1);
+};

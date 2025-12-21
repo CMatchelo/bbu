@@ -13,4 +13,5 @@ export type PlayerGameStats = {
   turnovers: number;
   rebounds: number;
   blocks: number;
+  stamina: number;
 };

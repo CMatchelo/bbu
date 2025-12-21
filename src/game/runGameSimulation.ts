@@ -8,6 +8,10 @@ import { PossessionResult } from "../types/PossessionResult";
 import { selectCpuStarters } from "./selectCpuStarters";
 import { useAppSelector } from "../hooks/useAppDispatch";
 import { RootState } from "../store";
+import {
+  calculateBenchRecovery,
+  calculateStaminaSpent,
+} from "./matchAuxFunctions";
 
 const QUARTER_DURATION = 10 * 60;
 
@@ -96,7 +100,8 @@ export function useGameSimulation({
 
   function updateStats(
     stats: Record<string, PlayerGameStats>,
-    possession: PossessionResult
+    possession: PossessionResult,
+    duration: number
   ) {
     const shooterId = possession.selectedPlayer.id;
     const shooter = stats[shooterId];
@@ -107,6 +112,7 @@ export function useGameSimulation({
 
     const updatedStats: Record<string, PlayerGameStats> = { ...stats };
 
+    // If shot
     if (!possession.turnoverBy) {
       updatedStats[shooterId] = {
         ...shooter,
@@ -118,6 +124,7 @@ export function useGameSimulation({
       };
     }
 
+    // Block
     if (possession.blockBy) {
       const blockerId = possession.blockBy.id;
       const blocker = stats[blockerId];
@@ -127,6 +134,7 @@ export function useGameSimulation({
       };
     }
 
+    // Turnover
     if (possession.turnoverBy && possession.stolenBy) {
       const turnoverId = possession.turnoverBy.id;
       const stealId = possession.stolenBy.id;
@@ -173,6 +181,44 @@ export function useGameSimulation({
       }
     }
 
+    const allPlayers = [
+      ...(homeUniversity.players || []),
+      ...(awayUniversity.players || []),
+    ];
+
+    const onCourtIds = new Set<string>([
+      ...homeLineup.map((p) => p.id),
+      ...awayLineup.map((p) => p.id),
+    ]);
+
+    allPlayers.forEach((currentPlayer) => {
+      const playerStats = updatedStats[currentPlayer.id];
+      if (!playerStats) return;
+
+      if (onCourtIds.has(currentPlayer.id)) {
+        const staminaSpent = calculateStaminaSpent(
+          duration,
+          currentPlayer.stamina
+        );
+
+        updatedStats[currentPlayer.id] = {
+          ...playerStats,
+          stamina: Number(
+            Math.max(0, playerStats.stamina - staminaSpent).toFixed(2)
+          ),
+        };
+        return;
+      }
+      const recovery = calculateBenchRecovery(duration);
+
+      updatedStats[currentPlayer.id] = {
+        ...playerStats,
+        stamina: Number(
+          Math.min(100, playerStats.stamina + recovery).toFixed(2)
+        ),
+      };
+    });
+
     return updatedStats;
   }
 
@@ -199,7 +245,7 @@ export function useGameSimulation({
 
     const duration = getPossessionDuration();
 
-    // 1️⃣ Log play
+    // Log play
     setLogPlays((prev) => [
       ...prev,
       {
@@ -208,7 +254,7 @@ export function useGameSimulation({
       },
     ]);
 
-    // 2️⃣ Update score
+    // Update score
     if (possessionResult.success) {
       if (offenseIsHome) {
         setHomeScore((s) => s + possessionResult.points);
@@ -217,12 +263,14 @@ export function useGameSimulation({
       }
     }
 
-    // 3️⃣ Update player stats
+    // Update player stats
     setPlayerState((prev) =>
-      prev ? updateStats(prev, possessionResult) : prev
+      prev ? updateStats(prev, possessionResult, duration) : prev
     );
 
-    // 4️⃣ Clock + quarter
+    console.log(playerState);
+
+    // Clock + quarter
     setTimeLeft((prev) => {
       const next = prev - duration;
 
@@ -241,7 +289,7 @@ export function useGameSimulation({
       return next;
     });
 
-    // 5️⃣ Switch possession
+    // Switch possession
     if (
       possessionResult.success ||
       possessionResult.result === "def_rebound" ||
