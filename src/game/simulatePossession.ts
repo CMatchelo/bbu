@@ -50,13 +50,13 @@ export function simulatePossession(
   const skillValue = shooter.skills[skillKey] / 100;
 
   const baseMultiplier =
-    playType === "THREE" ? 0.35 : playType === "TWO" ? 0.52 : 0.75; // layup
+    playType === "THREE" ? 0.42 : playType === "TWO" ? 0.65 : 0.92; // layup
 
   const baseAccuracy = skillValue * baseMultiplier;
   // ====================================================
   // 4. Shooter skill influence
   // ====================================================
-  const shooterFactor = 0.6 + skillValue * 0.8;
+  const shooterFactor = 0.65 + skillValue * 0.65;
 
   // ====================================================
   // 4. ATK Average
@@ -70,10 +70,10 @@ export function simulatePossession(
   const defAvg = calcOffAvg(defenseTeam) / 100;
   const defFactor =
     playType === "THREE"
-      ? 1.05 - defAvg * 0.25
+      ? 0.92 - defAvg * 0.15
       : playType === "TWO"
-      ? 1.1 - defAvg * 0.35
-      : 1.2 - defAvg * 0.5;
+      ? 1.0 - defAvg * 0.20
+      : 1.05 - defAvg * 0.25
 
   // ====================================================
   // 5. Check if turnover
@@ -95,7 +95,7 @@ export function simulatePossession(
       result: "turnover",
       shotType: playType,
       selectedPlayer: shooter,
-      stealedBy: stealer,
+      stolenBy: stealer,
       turnoverBy: turnoverBy,
       success: false,
       points: getPoints(playType),
@@ -121,7 +121,7 @@ export function simulatePossession(
   // ====================================================
   let finalProb =
     baseAccuracy * shooterFactor * offFactor * defFactor * rng + homeAdv;
-  finalProb = clamp(finalProb, 0.05, 0.92);
+  finalProb = clamp(finalProb, 0.12, 0.92);
 
   // ====================================================
   // 9. Check if points

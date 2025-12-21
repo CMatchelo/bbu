@@ -85,7 +85,7 @@ export function useGameSimulation({
   // Helpers (private)
   // ─────────────────────────────────────────────
   function getPossessionDuration() {
-    return Math.floor(Math.random() * 20) + 5;
+    return Math.floor(Math.random() * 10) + 15;
   }
 
   function getNextPossession(current: string) {
@@ -120,16 +120,16 @@ export function useGameSimulation({
 
     if (possession.blockBy) {
       const blockerId = possession.blockBy.id;
-      const blocker = stats[blockerId]
+      const blocker = stats[blockerId];
       updatedStats[blockerId] = {
         ...blocker,
         blocks: shooter.blocks + 1,
       };
     }
 
-    if (possession.turnoverBy && possession.stealedBy) {
+    if (possession.turnoverBy && possession.stolenBy) {
       const turnoverId = possession.turnoverBy.id;
-      const stealId = possession.stealedBy.id;
+      const stealId = possession.stolenBy.id;
       const turnover = stats[turnoverId];
       const stealer = stats[stealId];
 
@@ -209,7 +209,7 @@ export function useGameSimulation({
     ]);
 
     // 2️⃣ Update score
-    if (possessionResult.points > 0) {
+    if (possessionResult.success) {
       if (offenseIsHome) {
         setHomeScore((s) => s + possessionResult.points);
       } else {

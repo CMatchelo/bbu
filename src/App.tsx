@@ -12,6 +12,7 @@ import TeamSelection from "./pages/TeamSelection";
 import Calendar from "./pages/calendar";
 import UniversityPage from "./pages/university";
 import GameScreen from "./pages/gameScreen";
+import "./i18n/i18n"
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();

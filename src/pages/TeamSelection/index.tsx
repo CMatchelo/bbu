@@ -10,6 +10,7 @@ import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { selectUniversitiesWithPlayers } from "../../selectors/data.selectors";
 import { useNavigate } from "react-router-dom";
 import { PlayType } from "../../types/PlayType";
+import { playerAverage } from "../../game/skillsAverage";
 
 const attackOptions = [
   { label: "Three Points", value: "THREE" },
@@ -112,14 +113,18 @@ export default function TeamSelection() {
               <button
                 key={p.id}
                 onClick={() => toggleStarter(p)}
-                className={`px-3 py-2 rounded border transition
+                className={`
+                  px-3 py-2 rounded border transition
+                  grid grid-cols-9
                   ${
                     isStarter
                       ? "bg-highlights1 text-black border-highlights1dark"
                       : "bg-cardbglight border-highlights2 hover:bg-cardbglight/70"
                   }`}
               >
-                {p.firstName} {p.lastName} ({p.inCourtPosition})
+                <div className="col-span-1">({p.inCourtPosition})</div>
+                <div className="col-span-7">{p.firstName} {p.lastName}</div>
+                <div className="col-span-1">{playerAverage(p)}</div>
               </button>
             );
           })}

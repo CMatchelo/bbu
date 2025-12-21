@@ -4,12 +4,14 @@ import { University } from "../../types/University";
 import { useAppSelector } from "../../hooks/useAppDispatch";
 import { selectUniversityById } from "../../selectors/data.selectors";
 import { FacilityCard } from "./components/facilityCard";
+import { useTranslation } from "react-i18next";
 
 export default function UniversityPage() {
   const { user } = useUser();
   const [uni, setUni] = useState<University | null>(null);
   const uniId = user?.currentUniversity.id ?? null;
   const selectedUni = useAppSelector(selectUniversityById(uniId));
+  const { t } = useTranslation()
 
   useEffect(() => {
     setUni(selectedUni);
@@ -31,44 +33,44 @@ export default function UniversityPage() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <FacilityCard
-          title="Court"
+          title={t("universityStrings.court")}
           level={uni?.courtLevel}
-          description="Improves technical training quality. Higher levels accelerate development of shooting, passing, and ball handling skills."
+          description={t("universityStrings.courtDesc")}
           onImprove={() => askImprovement("court")}
         />
 
         <FacilityCard
-          title="Gym"
+          title={t("universityStrings.gym")}
           level={uni?.gymLevel}
-          description="Enhances physical conditioning and defensive work, improving strength, speed, rebounding, and defensive attributes."
+          description={t("universityStrings.gymDesc")}
           onImprove={() => askImprovement("gym")}
         />
 
         <FacilityCard
-          title="Medical Center"
+          title={t("universityStrings.medicalCenter")}
           level={uni?.medicalCenterLevel}
-          description="Reduces injury recovery time, allowing players to return to match fitness faster."
+          description={t("universityStrings.medicalCenterDesc")}
           onImprove={() => askImprovement("medicalCenter")}
         />
 
         <FacilityCard
-          title="Physio Department"
+          title={t("universityStrings.physioDept")}
           level={uni?.physioLevel}
-          description="Manages player fatigue and conditioning, slowing stamina loss during matches and improving recovery."
+          description={t("universityStrings.physioDeptDesc")}
           onImprove={() => askImprovement("physio")}
         />
 
         <FacilityCard
-          title="Education Support"
+          title={t("universityStrings.eduSupport")}
           level={uni?.educationSupportLevel}
-          description="Supports academic performance, reducing off-court issues and improving player discipline."
+          description={t("universityStrings.eduSupportDesc")}
           onImprove={() => askImprovement("education")}
         />
 
         <FacilityCard
-          title="Academic Prestige"
+          title={t("universityStrings.prestige")}
           level={uni?.academicPrestige}
-          description="Reflects the university’s academic reputation, influencing recruiting success and transfer interest."
+          description={t("universityStrings.prestigeDesc")}
           onImprove={() => askImprovement("academicPrestige")}
         />
       </div>

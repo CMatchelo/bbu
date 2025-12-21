@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 type FacilityCardProps = {
   title: string;
   level?: number;
@@ -11,6 +13,7 @@ export function FacilityCard({
   description,
   onImprove,
 }: FacilityCardProps) {
+  const { t } = useTranslation()
   return (
     <div className="flex flex-col gap-2 border border-border  divide-y divide-highlights1">
       {/* Header */}
@@ -30,7 +33,7 @@ export function FacilityCard({
           bg-highlights1 rounded-sm shadow-2xl
           hover:bg-highlights1light transition"
         >
-          Improve
+          {t("universityStrings.improveBtn")}
         </button>
       </div>
 

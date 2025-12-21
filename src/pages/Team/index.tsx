@@ -5,12 +5,25 @@ import { updatePlayerSkill } from "../../store/slices/dataSlice";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { TableHeader } from "../../Components/tableHeader";
 import { TableTD } from "../../Components/tableTd";
+import { playerAverage, teamAverage } from "../../game/skillsAverage";
+import { useEffect } from "react";
 
 export default function Team() {
   const user = useAuthUser();
   const dispatch = useAppDispatch();
 
   const universities = useSelector(selectUniversitiesWithPlayers);
+
+  const uniTest = universities.find((u) => u.id === "usp");
+  const uniTest2 = universities.find((u) => u.id === "ufpr");
+
+  useEffect(() => {
+    if (uniTest?.players) console.log(teamAverage(uniTest?.players));
+  }, [uniTest])
+
+  useEffect(() => {
+    if (uniTest2?.players) console.log(teamAverage(uniTest2?.players));
+  }, [uniTest2])
 
   const uni = universities.find((u) => u.id === user.currentUniversity.id);
   const playersSorted = uni?.players
@@ -40,13 +53,14 @@ export default function Team() {
               <TableHeader>DEF</TableHeader>
               <TableHeader>DRI</TableHeader>
               <TableHeader>PAS</TableHeader>
-              <TableHeader>SPD</TableHeader>
+              <TableHeader>SPE</TableHeader>
               <TableHeader>BLK</TableHeader>
               <TableHeader>STL</TableHeader>
               <TableHeader>REB</TableHeader>
               <TableHeader>LAY</TableHeader>
               <TableHeader>3PT</TableHeader>
               <TableHeader>2PT</TableHeader>
+              <TableHeader>AVG</TableHeader>
             </tr>
           </thead>
 
@@ -67,6 +81,7 @@ export default function Team() {
                 <TableTD index={index}>{player.skills.layup}</TableTD>
                 <TableTD index={index}>{player.skills.threept}</TableTD>
                 <TableTD index={index}>{player.skills.twopt}</TableTD>
+                <TableTD index={index}>{playerAverage(player).toString()}</TableTD>
               </tr>
             ))}
           </tbody>

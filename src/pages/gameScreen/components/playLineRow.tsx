@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { PlayLog } from "../../../types/PlayLog";
 
 interface PlayLineRowProps {
@@ -18,24 +19,25 @@ export const PlayLineRow = ({ play, team }: PlayLineRowProps) => {
     : formatPlayerName(play.result.selectedPlayer);
 
   const blocker = play.result.blockBy && formatPlayerName(play.result.blockBy);
+  const { t } = useTranslation()
 
   const secondaryPlayer =
     isSuccess && play.result.assistBy
       ? formatPlayerName(play.result.assistBy)
       : !isSuccess && play.result.reboundWinnerPlayer
       ? formatPlayerName(play.result.reboundWinnerPlayer)
-      : !isSuccess && play.result.stealedBy
-      ? formatPlayerName(play.result.stealedBy)
+      : !isSuccess && play.result.stolenBy
+      ? formatPlayerName(play.result.stolenBy)
       : "";
 
   let secondaryLabel = "";
 
   if (isSuccess && play.result.assistBy) {
-    secondaryLabel = "Assist by";
+    secondaryLabel = t("inGame.assistBy");
   } else if (!isSuccess && play.result.reboundWinnerPlayer) {
-    secondaryLabel = "Rebound by";
-  } else if (!isSuccess && play.result.stealedBy) {
-    secondaryLabel = "Steal by";
+    secondaryLabel = t("inGame.reboundBy");
+  } else if (!isSuccess && play.result.stolenBy) {
+    secondaryLabel = t("inGame.stealBy");
   }
 
   let boxLabel = "";
@@ -64,7 +66,7 @@ export const PlayLineRow = ({ play, team }: PlayLineRowProps) => {
         >
           {secondaryPlayer && (
             <div className="flex flex-col gap-1">
-              {blocker && <span className="text-xs">Blocked by {blocker}</span>}
+              {blocker && <span className="text-xs">{t("inGame.blockedBy")} {blocker}</span>}
               <span className="text-xs">
                 {secondaryLabel} {secondaryPlayer}
               </span>
