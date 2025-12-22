@@ -2,7 +2,7 @@ import { Player } from "../types/Player";
 import { PlayerGameStats } from "../types/PlayerGameStats";
 import { University } from "../types/University";
 
-export function initializePlayerState(
+export function initializePlayerStats(
   homeUniversityId: string,
   awayUniversityId: string,
   playersHome: Player[],

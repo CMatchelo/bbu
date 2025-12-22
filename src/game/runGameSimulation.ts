@@ -3,7 +3,7 @@ import { University } from "../types/University";
 import { PlayLog } from "../types/PlayLog";
 import { PlayerGameStats } from "../types/PlayerGameStats";
 import { simulatePossession } from "./simulatePossession";
-import { initializePlayerState } from "./initializePlayersState";
+import { initializePlayerStats } from "./initializePlayersState";
 import { PossessionResult } from "../types/PossessionResult";
 import { selectCpuStarters } from "./selectCpuStarters";
 import { useAppSelector } from "../hooks/useAppDispatch";
@@ -36,7 +36,7 @@ export function useGameSimulation({
   const [isGameOver, setIsGameOver] = useState(false);
   const [currentPoss, setCurrentPoss] = useState<string | null>(null);
   const [logPlays, setLogPlays] = useState<PlayLog[]>([]);
-  const [playerState, setPlayerState] = useState<Record<
+  const [playerStats, setPlayerStats] = useState<Record<
     string,
     PlayerGameStats
   > | null>(null);
@@ -73,8 +73,8 @@ export function useGameSimulation({
     setIsGameOver(false);
     setLogPlays([]);
 
-    setPlayerState(
-      initializePlayerState(
+    setPlayerStats(
+      initializePlayerStats(
         homeUniversity.id,
         awayUniversity.id,
         homeUniversity.players,
@@ -226,7 +226,7 @@ export function useGameSimulation({
   // Game loop
   // ─────────────────────────────────────────────
   function runNextPossession() {
-    if (isGameOver || !currentPoss || !playerState || timeLeft <= 0) {
+    if (isGameOver || !currentPoss || !playerStats || timeLeft <= 0) {
       return;
     }
 
@@ -264,11 +264,11 @@ export function useGameSimulation({
     }
 
     // Update player stats
-    setPlayerState((prev) =>
+    setPlayerStats((prev) =>
       prev ? updateStats(prev, possessionResult, duration) : prev
     );
 
-    console.log(playerState);
+    console.log(playerStats);
 
     // Clock + quarter
     setTimeLeft((prev) => {
@@ -319,7 +319,7 @@ export function useGameSimulation({
     isPlayerHome,
 
     currentPoss,
-    playerState,
+    playerStats,
     logPlays,
     runNextPossession,
   };
