@@ -50,7 +50,6 @@ export default function GameScreen() {
 
   const callTimeout = () => {
     setDisplayPopup((prev) => !prev);
-    console.log(displayPopup);
   };
 
   return (

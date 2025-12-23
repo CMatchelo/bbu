@@ -240,7 +240,8 @@ export function useGameSimulation({
       offensePlayers,
       defensePlayers,
       offenseIsHome,
-      80
+      80,
+      playerStats
     );
 
     const duration = getPossessionDuration();
@@ -267,8 +268,6 @@ export function useGameSimulation({
     setPlayerStats((prev) =>
       prev ? updateStats(prev, possessionResult, duration) : prev
     );
-
-    console.log(playerStats);
 
     // Clock + quarter
     setTimeLeft((prev) => {

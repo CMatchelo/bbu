@@ -1,4 +1,5 @@
 import { Player } from "../types/Player";
+import { PlayerGameStats } from "../types/PlayerGameStats";
 import { PlayType } from "../types/PlayType";
 
 export function randomFloat(min: number, max: number) {
@@ -34,21 +35,40 @@ export function getPoints(play: PlayType): number {
   return 2;
 }
 
-export function calcOffAvg(players: Player[]): number {
-  let avg = 0;
+export function calcOffAvg(
+  players: Player[],
+  playerStats: Record<string, PlayerGameStats> | null
+): number {
+  let total = 0;
+
   players.forEach((p) => {
-    avg = avg + p.skills.dribble + p.skills.pass + p.skills.speedBall;
+    const base = p.skills.dribble + p.skills.pass + p.skills.speedBall;
+    const stamina = playerStats?.[p.id]?.stamina ?? 100;
+    const staminaFactor = 0.95 + stamina / 2000;
+    total += base * (1 + (staminaFactor - 1));
   });
-  avg = avg / (players.length * 3);
+  const avg = total / (players.length * 3);
   return Math.round(avg);
 }
 
-export function calcDefAvg(players: Player[]): number {
-  let avg = 0;
+export function calcDefAvg(
+  players: Player[],
+  playerStats: Record<string, PlayerGameStats> | null
+): number {
+  let total = 0;
+
   players.forEach((p) => {
-    avg = avg + p.skills.block + p.skills.defense + p.skills.steal;
+    const base = p.skills.block + p.skills.defense + p.skills.steal;
+
+    const stamina = playerStats?.[p.id]?.stamina ?? 100;
+
+    // Defense suffers more from fatigue
+    const staminaFactor = 0.94 + stamina / 1666; // 100 → 1.0
+
+    total += base * staminaFactor;
   });
-  avg = avg / (players.length * 3);
+
+  const avg = total / (players.length * 3);
   return Math.round(avg);
 }
 
@@ -62,7 +82,8 @@ export function calculateTurnoverChance(offAvg: number, defAvg: number) {
 export function checkIfBlocked(
   shooter: Player,
   blockBy: Player,
-  playType: PlayType
+  playType: PlayType,
+  blockerStamina: number
 ) {
   const skill =
     playType === "THREE"
@@ -71,7 +92,13 @@ export function checkIfBlocked(
       ? shooter.skills.twopt
       : shooter.skills.layup;
 
-  const diff = skill - blockBy.skills.block;
+  const staminaFactor = Math.max(
+    0.85,
+    0.9 + blockerStamina / 1000
+  );
+  const penalizedBlockSkill =
+    blockBy.skills.block * staminaFactor;
+  const diff = skill - penalizedBlockSkill;
   const chance = 0.04 + 0.08 / (1 + Math.exp(-diff / 8));
   return Math.min(Math.max(chance, 0.01), 0.12);
 }

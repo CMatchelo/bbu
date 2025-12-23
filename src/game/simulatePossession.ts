@@ -1,4 +1,5 @@
 import { Player } from "../types/Player";
+import { PlayerGameStats } from "../types/PlayerGameStats";
 import { PlayType } from "../types/PlayType";
 import { PossessionResult } from "../types/PossessionResult";
 import {
@@ -17,6 +18,7 @@ export function simulatePossession(
   defenseTeam: Player[],
   isHomeTeam: boolean,
   fanbase: number,
+  playerStats: Record<string, PlayerGameStats> | null,
   playOrder: PlayType[] = ["THREE", "TWO", "LAYUP"]
 ): PossessionResult {
   // ====================================================
@@ -43,6 +45,8 @@ export function simulatePossession(
     (p) => p.skills[skillKey] * (0.8 + Math.random() * 0.4)
   );
   const shooter = weightedRandom(offenseTeam, weights);
+  const shooterStamina = playerStats?.[shooter.id].stamina ?? 100;
+  const staminaFactor = clamp(0.8 + shooterStamina / 500, 0.8, 1);
 
   // ====================================================
   // 3. Base Accuracy
@@ -61,25 +65,25 @@ export function simulatePossession(
   // ====================================================
   // 4. ATK Average
   // ====================================================
-  const offAvg = calcOffAvg(offenseTeam) / 100;
-  const offFactor = 0.9 + offAvg * 0.3; // 0.9 – 1.2
+  const offAvg = calcOffAvg(offenseTeam, playerStats) / 100;
+  const offFactor = 0.9 + offAvg * 0.3;
 
   // ====================================================
   // 5. DEF Average
   // ====================================================
-  const defAvg = calcOffAvg(defenseTeam) / 100;
+  const defAvg = calcOffAvg(defenseTeam, playerStats) / 100;
   const defFactor =
     playType === "THREE"
       ? 0.92 - defAvg * 0.15
       : playType === "TWO"
-      ? 1.0 - defAvg * 0.20
-      : 1.05 - defAvg * 0.25
+      ? 1.0 - defAvg * 0.2
+      : 1.05 - defAvg * 0.25;
 
   // ====================================================
   // 5. Check if turnover
   // ====================================================
   const turnover = Math.random() < calculateTurnoverChance(offAvg, defAvg);
-
+  
   if (turnover) {
     const weightsSteal = offenseTeam.map(
       (p) => p.skills["steal"] * (0.8 + Math.random() * 0.4)
@@ -120,8 +124,12 @@ export function simulatePossession(
   // 8. Final Prov
   // ====================================================
   let finalProb =
-    baseAccuracy * shooterFactor * offFactor * defFactor * rng + homeAdv;
+    baseAccuracy * shooterFactor * offFactor * defFactor * staminaFactor * rng +
+    homeAdv;
+
   finalProb = clamp(finalProb, 0.12, 0.92);
+
+  console.log(finalProb)
 
   // ====================================================
   // 9. Check if points
@@ -133,7 +141,7 @@ export function simulatePossession(
     );
     blockBy = weightedRandom(defenseTeam, weightsBlock);
     const isBlocked =
-      Math.random() < checkIfBlocked(shooter, blockBy, playType);
+      Math.random() < checkIfBlocked(shooter, blockBy, playType, playerStats?.[blockBy.id].stamina ?? 100);
 
     if (!isBlocked) {
       const weightsAssist = offenseTeam.map(
