@@ -51,7 +51,7 @@ export function calcOffAvg(
   return Math.round(avg);
 }
 
-export function calcDefAvg(
+/* export function calcDefAvg(
   players: Player[],
   playerStats: Record<string, PlayerGameStats> | null
 ): number {
@@ -70,7 +70,7 @@ export function calcDefAvg(
 
   const avg = total / (players.length * 3);
   return Math.round(avg);
-}
+} */
 
 export function calculateTurnoverChance(offAvg: number, defAvg: number) {
   const base = 0.12;

@@ -10,6 +10,7 @@ import { useState } from "react";
 import { PlayerSelection } from "../TeamSelection/components/PlayersSelection";
 import { PlayTypeSelection } from "../TeamSelection/components/PlayTypeSelection";
 import { TimeoutBtn } from "./components/TimeoutBtn";
+import { RootState } from "../../store";
 
 export default function GameScreen() {
   const { user } = useUser();
@@ -19,8 +20,10 @@ export default function GameScreen() {
     selectGameContext(state, user?.currentUniversity.id)
   );
 
-  const [userTimeouts, setUserTimeouts] = useState<number>(8);
-  const [cpuTimeouts, setCpuTimeouts] = useState<number>(8);
+  const starters = useAppSelector(
+    (state: RootState) => state.gameSettings.starters
+  );
+
   const [displayPopup, setDisplayPopup] = useState<boolean>(false);
 
   if (!gameContext) return null;
@@ -41,6 +44,12 @@ export default function GameScreen() {
     homeLineup,
     awayLineup,
     isPlayerHome,
+
+    userTimeouts,
+    cpuTimeouts,
+
+    setUserTimeouts,
+
     runNextPossession,
   } = useGameSimulation({
     homeUniversity,
@@ -49,7 +58,13 @@ export default function GameScreen() {
   });
 
   const callTimeout = () => {
-    setDisplayPopup((prev) => !prev);
+    setDisplayPopup(true);
+  };
+
+  const closePopup = () => {
+    if (starters.length < 5) return;
+    setDisplayPopup(false);
+    setUserTimeouts((prev) => prev - 1);
   };
 
   return (
@@ -69,7 +84,7 @@ export default function GameScreen() {
             <PlayTypeSelection />
             <PlayerSelection />
             <button
-              onClick={callTimeout}
+              onClick={closePopup}
               className="
                 bg-highlights2 text-gray-700
                 p-2 rounded-2xl
@@ -91,7 +106,12 @@ export default function GameScreen() {
           </h2>
           {/* Scoreboard */}
           <div className="w-full flex flex-row gap-4 justify-center items-center mb-5">
-            <TimeoutBtn isPlayerHome={isPlayerHome} timeoutsRemaining={isPlayerHome ? userTimeouts : cpuTimeouts} callTimeout={callTimeout} classname="self" />
+            <TimeoutBtn
+              isPlayerHome={isPlayerHome}
+              timeoutsRemaining={isPlayerHome ? userTimeouts : cpuTimeouts}
+              callTimeout={callTimeout}
+              classname="self"
+            />
             <div className="grid grid-cols-7 items-center w-1/2 rounded-xl border border-highlights1 bg-white/5 px-6 py-4 shadow-md">
               <div className="col-span-3 text-right">
                 <h1 className="text-xl font-bold tracking-wide">
@@ -113,7 +133,11 @@ export default function GameScreen() {
                 </h1>
               </div>
             </div>
-            <TimeoutBtn isPlayerHome={!isPlayerHome} timeoutsRemaining={isPlayerHome ? cpuTimeouts : userTimeouts} callTimeout={callTimeout} />
+            <TimeoutBtn
+              isPlayerHome={!isPlayerHome}
+              timeoutsRemaining={isPlayerHome ? cpuTimeouts : userTimeouts}
+              callTimeout={callTimeout}
+            />
           </div>
         </div>
 
@@ -122,7 +146,7 @@ export default function GameScreen() {
         </button>
 
         <button onClick={() => navigate("/team")}>Voltar</button>
-        
+
         <div className="flex-1 overflow-y-auto px-20 scrollbar-hide">
           <div className="flex flex-row justify-center gap-8">
             <TeamPlayCol logPlays={logPlays} team="HOME" />

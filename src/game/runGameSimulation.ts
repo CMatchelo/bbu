@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { University } from "../types/University";
 import { PlayLog } from "../types/PlayLog";
 import { PlayerGameStats } from "../types/PlayerGameStats";
@@ -12,6 +12,8 @@ import {
   calculateBenchRecovery,
   calculateStaminaSpent,
 } from "./matchAuxFunctions";
+import { shouldCallTimeout, substituteCPU, TimeoutState } from "./cpuSubs";
+import { Player } from "../types/Player";
 
 const QUARTER_DURATION = 10 * 60;
 
@@ -31,6 +33,9 @@ export function useGameSimulation({
   // ─────────────────────────────────────────────
   const [homeScore, setHomeScore] = useState(0);
   const [awayScore, setAwayScore] = useState(0);
+  const [userTimeouts, setUserTimeouts] = useState<number>(8);
+  const [cpuTimeouts, setCpuTimeouts] = useState<number>(8);
+  const [cpuTimeoutsOnQrt, setCpuTimeoutsOnQrt] = useState<number>(0);
   const [quarter, setQuarter] = useState(1);
   const [timeLeft, setTimeLeft] = useState(QUARTER_DURATION);
   const [isGameOver, setIsGameOver] = useState(false);
@@ -46,17 +51,16 @@ export function useGameSimulation({
   const playerTeam = isPlayerHome ? homeUniversity : awayUniversity;
   const cpuTeam = isPlayerHome ? awayUniversity : homeUniversity;
 
-  const cpuStarters = useMemo(
-    () => selectCpuStarters(cpuTeam.players || []),
-    [cpuTeam.players]
+  const [cpuOnCourt, setCpuOnCourt] = useState<Player[]>(() =>
+    selectCpuStarters(cpuTeam.players || [])
   );
 
   const playerStarters = useAppSelector(
     (state: RootState) => state.gameSettings.starters
   );
 
-  const homeLineup = isPlayerHome ? playerStarters : cpuStarters;
-  const awayLineup = isPlayerHome ? cpuStarters : playerStarters;
+  const homeLineup = isPlayerHome ? playerStarters : cpuOnCourt;
+  const awayLineup = isPlayerHome ? cpuOnCourt : playerStarters;
 
   const quarterAdvancedRef = useRef(false);
 
@@ -204,7 +208,7 @@ export function useGameSimulation({
         updatedStats[currentPlayer.id] = {
           ...playerStats,
           stamina: Number(
-            Math.max(0, playerStats.stamina - staminaSpent).toFixed(2)
+            Math.max(0, playerStats.stamina - staminaSpent).toFixed(1)
           ),
         };
         return;
@@ -214,7 +218,7 @@ export function useGameSimulation({
       updatedStats[currentPlayer.id] = {
         ...playerStats,
         stamina: Number(
-          Math.min(100, playerStats.stamina + recovery).toFixed(2)
+          Math.min(100, playerStats.stamina + recovery).toFixed(1)
         ),
       };
     });
@@ -264,16 +268,12 @@ export function useGameSimulation({
       }
     }
 
-    // Update player stats
-    setPlayerStats((prev) =>
-      prev ? updateStats(prev, possessionResult, duration) : prev
-    );
-
     // Clock + quarter
     setTimeLeft((prev) => {
       const next = prev - duration;
 
       if (next <= 0) {
+        setCpuTimeoutsOnQrt(0)
         if (quarter === 4) {
           setIsGameOver(true);
           return 0;
@@ -288,6 +288,11 @@ export function useGameSimulation({
       return next;
     });
 
+    // Update player stats
+    setPlayerStats((prev) =>
+      prev ? updateStats(prev, possessionResult, duration) : prev
+    );
+
     // Switch possession
     if (
       possessionResult.success ||
@@ -296,7 +301,34 @@ export function useGameSimulation({
     ) {
       setCurrentPoss((prev) => (prev ? getNextPossession(prev) : prev));
     }
+
+    const timeoutState: TimeoutState = {used: 8 - cpuTimeouts, usedThisQuarter: cpuTimeoutsOnQrt}
+    const diffPoints = isPlayerHome
+        ? awayScore - homeScore
+        : homeScore - awayScore;
+    const shouldCPUTimeout = shouldCallTimeout(quarter, timeLeft, timeoutState, playerStats, cpuOnCourt, diffPoints)
+    if (shouldCPUTimeout) checkCPUSub(playerStats)
   }
+
+  const checkCPUSub = (playerStats: Record<string, PlayerGameStats>) => {
+      const diffPoints = isPlayerHome
+        ? awayScore - homeScore
+        : homeScore - awayScore;
+      const updateCpuOnCourt =
+        substituteCPU(
+          cpuTeam.players || [],
+          cpuOnCourt,
+          playerStats,
+          diffPoints
+        )
+          .slice()
+          .sort((a, b) => a.inCourtPosition.localeCompare(b.inCourtPosition)) ||
+        [];
+
+      setCpuOnCourt(updateCpuOnCourt);
+      setCpuTimeouts((prev) => prev - 1)
+      setCpuTimeoutsOnQrt((prev) => prev + 1)
+    };
 
   // ─────────────────────────────────────────────
   // Public API
@@ -311,11 +343,15 @@ export function useGameSimulation({
 
     playerTeam,
     cpuTeam,
-    cpuStarters,
+    cpuOnCourt,
     playerStarters,
     homeLineup,
     awayLineup,
     isPlayerHome,
+
+    userTimeouts,
+    cpuTimeouts,
+    setUserTimeouts,
 
     currentPoss,
     playerStats,

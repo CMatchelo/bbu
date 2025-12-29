@@ -15,7 +15,7 @@ export const TimeoutBtn = ({
     <div className={`min-w-50 ${classname}`}>
       <div className="flex flex-col">
         <span className="text-xs">Timeouts remaining: {timeoutsRemaining}</span>
-        {isPlayerHome && (
+        {isPlayerHome && timeoutsRemaining > 0 && (
           <button
             onClick={callTimeout}
             className={`

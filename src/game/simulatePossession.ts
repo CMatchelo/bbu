@@ -46,27 +46,33 @@ export function simulatePossession(
   );
   const shooter = weightedRandom(offenseTeam, weights);
   const shooterStamina = playerStats?.[shooter.id].stamina ?? 100;
-  const staminaFactor = clamp(0.8 + shooterStamina / 500, 0.8, 1);
+  const staminaFactor = clamp(
+    0.5 + Math.pow(shooterStamina / 100, 1.5) * 0.5,
+    0.5,
+    1
+  );
+  const staminaDelta = (staminaFactor - 1) * 0.25;
 
   // ====================================================
   // 3. Base Accuracy
   // ====================================================
   const skillValue = shooter.skills[skillKey] / 100;
+  const skillDelta = (skillValue - 0.5) * 0.24;
 
   const baseMultiplier =
-    playType === "THREE" ? 0.42 : playType === "TWO" ? 0.65 : 0.92; // layup
+    playType === "THREE" ? 0.47 : playType === "TWO" ? 0.7 : 0.95;
 
   const baseAccuracy = skillValue * baseMultiplier;
   // ====================================================
   // 4. Shooter skill influence
   // ====================================================
-  const shooterFactor = 0.65 + skillValue * 0.65;
+  const shooterFactor = 0.75 + skillValue * 0.7;
 
   // ====================================================
   // 4. ATK Average
   // ====================================================
   const offAvg = calcOffAvg(offenseTeam, playerStats) / 100;
-  const offFactor = 0.9 + offAvg * 0.3;
+  const offFactor = 0.95 + offAvg * 0.35;
 
   // ====================================================
   // 5. DEF Average
@@ -74,16 +80,17 @@ export function simulatePossession(
   const defAvg = calcOffAvg(defenseTeam, playerStats) / 100;
   const defFactor =
     playType === "THREE"
-      ? 0.92 - defAvg * 0.15
+      ? 0.95 - defAvg * 0.13
       : playType === "TWO"
-      ? 1.0 - defAvg * 0.2
-      : 1.05 - defAvg * 0.25;
+      ? 1.02 - defAvg * 0.16
+      : 1.08 - defAvg * 0.22;
 
+  const matchupDelta = (offAvg - defAvg) * 0.16;
   // ====================================================
   // 5. Check if turnover
   // ====================================================
   const turnover = Math.random() < calculateTurnoverChance(offAvg, defAvg);
-  
+
   if (turnover) {
     const weightsSteal = offenseTeam.map(
       (p) => p.skills["steal"] * (0.8 + Math.random() * 0.4)
@@ -114,34 +121,53 @@ export function simulatePossession(
   if (isHomeTeam) {
     homeAdv = isHomeTeam ? (fanbase / 100) * 0.05 : 0;
   }
+  const homeDelta = isHomeTeam ? (fanbase / 100) * 0.04 : 0;
 
   // ====================================================
   // 7. RNG
   // ====================================================
   const rng = randomFloat(0.95, 1.05);
+  const rngDelta = randomFloat(-0.015, 0.015);
 
   // ====================================================
   // 8. Final Prov
   // ====================================================
-  let finalProb =
-    baseAccuracy * shooterFactor * offFactor * defFactor * staminaFactor * rng +
-    homeAdv;
+  //let finalProb = baseAccuracy * shooterFactor * offFactor * defFactor * staminaFactor * rng + homeAdv;
 
-  finalProb = clamp(finalProb, 0.12, 0.92);
+  const rawProb =
+    baseMultiplier +
+    skillDelta +
+    matchupDelta +
+    staminaDelta +
+    homeDelta +
+    rngDelta;
 
-  console.log(finalProb)
+  function sigmoid(x: number) {
+    return 1 / (1 + Math.exp(-8 * (x - 0.5)));
+  }
+
+  const finalProb = clamp(sigmoid(rawProb), 0.15, 0.92);
+
+  //finalProb = clamp(finalProb, 0.18, 0.92);
 
   // ====================================================
   // 9. Check if points
   // ====================================================
   let blockBy;
-  if (Math.random() <= finalProb) {
+  const randomN = Math.random()
+  if (randomN <= finalProb) {
     const weightsBlock = defenseTeam.map(
       (p) => p.skills["block"] * (0.8 + Math.random() * 0.4)
     );
     blockBy = weightedRandom(defenseTeam, weightsBlock);
     const isBlocked =
-      Math.random() < checkIfBlocked(shooter, blockBy, playType, playerStats?.[blockBy.id].stamina ?? 100);
+      Math.random() <
+      checkIfBlocked(
+        shooter,
+        blockBy,
+        playType,
+        playerStats?.[blockBy.id].stamina ?? 100
+      );
 
     if (!isBlocked) {
       const weightsAssist = offenseTeam.map(
