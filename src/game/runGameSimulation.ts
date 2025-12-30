@@ -105,7 +105,8 @@ export function useGameSimulation({
   function updateStats(
     stats: Record<string, PlayerGameStats>,
     possession: PossessionResult,
-    duration: number
+    duration: number,
+    interval: boolean
   ) {
     const shooterId = possession.selectedPlayer.id;
     const shooter = stats[shooterId];
@@ -197,6 +198,8 @@ export function useGameSimulation({
 
     allPlayers.forEach((currentPlayer) => {
       const playerStats = updatedStats[currentPlayer.id];
+      let intervalRest = 0;
+      if (interval) intervalRest = calculateBenchRecovery(150);
       if (!playerStats) return;
 
       if (onCourtIds.has(currentPlayer.id)) {
@@ -208,7 +211,10 @@ export function useGameSimulation({
         updatedStats[currentPlayer.id] = {
           ...playerStats,
           stamina: Number(
-            Math.max(0, playerStats.stamina - staminaSpent).toFixed(1)
+            Math.min(
+              100,
+              Math.max(0, playerStats.stamina - staminaSpent + intervalRest)
+            ).toFixed(1)
           ),
         };
         return;
@@ -218,7 +224,9 @@ export function useGameSimulation({
       updatedStats[currentPlayer.id] = {
         ...playerStats,
         stamina: Number(
-          Math.min(100, playerStats.stamina + recovery).toFixed(1)
+          Math.min(100, playerStats.stamina + recovery + intervalRest).toFixed(
+            1
+          )
         ),
       };
     });
@@ -268,12 +276,15 @@ export function useGameSimulation({
       }
     }
 
+    let interval = false;
+
     // Clock + quarter
     setTimeLeft((prev) => {
       const next = prev - duration;
 
       if (next <= 0) {
-        setCpuTimeoutsOnQrt(0)
+        interval = true;
+        setCpuTimeoutsOnQrt(0);
         if (quarter === 4) {
           setIsGameOver(true);
           return 0;
@@ -290,7 +301,7 @@ export function useGameSimulation({
 
     // Update player stats
     setPlayerStats((prev) =>
-      prev ? updateStats(prev, possessionResult, duration) : prev
+      prev ? updateStats(prev, possessionResult, duration, interval) : prev
     );
 
     // Switch possession
@@ -302,33 +313,38 @@ export function useGameSimulation({
       setCurrentPoss((prev) => (prev ? getNextPossession(prev) : prev));
     }
 
-    const timeoutState: TimeoutState = {used: 8 - cpuTimeouts, usedThisQuarter: cpuTimeoutsOnQrt}
+    const timeoutState: TimeoutState = {
+      used: 8 - cpuTimeouts,
+      usedThisQuarter: cpuTimeoutsOnQrt,
+    };
     const diffPoints = isPlayerHome
-        ? awayScore - homeScore
-        : homeScore - awayScore;
-    const shouldCPUTimeout = shouldCallTimeout(quarter, timeLeft, timeoutState, playerStats, cpuOnCourt, diffPoints)
-    if (shouldCPUTimeout) checkCPUSub(playerStats)
+      ? awayScore - homeScore
+      : homeScore - awayScore;
+    const shouldCPUTimeout = shouldCallTimeout(
+      quarter,
+      timeLeft,
+      timeoutState,
+      playerStats,
+      cpuOnCourt,
+      diffPoints
+    );
+    if (shouldCPUTimeout) checkCPUSub(playerStats);
   }
 
   const checkCPUSub = (playerStats: Record<string, PlayerGameStats>) => {
-      const diffPoints = isPlayerHome
-        ? awayScore - homeScore
-        : homeScore - awayScore;
-      const updateCpuOnCourt =
-        substituteCPU(
-          cpuTeam.players || [],
-          cpuOnCourt,
-          playerStats,
-          diffPoints
-        )
-          .slice()
-          .sort((a, b) => a.inCourtPosition.localeCompare(b.inCourtPosition)) ||
-        [];
+    const diffPoints = isPlayerHome
+      ? awayScore - homeScore
+      : homeScore - awayScore;
+    const updateCpuOnCourt =
+      substituteCPU(cpuTeam.players || [], cpuOnCourt, playerStats, diffPoints)
+        .slice()
+        .sort((a, b) => a.inCourtPosition.localeCompare(b.inCourtPosition)) ||
+      [];
 
-      setCpuOnCourt(updateCpuOnCourt);
-      setCpuTimeouts((prev) => prev - 1)
-      setCpuTimeoutsOnQrt((prev) => prev + 1)
-    };
+    setCpuOnCourt(updateCpuOnCourt);
+    setCpuTimeouts((prev) => prev - 1);
+    setCpuTimeoutsOnQrt((prev) => prev + 1);
+  };
 
   // ─────────────────────────────────────────────
   // Public API
