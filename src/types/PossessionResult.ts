@@ -15,7 +15,6 @@ export type PossessionResult = {
   success: boolean;
   points: number;
 
-  reboundWonBy?: string;
   reboundWinnerPlayer?: Player;
 
   blockBy?: Player;

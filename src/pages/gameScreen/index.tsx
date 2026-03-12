@@ -6,22 +6,23 @@ import { TeamPlayCol } from "./components/playLine";
 import { selectGameContext } from "../../selectors/inGameTeam.selector";
 import { useGameSimulation } from "../../game/runGameSimulation";
 import { PlayerTable } from "./components/PlayersTable";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PlayerSelection } from "../TeamSelection/components/PlayersSelection";
 import { PlayTypeSelection } from "../TeamSelection/components/PlayTypeSelection";
 import { TimeoutBtn } from "./components/TimeoutBtn";
 import { RootState } from "../../store";
+import { TeamStats } from "./components/TeamStats";
 
 export default function GameScreen() {
   const { user } = useUser();
   const navigate = useNavigate();
 
   const gameContext = useAppSelector((state) =>
-    selectGameContext(state, user?.currentUniversity.id)
+    selectGameContext(state, user?.currentUniversity.id),
   );
 
   const starters = useAppSelector(
-    (state: RootState) => state.gameSettings.starters
+    (state: RootState) => state.gameSettings.starters,
   );
 
   const [displayPopup, setDisplayPopup] = useState<boolean>(false);
@@ -36,8 +37,8 @@ export default function GameScreen() {
     timeLeft,
     isGameOver,
 
-    homeScore,
-    awayScore,
+    homeStats,
+    awayStats,
 
     logPlays,
     playerStats,
@@ -49,6 +50,9 @@ export default function GameScreen() {
     cpuTimeouts,
 
     setUserTimeouts,
+    cpuWantsTimeout,
+    setCpuWantsTimeout,
+    checkCPUSub,
 
     runNextPossession,
   } = useGameSimulation({
@@ -58,14 +62,23 @@ export default function GameScreen() {
   });
 
   const callTimeout = () => {
+    setUserTimeouts((prev) => prev - 1);
+    checkCPUSub();
     setDisplayPopup(true);
   };
 
   const closePopup = () => {
     if (starters.length < 5) return;
     setDisplayPopup(false);
-    setUserTimeouts((prev) => prev - 1);
   };
+
+  useEffect(() => {
+    if (!cpuWantsTimeout) return;
+
+    checkCPUSub();
+    setDisplayPopup(true);
+    setCpuWantsTimeout(false);
+  }, [cpuWantsTimeout, setCpuWantsTimeout]);
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
@@ -121,9 +134,9 @@ export default function GameScreen() {
 
               <div className="col-span-1 text-center">
                 <h2 className="text-2xl font-extrabold text-white">
-                  {homeScore}
+                  {homeStats.points}
                   <span className="mx-1 text-gray-400">x</span>
-                  {awayScore}
+                  {awayStats.points}
                 </h2>
               </div>
 
@@ -149,8 +162,10 @@ export default function GameScreen() {
 
         <div className="flex-1 overflow-y-auto px-20 scrollbar-hide">
           <div className="flex flex-row justify-center gap-8">
+            <TeamStats stats={homeStats} />
             <TeamPlayCol logPlays={logPlays} team="HOME" />
             <TeamPlayCol logPlays={logPlays} team="AWAY" />
+            <TeamStats stats={awayStats} isAway />
           </div>
         </div>
       </div>

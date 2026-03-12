@@ -1,7 +1,6 @@
 import { Player } from "../types/Player";
 
 export const teamAverage = (players: Player[]) => {
-  console.log("oi", players)
   let average = 0
   players.map((p) => {
     average += Object.values(p.skills).reduce((total, n) => total + n, 0);
