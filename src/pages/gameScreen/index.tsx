@@ -1,4 +1,4 @@
-import { useAppSelector } from "../../hooks/useAppDispatch";
+import { useAppDispatch, useAppSelector } from "../../hooks/useAppDispatch";
 import { useUser } from "../../Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import formatTime from "../../utils/formatTime";
@@ -12,10 +12,16 @@ import { PlayTypeSelection } from "../TeamSelection/components/PlayTypeSelection
 import { TimeoutBtn } from "./components/TimeoutBtn";
 import { RootState } from "../../store";
 import { TeamStats } from "./components/TeamStats";
+import {
+  incrementWeek,
+  saveScheduleThunk,
+  setMatchResult,
+} from "../../store/slices/scheduleSlice";
 
 export default function GameScreen() {
   const { user } = useUser();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const gameContext = useAppSelector((state) =>
     selectGameContext(state, user?.currentUniversity.id),
@@ -70,6 +76,21 @@ export default function GameScreen() {
   const closePopup = () => {
     if (starters.length < 5) return;
     setDisplayPopup(false);
+  };
+
+  const saveGame = async () => {
+    if (!user) return
+    navigate("/team");
+    const matchResult = {
+      matchId: gameContext.match.id,
+      homeScore: homeStats.points,
+      awayScore: awayStats.points,
+    };
+    console.log(user?.id, user?.name)
+    const folderName = `${user.name}_${user.id}`
+    dispatch(setMatchResult(matchResult));
+    dispatch(incrementWeek());
+    dispatch(saveScheduleThunk(folderName));
   };
 
   useEffect(() => {
@@ -158,7 +179,7 @@ export default function GameScreen() {
           Posse
         </button>
 
-        <button onClick={() => navigate("/team")}>Voltar</button>
+        <button onClick={saveGame}>Voltar</button>
 
         <div className="flex-1 overflow-y-auto px-20 scrollbar-hide">
           <div className="flex flex-row justify-center gap-8">

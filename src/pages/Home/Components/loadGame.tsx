@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useUser } from "../../../Context/UserContext";
 import {
-  setCurrentRound,
+  setCurrentWeek,
   setSchedule,
 } from "../../../store/slices/scheduleSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
@@ -27,7 +27,7 @@ export const LoadGame = ({ saveIds }: LoadGameProps) => {
       return;
     }
     dispatch(setSchedule(userLoaded.schedule.matches));
-    dispatch(setCurrentRound(userLoaded.schedule.currentRound));
+    dispatch(setCurrentWeek(userLoaded.schedule.currentWeek));
     loadUser(userLoaded.user);
     //navigate("/team")
   };

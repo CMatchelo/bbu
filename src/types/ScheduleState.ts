@@ -1,12 +1,12 @@
 import { Match } from "./Match";
 
 export type ScheduleSave = {
-  currentRound: number;
+  currentWeek: number;
   matches: Match[];
 };
 
 export type ScheduleState = {
-  currentRound: number;
+  currentWeek: number;
   matchesById: Record<string, Match>;
-  matchesByRound: Record<number, string[]>;
+  matchesByWeek: Record<number, string[]>;
 };

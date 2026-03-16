@@ -1,8 +1,9 @@
 export type Match = {
   id: string;
+  championship: string;
   home: string;
   away: string;
-  round: number;
+  week: number;
   played?: boolean;
   result?: {
     homeScore: number;

@@ -16,8 +16,6 @@ export default function Calendar() {
   );
   const dispatch = useAppDispatch();
 
-  console.log(teamSchedule);
-
   const matchResult = {
     matchId: "d3ece8e6-fbcf-4762-9077-1ae0e9a7b00f",
     homeScore: 80,

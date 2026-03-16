@@ -3,10 +3,10 @@ import { RootState } from "../store";
 import { Match } from "../types/Match";
 import { selectUniversitiesArray } from "./data.selectors";
 
-export const selectMatchesByRound =
-  (round: number) =>
+export const selectMatchesByWeek =
+  (week: number) =>
   (state: RootState): Match[] => {
-    const ids = state.schedule.matchesByRound[round] ?? [];
+    const ids = state.schedule.matchesByWeek[week] ?? [];
     return ids.map((id) => state.schedule.matchesById[id]);
   };
 
@@ -32,7 +32,6 @@ export const selectTeamSchedule = (teamId: string) =>
       const uniById = Object.fromEntries(
         universities.map((uni) => [uni.id, uni])
       );
-      console.log(uniById);
       return matches.map((match) => ({
         ...match,
         homeTeam: uniById[match.home],
@@ -41,19 +40,19 @@ export const selectTeamSchedule = (teamId: string) =>
     }
   );
 
-export const selectCurrentRoundMatchByUniversity = createSelector(
+export const selectcurrentWeekMatchByUniversity = createSelector(
   [
-    (state: RootState) => state.schedule.currentRound,
-    (state: RootState) => state.schedule.matchesByRound,
+    (state: RootState) => state.schedule.currentWeek,
+    (state: RootState) => state.schedule.matchesByWeek,
     (state: RootState) => state.schedule.matchesById,
     (_: RootState, universityId: string) => universityId,
   ],
-  (currentRound, matchesByRound, matchesById, universityId) => {
-    const roundMatchIds = matchesByRound[currentRound];
-    if (!roundMatchIds) return null;
+  (currentWeek, matchesByWeek, matchesById, universityId) => {
+    const weekMatchIds = matchesByWeek[currentWeek];
+    if (!weekMatchIds) return null;
 
     return (
-      roundMatchIds
+      weekMatchIds
         .map((id) => matchesById[id])
         .find(
           (match) => match.home === universityId || match.away === universityId

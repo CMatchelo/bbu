@@ -6,20 +6,20 @@ type Streak = {
   count: number;
 };
 
-export function GenerateSchedule(universities: University[]): Match[] {
+export function GenerateSchedule(universities: University[], championship: string): Match[] {
   if (universities.length % 2 !== 0) {
     throw new Error("Number of teams must be even");
   }
 
-  const roundsCount = universities.length - 1;
+  const weeksCount = universities.length - 1;
   const half = universities.length / 2;
 
   const streaks = new Map<string, Streak>();
   universities.forEach((u) => streaks.set(u.id, { last: null, count: 0 }));
 
-  const baseRounds: Match[][] = [];
+  const baseWeeks: Match[][] = [];
 
-  for (let r = 0; r < roundsCount; r++) {
+  for (let r = 0; r < weeksCount; r++) {
     const matches: Match[] = [];
 
     for (let i = 0; i < half; i++) {
@@ -33,17 +33,18 @@ export function GenerateSchedule(universities: University[]): Match[] {
 
       matches.push({
         id: crypto.randomUUID(),
+        championship,
         home: home.id,
         away: away.id,
         played: false,
-        round: r + 1,
+        week: r + 1,
       });
 
       updateStreak(streaks.get(home.id)!, "home");
       updateStreak(streaks.get(away.id)!, "away");
     }
 
-    baseRounds.push(matches);
+    baseWeeks.push(matches);
 
     // rotate teams
     const fixed = universities[0];
@@ -54,37 +55,39 @@ export function GenerateSchedule(universities: University[]): Match[] {
 
   // Expand to 4 legs (same logic as before)
   const schedule: Match[] = [];
-  const total = roundsCount;
+  const total = weeksCount;
 
-  baseRounds.forEach((r) => schedule.push(...r));
-  baseRounds.forEach((r, i) =>
+  baseWeeks.forEach((r) => schedule.push(...r));
+  baseWeeks.forEach((r, i) =>
     r.forEach((m) =>
       schedule.push({
         id: crypto.randomUUID(),
+        championship,
         home: m.away,
         away: m.home,
         played: false,
-        round: total + i + 1,
+        week: total + i + 1,
       })
     )
   );
-  baseRounds.forEach((r, i) =>
+  baseWeeks.forEach((r, i) =>
     r.forEach((m) =>
       schedule.push({
         ...m,
         id: crypto.randomUUID(),
-        round: total * 2 + i + 1,
+        week: total * 2 + i + 1,
       })
     )
   );
-  baseRounds.forEach((r, i) =>
+  baseWeeks.forEach((r, i) =>
     r.forEach((m) =>
       schedule.push({
         id: crypto.randomUUID(),
+        championship,
         home: m.away,
         away: m.home,
         played: false,
-        round: total * 3 + i + 1,
+        week: total * 3 + i + 1,
       })
     )
   );

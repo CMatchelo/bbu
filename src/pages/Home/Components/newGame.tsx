@@ -39,10 +39,10 @@ export default function NewGame() {
       isStartSeason: false,
     };
     await window.api.saveGame(newUser);
-    const schedule = GenerateSchedule(universitiesArray)
+    const schedule = GenerateSchedule(universitiesArray, 'testChampionship')
     const newSchedule = {
       matches: schedule,
-      currentRound: 1
+      currentWeek: 1
     }
     const folderName = `${newUser.name}_${newUser.id}`
     await window.api.saveSchedule(folderName, newSchedule)

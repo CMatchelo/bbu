@@ -26,7 +26,7 @@ export const TeamStats = ({ stats, isAway }: TeamStateProps) => {
         >
           {isAway ? (
             <>
-              <span className="font-semibold">{value}</span>
+              <span className="font-semibold text-left">{value}</span>
               <span className="text-gray-500">{label}</span>
             </>
           ) : (
