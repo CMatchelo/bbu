@@ -23,5 +23,5 @@ export type GameState = {
   awayTimeouts: number;
   awayTimeoutsOnQrt: number;
 
-  logPlays: PlayLog[];
+  logPlays?: PlayLog[];
 };

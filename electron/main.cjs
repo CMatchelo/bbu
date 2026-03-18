@@ -60,6 +60,5 @@ ipcMain.handle("load-folders", (_) => {
 })
 
 ipcMain.handle("save-schedule", (_, user, schedule) => {
-  console.log(user, schedule)
   return saveSchedule(user, schedule)
 });

@@ -94,9 +94,9 @@ export default function GameScreen() {
     const folderName = `${user.name}_${user.id}`;
     dispatch(setMatchResult(matchResult));
     
-    simulateMatchWithoutPlayer(schedule, 2, user.currentUniversity.id, dispatch)
+    simulateMatchWithoutPlayer(schedule, gameContext.match.week, user.currentUniversity.id, dispatch)
     dispatch(incrementWeek());
-    dispatch(saveScheduleThunk(folderName));
+    //dispatch(saveScheduleThunk(folderName));
   };
 
   useEffect(() => {

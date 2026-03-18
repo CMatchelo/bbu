@@ -21,18 +21,19 @@ export function simulateMatchWithoutPlayer(
     (match) =>
       match.away !== userUni &&
       match.home !== userUni &&
-      match.week < currentWeek,
+      !match.played &&
+      match.week <= currentWeek,
   );
   const state = store.getState();
   const universities = selectUniversitiesWithPlayers(state);
   const uniById = Object.fromEntries(universities.map((u) => [u.id, u]));
-  matches.forEach((match) => {
-    const home = uniById[match.homeTeam.id];
-    const away = uniById[match.awayTeam.id];
+  const results = matches
+    .map((match) => {
+      const home = uniById[match.homeTeam.id];
+      const away = uniById[match.awayTeam.id];
 
-    if (!home || !away) return;
-    /* dispatch(setMatchResult(matchResult)); */
-    const results = matches.map((match) => {
+      if (!home || !away) return null;
+
       const result = simulateFullMatch(home, away);
 
       return {
@@ -40,17 +41,19 @@ export function simulateMatchWithoutPlayer(
         homeScore: result?.homeScore || 0,
         awayScore: result?.awayScore || 0,
       };
-    });
-    console.log(results);
-    dispatch(setMultipleMatchResults(results));
-  });
+    })
+    .filter(Boolean);
+  const matchesSimulated = results.filter(
+    (item): item is { matchId: string; homeScore: number; awayScore: number } =>
+      item !== null,
+  );
+  dispatch(setMultipleMatchResults(matchesSimulated));
 }
 
 export function simulateFullMatch(
   homeUniversity: University,
   awayUniversity: University,
 ) {
-  console.log(homeUniversity);
   if (!homeUniversity.players || !awayUniversity.players) return;
   const state = {
     quarter: 1,
@@ -75,6 +78,7 @@ export function simulateFullMatch(
   };
 
   while (!state.isGameOver) {
+    console.log(state);
     runNextPossessionPure(state, homeUniversity, awayUniversity);
   }
 
@@ -109,12 +113,6 @@ function runNextPossessionPure(
 
   const duration = Math.floor(Math.random() * 10) + 15;
 
-  // log
-  state.logPlays.push({
-    team: offenseIsHome ? "HOME" : "AWAY",
-    result,
-  });
-
   // clock
   state.timeLeft -= duration;
 
@@ -129,7 +127,7 @@ function runNextPossessionPure(
     }
 
     state.quarter += 1;
-    state.timeLeft = 10 * 60;
+    state.timeLeft = quarterDuration;
   }
 
   // player stats

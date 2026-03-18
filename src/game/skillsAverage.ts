@@ -5,7 +5,6 @@ export const teamAverage = (players: Player[]) => {
   players.map((p) => {
     average += Object.values(p.skills).reduce((total, n) => total + n, 0);
   });
-  console.log(average/(players.length*10));
 };
 
 export const playerAverage = (player: Player) => {

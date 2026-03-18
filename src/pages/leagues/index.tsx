@@ -9,7 +9,7 @@ export const Leagues = () => {
   const dispatch = useAppDispatch();
   const schedule = useSelector(selectAllMatches);
   const testFunc = () => {
-    simulateMatchWithoutPlayer(schedule, 2, "ufpr", dispatch)
+    simulateMatchWithoutPlayer(schedule, 4, "ufpr", dispatch)
   }
   return (
     <ParentSecion>

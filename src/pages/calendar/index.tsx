@@ -9,7 +9,6 @@ export default function Calendar() {
   const teamSchedule = useSelector(
     selectTeamSchedule(user?.currentUniversity.id || "")
   );
-  console.log(teamSchedule)
 
   return (
     <ParentSecion>

@@ -1,8 +1,6 @@
 import {
-  Action,
   createSlice,
   PayloadAction,
-  ThunkAction,
 } from "@reduxjs/toolkit";
 import { ScheduleState } from "../../types/ScheduleState";
 import { Match } from "../../types/Match";

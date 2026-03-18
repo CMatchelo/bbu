@@ -4,17 +4,22 @@ import { Match } from "../types/Match";
 import { selectUniversitiesArray } from "./data.selectors";
 import { University } from "../types/University";
 
-export const selectMatchesByWeek =
-  (week: number) =>
-  (state: RootState): Match[] => {
-    const ids = state.schedule.matchesByWeek[week] ?? [];
-    return ids.map((id) => state.schedule.matchesById[id]);
-  };
+export const selectMatchesByWeek = createSelector(
+  [
+    (state: RootState) => state.schedule.matchesByWeek,
+    (state: RootState) => state.schedule.matchesById,
+    (_: RootState, week: number) => week,
+  ],
+  (matchesByWeek, matchesById, week) => {
+    const ids = matchesByWeek[week] ?? [];
+    return ids.map((id) => matchesById[id]);
+  },
+);
 
 export const selectAllMatches = createSelector(
   [
     (state: RootState) => Object.values(state.schedule.matchesById),
-    selectUniversitiesArray
+    selectUniversitiesArray,
   ],
   (matches, universities) => {
     const uniById = Object.fromEntries(
@@ -40,7 +45,7 @@ export const selectTeamSchedule = (teamId: string) =>
   createSelector(
     [
       (state: RootState) => selectMatchesByTeam(teamId)(state),
-      selectUniversitiesArray
+      selectUniversitiesArray,
     ],
     (matches, universities) => {
       const uniById = Object.fromEntries(

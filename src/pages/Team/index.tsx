@@ -18,13 +18,13 @@ export default function Team() {
   const uniTest = universities.find((u) => u.id === "usp");
   const uniTest2 = universities.find((u) => u.id === "ufpr");
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (uniTest?.players) console.log(teamAverage(uniTest?.players));
   }, [uniTest])
 
   useEffect(() => {
     if (uniTest2?.players) console.log(teamAverage(uniTest2?.players));
-  }, [uniTest2])
+  }, [uniTest2]) */
 
   const uni = universities.find((u) => u.id === user.currentUniversity.id);
   const playersSorted = uni?.players
