@@ -45,13 +45,13 @@ export function calcOffAvg(
     const base = p.skills.dribble + p.skills.pass + p.skills.speedBall;
     const stamina = playerStats?.[p.id]?.stamina ?? 100;
     const staminaFactor = 0.95 + stamina / 2000;
-    total += base * (1 + (staminaFactor - 1));
+    total += base * staminaFactor;
   });
   const avg = total / (players.length * 3);
   return Math.round(avg);
 }
 
-/* export function calcDefAvg(
+export function calcDefAvg(
   players: Player[],
   playerStats: Record<string, PlayerGameStats> | null
 ): number {
@@ -59,18 +59,14 @@ export function calcOffAvg(
 
   players.forEach((p) => {
     const base = p.skills.block + p.skills.defense + p.skills.steal;
-
     const stamina = playerStats?.[p.id]?.stamina ?? 100;
-
-    // Defense suffers more from fatigue
     const staminaFactor = 0.94 + stamina / 1666; // 100 → 1.0
-
     total += base * staminaFactor;
   });
 
   const avg = total / (players.length * 3);
   return Math.round(avg);
-} */
+}
 
 export function calculateTurnoverChance(offAvg: number, defAvg: number) {
   const base = 0.12;

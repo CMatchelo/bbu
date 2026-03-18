@@ -54,10 +54,31 @@ export const scheduleSlice = createSlice({
         awayScore: action.payload.awayScore,
       };
     },
+    setMultipleMatchResults(
+      state,
+      action: PayloadAction<
+        {
+          matchId: string;
+          homeScore: number;
+          awayScore: number;
+        }[]
+      >,
+    ) {
+      action.payload.forEach((result) => {
+        const match = state.matchesById[result.matchId];
+        if (!match) return;
+
+        match.played = true;
+        match.result = {
+          homeScore: result.homeScore,
+          awayScore: result.awayScore,
+        };
+      });
+    },
   },
 });
 
-export const { setSchedule, setCurrentWeek, incrementWeek, setMatchResult } =
+export const { setSchedule, setCurrentWeek, incrementWeek, setMatchResult, setMultipleMatchResults } =
   scheduleSlice.actions;
 export default scheduleSlice.reducer;
 

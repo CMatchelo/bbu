@@ -13,6 +13,7 @@ import Calendar from "./pages/calendar";
 import UniversityPage from "./pages/university";
 import GameScreen from "./pages/gameScreen";
 import "./i18n/i18n"
+import { Leagues } from "./pages/leagues";
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -32,6 +33,7 @@ function App() {
             <Route path="/teamSelection" element={<TeamSelection />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/university" element={<UniversityPage />}/>
+            <Route path="/leagues" element={<Leagues />}/>
           </Route>
         </Routes>
       </BrowserRouter>

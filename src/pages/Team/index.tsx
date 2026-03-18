@@ -7,6 +7,7 @@ import { TableHeader } from "../../Components/tableHeader";
 import { TableTD } from "../../Components/tableTd";
 import { playerAverage, teamAverage } from "../../game/skillsAverage";
 import { useEffect } from "react";
+import { ParentSecion } from "../../Components/ParentSection";
 
 export default function Team() {
   const user = useAuthUser();
@@ -41,7 +42,7 @@ export default function Team() {
   };
 
   return (
-    <div className="flex flex-col items-start gap-4 px-4">
+    <ParentSecion>
       <button onClick={testFunc}>Atualizar o jogador teste</button>
       <h1>TEAM AND STRATEGY</h1>
       <div className="overflow-x-auto w-full">
@@ -87,6 +88,6 @@ export default function Team() {
           </tbody>
         </table>
       </div>
-    </div>
+    </ParentSecion>
   );
 }

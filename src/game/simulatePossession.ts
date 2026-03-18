@@ -3,6 +3,7 @@ import { PlayerGameStats } from "../types/PlayerGameStats";
 import { PlayType } from "../types/PlayType";
 import { PossessionResult } from "../types/PossessionResult";
 import {
+  calcDefAvg,
   calcOffAvg,
   calculateTurnoverChance,
   checkIfBlocked,
@@ -77,7 +78,7 @@ export function simulatePossession(
   // ====================================================
   // 5. DEF Average
   // ====================================================
-  const defAvg = calcOffAvg(defenseTeam, playerStats) / 100;
+  const defAvg = calcDefAvg(defenseTeam, playerStats) / 100;
   const defFactor =
     playType === "THREE"
       ? 0.95 - defAvg * 0.13

@@ -1,3 +1,5 @@
+import { University } from "./University";
+
 export type Match = {
   id: string;
   championship: string;
@@ -10,3 +12,8 @@ export type Match = {
     awayScore: number;
   };
 };
+
+export type MatchWithTeams = Match & {
+  homeTeam: University;
+  awayTeam: University;
+}

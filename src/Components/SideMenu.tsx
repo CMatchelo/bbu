@@ -36,7 +36,7 @@ export const SideMenu = () => {
       <MenuLink goTo="/" text={t("mainMenu.commitments")} />
 
       <MenuLink goTo="/calendar" text={t("mainMenu.calendar")} />
-      <MenuLink goTo="/" text={t("mainMenu.leagues")} />
+      <MenuLink goTo="/leagues" text={t("mainMenu.leagues")} />
       <MenuLink goTo="/" text={t("mainMenu.champions")} />
       <MenuLink goTo="/" text={t("mainMenu.news")} />
 

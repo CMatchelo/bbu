@@ -4,7 +4,6 @@ import { PlayLog } from "../types/PlayLog";
 import { PlayerGameStats } from "../types/PlayerGameStats";
 import { simulatePossession } from "./simulatePossession";
 import { initializePlayerStats } from "./initializePlayersState";
-import { PossessionResult } from "../types/PossessionResult";
 import { selectCpuStarters } from "./selectCpuStarters";
 import { useAppSelector } from "../hooks/useAppDispatch";
 import { RootState } from "../store";
@@ -13,8 +12,9 @@ import { Player } from "../types/Player";
 import { TeamGameStats } from "../types/TeamGameStats";
 import { updateStats, updateTeamStats } from "./updateGameStats";
 import { createEmptyTeamStats } from "../utils/createEmptyStats";
+import { quarterDuration } from "../variables/quarterDuration";
 
-const QUARTER_DURATION = 10 * 60;
+const QUARTER_DURATION = quarterDuration;
 
 interface UseGameSimulationParams {
   homeUniversity: University;
@@ -69,10 +69,6 @@ export function useGameSimulation({
   const awayLineup = isPlayerHome ? cpuOnCourt : playerStarters;
 
   const quarterAdvancedRef = useRef(false);
-
-  useEffect(() => {
-    console.log(homeStats, awayStats);
-  }, [homeStats, awayStats]);
 
   // ─────────────────────────────────────────────
   // Initialization
