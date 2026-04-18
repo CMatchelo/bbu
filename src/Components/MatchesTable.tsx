@@ -23,11 +23,11 @@ export const MatchesTable = ({ schedule }: MatchesTableProps) => {
         <col className="w-2/12"></col>
       </colgroup>
       <thead className="bg-gray-cardbg bg-cardbglight">
-        <TableHeader colspan={1}>{t("mainMenu.team")}</TableHeader>
+        <TableHeader colspan={1}>{t("generalLocale.round")}</TableHeader>
         <TableHeader colspan={2}>{t("generalLocale.home")}</TableHeader>
         <TableHeader colspan={3}>X</TableHeader>
-        <TableHeader colspan={2}>Away</TableHeader>
-        <TableHeader colspan={1}>Championship</TableHeader>
+        <TableHeader colspan={2}>{t("generalLocale.away")}</TableHeader>
+        <TableHeader colspan={1}>{t("generalLocale.league")}</TableHeader>
       </thead>
       <tbody className="divide-y divide-highlights1">
         {schedule.map((match, index) => (

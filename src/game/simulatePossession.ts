@@ -99,7 +99,7 @@ export function simulatePossession(
     const stealer = weightedRandom(defenseTeam, weightsSteal);
 
     const weightsTurnover = offenseTeam.map(
-      (p) => p.skills["dribble"] * (0.8 + Math.random() * 0.4)
+      (p) => p.skills["ballHandling"] * (0.8 + Math.random() * 0.4)
     );
     const turnoverBy = weightedRandom(offenseTeam, weightsTurnover);
 

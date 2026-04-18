@@ -5,5 +5,7 @@ contextBridge.exposeInMainWorld("api", {
   saveGame: (user) => ipcRenderer.invoke("save-game", user),
   loadGame: (userId) => ipcRenderer.invoke("load-game", userId),
   loadFolders: () => ipcRenderer.invoke("load-folders"),
-  saveSchedule: (user, schedule) => ipcRenderer.invoke("save-schedule", user, schedule)
+  saveSchedule: (user, schedule) => ipcRenderer.invoke("save-schedule", user, schedule),
+  savePlayers: (user, players) => ipcRenderer.invoke("save-players", user, players),
+  saveUniversities: (user, universities) => ipcRenderer.invoke("save-universities", user, universities),
 });

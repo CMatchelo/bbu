@@ -4,15 +4,17 @@ import {
   setCurrentWeek,
   setSchedule,
 } from "../../../store/slices/scheduleSlice";
+import { setPlayers, setUniversities } from "../../../store/slices/dataSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { useNavigate } from "react-router-dom";
 
 type LoadGameProps = {
   saveIds: string[];
 };
 
 export const LoadGame = ({ saveIds }: LoadGameProps) => {
-  //const navigate = useNavigate()
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { loadUser } = useUser();
   const [chosenId, setChosenId] = useState<number | null>(null);
 
@@ -21,15 +23,24 @@ export const LoadGame = ({ saveIds }: LoadGameProps) => {
       console.log("Escolha um jogo para carregar");
       return;
     }
-    const userLoaded = await window.api.loadGame(saveIds[chosenId]);
+
+    const saveFolder = saveIds[chosenId];
+    const userLoaded = await window.api.loadGame(saveFolder);
+
     if (!userLoaded) {
       console.log("Save bugado");
       return;
     }
+
+    // Carregar universidades da pasta de save (com roster já populado)
+    dispatch(setUniversities(Object.values(userLoaded.universities)));
+
     dispatch(setSchedule(userLoaded.schedule.matches));
     dispatch(setCurrentWeek(userLoaded.schedule.currentWeek));
+    dispatch(setPlayers(userLoaded.players));
+
     loadUser(userLoaded.user);
-    //navigate("/team")
+    navigate("/team");
   };
 
   return (
@@ -37,7 +48,7 @@ export const LoadGame = ({ saveIds }: LoadGameProps) => {
       <h2> Escolha um save para carregar</h2>
       {saveIds.map((save, i) => (
         <button
-          className="p-2 bg-amber-950"
+          className={`p-2 bg-amber-950 ${chosenId === i ? "ring-2 ring-white" : ""}`}
           key={save}
           onClick={() => setChosenId(i)}
         >

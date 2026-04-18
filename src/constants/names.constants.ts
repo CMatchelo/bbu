@@ -1,0 +1,25 @@
+export const firtNames = [
+  "Lucas","Pedro","João","Gabriel","Matheus","Rafael","Bruno","Felipe","Carlos","André",
+  "Gustavo","Daniel","Henrique","Vinícius","Leonardo","Eduardo","Diego","Thiago","Fernando","Ricardo",
+  "Marcos","Paulo","Roberto","Marcelo","Rodrigo","Alex","Igor","Caio","Vitor","Renato",
+  "Fábio","Leandro","César","Jorge","Samuel","Elias","Otávio","Davi","Arthur","Heitor",
+  "Enzo","Murilo","Breno","Yuri","Luan","Nathan","Noah","Raul","Danilo","Cláudio",
+  "Augusto","Adriano","Wesley","Ruan","Cristiano","Alan","Márcio","Evandro","Sérgio","Gilberto",
+  "Douglas","Jonas","Rogério","Hugo","Victor","Kauã","Ryan","Patrick","Wallace","Jefferson",
+  "Matias","Benício","Erick","Pietro","Gael","Luiz","Antônio","Francisco","João Pedro","João Lucas",
+  "João Vitor","João Gabriel","Miguel","Nicolas","Theo","Tomás","Anderson","Denis","Edu","Flávio",
+  "Júnior","Kevin","Léo","Moisés","Orlando","Pablo","Renan","Saulo","Tales","Zeca"
+];
+
+export const lastNames = [
+  "Silva","Souza","Oliveira","Santos","Lima","Costa","Pereira","Almeida","Ferreira","Rodrigues",
+  "Martins","Gomes","Barbosa","Ribeiro","Carvalho","Teixeira","Moreira","Correia","Dias","Castro",
+  "Azevedo","Cardoso","Monteiro","Mendes","Freitas","Campos","Cavalcante","Pinto","Moura","Batista",
+  "Nunes","Farias","Vieira","Rocha","Rezende","Araújo","Macedo","Peixoto","Borges","Tavares",
+  "Queiroz","Neves","Aguiar","Coelho","Viana","Duarte","Barros","Fonseca","Siqueira","Leite",
+  "Amaral","Assis","Bezerra","Braga","Cabral","Cunha","Dantas","Esteves","Figueiredo","Franco",
+  "Garcia","Gonçalves","Lacerda","Lopes","Machado","Marques","Melo","Morais","Paiva","Pacheco",
+  "Prado","Ramos","Sales","Santana","Saraiva","Severino","Simões","Torres","Valente","Vasconcelos",
+  "Xavier","Zanetti","Bittencourt","Caldeira","Damasceno","Delgado","Escobar","Estevão","Galvão","Guedes",
+  "Haddad","Junqueira","Klein","Leal","Magalhães","Noronha","Porto","Quintana","Rangel","Salazar"
+];

@@ -1,84 +1,139 @@
-import { useState } from "react";
-import { RootState } from "../../../store";
+import { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { User } from "../../../types/User";
 import { University } from "../../../types/University";
 import { useUser } from "../../../Context/UserContext";
-import { selectUniversitiesGrouped } from "../../../selectors/data.selectors";
+import {
+  selectUniversitiesGrouped,
+  selectAllUniversities,
+} from "../../../selectors/data.selectors";
 import { generateLeagueSchedules } from "../../../utils/managerSchedule";
 import { useTranslation } from "react-i18next";
+import { generateAllPlayers } from "../../../utils/createPlayer";
+import {
+  setPlayers,
+  setUniversities,
+  loadUniversitiesFromFiles,
+} from "../../../store/slices/dataSlice";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { RootState } from "../../../store";
 
 export default function NewGame() {
-  const universities = useSelector(
-    (state: RootState) => state.data.universitiesById,
-  );
-
-  const grouped = useSelector(selectUniversitiesGrouped);
-
-  const { loadUser } = useUser();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { loadUser } = useUser();
+
+  const grouped = useSelector(selectUniversitiesGrouped);
+  const universities = useSelector(selectAllUniversities);
+
+  const loading = useSelector((state: RootState) => state.data.loading);
 
   const [name, setName] = useState<string>("");
-  const [uni, setUni] = useState<University | null>(null);
+  const [selectedUniId, setSelectedUniId] = useState<string | null>(null);
 
-  const selectUni = (id: string) => {
-    const selectedUni = Object.values(universities).find((u) => u.id === id);
-    if (selectedUni) {
-      setUni(selectedUni);
+  // Load universities from original files when component mounts (new game always uses originals)
+  useMemo(() => {
+    if (universities.length === 0) {
+      dispatch(loadUniversitiesFromFiles());
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const selectedUni = useMemo(
+    () => universities.find((u) => u.id === selectedUniId) ?? null,
+    [selectedUniId, universities],
+  );
+
+  const buildUniversitiesWithRoster = (
+    players: ReturnType<typeof generateAllPlayers>,
+  ) => {
+    const playersByUni: Record<string, string[]> = {};
+
+    for (const p of players) {
+      if (!playersByUni[p.currentUniversity]) {
+        playersByUni[p.currentUniversity] = [];
+      }
+      playersByUni[p.currentUniversity].push(p.id);
+    }
+
+    return universities.map((uni) => ({
+      ...uni,
+      roster: playersByUni[uni.id] || [],
+    }));
+  };
+
+  const toRecord = <T extends { id: string }>(arr: T[]) =>
+    Object.fromEntries(arr.map((i) => [i.id, i]));
+
+  const createUser = (uni: University): User => ({
+    id: crypto.randomUUID(),
+    name,
+    currentUniversity: uni,
+    reputation: 50,
+    currentSeason: 2026,
+    isStartSeason: false,
+  });
+
+  const startGame = async () => {
+    if (!selectedUni || !name.trim()) return;
+
+    try {
+      const user = createUser(selectedUni);
+      const folderName = `${user.name}_${user.id}`;
+
+      // schedule
+      const schedule = generateLeagueSchedules(universities);
+      const scheduleData = { matches: schedule, currentWeek: 1 };
+
+      // players + roster
+      const players = generateAllPlayers(universities);
+      const universitiesWithRoster = buildUniversitiesWithRoster(players);
+
+      // persist
+      await window.api.saveGame(user);
+      await window.api.saveSchedule(folderName, scheduleData);
+      await window.api.savePlayers(folderName, toRecord(players));
+      await window.api.saveUniversities(
+        folderName,
+        toRecord(universitiesWithRoster),
+      );
+
+      // redux — update stores with generated data
+      dispatch(setUniversities(universitiesWithRoster));
+      dispatch(setPlayers(toRecord(players)));
+
+      // context + navigation
+      loadUser(user);
+      navigate("/team");
+    } catch (err) {
+      console.error("Erro ao iniciar jogo:", err);
     }
   };
 
-  const test = () => {
-    const schedule = generateLeagueSchedules(
-      Object.values(universities)
-    );
-    const newSchedule = {
-      matches: schedule,
-      currentWeek: 1,
-    };
-    console.log(newSchedule);
-  };
-
-  const startGame = async () => {
-    console.log("0", name, uni)
-    if (!uni || !name) return;
-    console.log("1")
-    const newUser: User = {
-      id: crypto.randomUUID(),
-      name: name,
-      currentUniversity: uni,
-      reputation: 50,
-      currentSeason: 2025,
-      isStartSeason: false,
-    };
-    console.log("2")
-    await window.api.saveGame(newUser);
-    const schedule = generateLeagueSchedules(Object.values(universities));
-    const newSchedule = {
-      matches: schedule,
-      currentWeek: 1,
-    };
-    const folderName = `${newUser.name}_${newUser.id}`;
-    await window.api.saveSchedule(folderName, newSchedule);
-    loadUser(newUser);
-    navigate("/team");
-  };
-
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-2">
       <input
-        className="bg-white w-40 text-black"
+        className="bg-white w-48 text-black"
         placeholder="Nome"
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
+
       <span>Selecione uma universidade para treinar</span>
+
+      {loading && <span>Carregando universidades...</span>}
+
       <select
         className="bg-amber-950"
-        onChange={(e) => selectUni(e.target.value)}
+        value={selectedUniId ?? ""}
+        onChange={(e) => setSelectedUniId(e.target.value)}
+        disabled={loading}
       >
+        <option value="" disabled>
+          -- selecionar --
+        </option>
+
         {Object.entries(grouped).map(([leagueId, unis]) => (
           <optgroup key={leagueId} label={t(`championshipLocale.${leagueId}`)}>
             {unis.map((uni) => (
@@ -90,8 +145,9 @@ export default function NewGame() {
         ))}
       </select>
 
-      <button onClick={test}>Gerar tabelas</button>
-      <button onClick={startGame}>Começar jogo</button>
+      <button onClick={startGame} disabled={!name || !selectedUni || loading}>
+        Começar jogo
+      </button>
     </div>
   );
 }

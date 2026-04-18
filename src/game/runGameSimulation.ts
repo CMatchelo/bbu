@@ -12,7 +12,7 @@ import { Player } from "../types/Player";
 import { TeamGameStats } from "../types/TeamGameStats";
 import { updateStats, updateTeamStats } from "./updateGameStats";
 import { createEmptyTeamStats } from "../utils/createEmptyStats";
-import { quarterDuration } from "../variables/quarterDuration";
+import { quarterDuration } from "../constants/quarterDuration";
 
 const QUARTER_DURATION = quarterDuration;
 

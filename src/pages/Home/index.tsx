@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 export default function MainScreen() {
   const [savesIds, setSavesId] = useState<string[]>([]);
   const { user } = useUser();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadGame = async () => {
@@ -19,7 +19,7 @@ export default function MainScreen() {
 
   useEffect(() => {
     if (user) {
-      navigate("/team")
+      navigate("/team");
     }
   }, [user, navigate]);
 
@@ -37,7 +37,10 @@ export default function MainScreen() {
   };
 
   return (
-    <div>
+    <div
+      className="min-h-screen w-full bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/mainMenuBg.png')" }}
+    >
       <div className="flex flex-col">
         <button onClick={openNewScreen}>New game</button>
         <button onClick={openLoadScreen}>Load game</button>

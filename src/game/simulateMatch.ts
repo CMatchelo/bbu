@@ -1,7 +1,7 @@
 import { GameState } from "../types/GameState";
 import { University } from "../types/University";
 import { createEmptyTeamStats } from "../utils/createEmptyStats";
-import { quarterDuration } from "../variables/quarterDuration";
+import { quarterDuration } from "../constants/quarterDuration";
 import { initializePlayerStats } from "./initializePlayersState";
 import { selectCpuStarters } from "./selectCpuStarters";
 import { simulatePossession } from "./simulatePossession";

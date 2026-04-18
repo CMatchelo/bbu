@@ -3,7 +3,7 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const { saveGame, loadGame, loadFolders, saveSchedule, loadSchedule } = require('./saveManager.cjs');
+const { saveGame, loadGame, loadFolders, saveSchedule, loadSchedule, savePlayers, loadPlayers, saveUniversities, loadUniversities } = require('./saveManager.cjs');
 
 const isDev = !app.isPackaged;
 
@@ -52,7 +52,9 @@ ipcMain.handle("save-game", (_, user) => {
 ipcMain.handle("load-game", (_, userId) => {
   const user = loadGame(userId)
   const schedule = loadSchedule(userId)
-  return {user, schedule}
+  const players = loadPlayers(userId)
+  const universities = loadUniversities(userId)
+  return {user, schedule, players, universities}
 })
 
 ipcMain.handle("load-folders", (_) => {
@@ -61,4 +63,12 @@ ipcMain.handle("load-folders", (_) => {
 
 ipcMain.handle("save-schedule", (_, user, schedule) => {
   return saveSchedule(user, schedule)
+});
+
+ipcMain.handle("save-players", (_, user, players) => {
+  return savePlayers(user, players)
+});
+
+ipcMain.handle("save-universities", (_, user, universities) => {
+  return saveUniversities(user, universities)
 });

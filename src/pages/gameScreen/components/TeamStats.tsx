@@ -8,10 +8,10 @@ interface TeamStateProps {
 
 export const TeamStats = ({ stats, isAway }: TeamStateProps) => {
   const items = [
-    { label: t("inGame.fga"), value: stats.fga },
     { label: t("inGame.fgm"), value: stats.fgm },
-    { label: t("inGame.tpa"), value: stats.tpa },
+    { label: t("inGame.fga"), value: stats.fga },
     { label: t("inGame.tpm"), value: stats.tpm },
+    { label: t("inGame.tpa"), value: stats.tpa },
     { label: t("inGame.blocks"), value: stats.blocks },
     { label: t("inGame.rebounds"), value: stats.rebounds },
     { label: t("inGame.steals"), value: stats.steals },

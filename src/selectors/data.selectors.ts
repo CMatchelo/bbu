@@ -2,35 +2,41 @@ import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { University } from "../types/University";
 
+/** Flat array of all universities across all leagues. */
+export const selectAllUniversities = createSelector(
+  [(state: RootState) => state.data.universitiesByLeague],
+  (byLeague): University[] => Object.values(byLeague).flat(),
+);
+
+/** All universities enriched with their Player objects. */
 export const selectUniversitiesWithPlayers = createSelector(
   [
-    (state: RootState) => state.data.universitiesById,
-    (state: RootState) => state.data.playersById,
+    (state: RootState) => state.data.universitiesByLeague,
+    (state: RootState) => state.data.playersByUniversity,
   ],
-  (universitiesById, playersById): University[] => {
-    return Object.values(universitiesById).map((uni) => ({
-      ...uni,
-      players: uni.roster.map((id) => playersById[id]),
-    }));
+  (byLeague, byUniversity): University[] => {
+    return Object.values(byLeague)
+      .flat()
+      .map((uni) => ({
+        ...uni,
+        players: byUniversity[uni.id] ?? [],
+      }));
   },
 );
 
+/** Universities grouped by leagueId (already the storage shape). */
 export const selectUniversitiesGrouped = createSelector(
-  [(state: RootState) => state.data.universitiesById],
-  (byId) => {
-    const grouped: Record<string, University[]> = {};
-    Object.values(byId).forEach((uni) => {
-      if (!grouped[uni.leagueId]) {
-        grouped[uni.leagueId] = [];
-      }
-      grouped[uni.leagueId].push(uni);
-    });
-    return grouped;
-  },
+  [(state: RootState) => state.data.universitiesByLeague],
+  (byLeague): Record<string, University[]> => byLeague,
 );
+
 export const selectUniversityById =
   (uniId: string | null | undefined) =>
   (state: RootState): University => {
     if (!uniId) throw new Error("University not found");
-    return state.data.universitiesById[uniId];
+    for (const unis of Object.values(state.data.universitiesByLeague)) {
+      const found = unis.find((u) => u.id === uniId);
+      if (found) return found;
+    }
+    throw new Error(`University ${uniId} not found`);
   };

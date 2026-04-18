@@ -3,8 +3,8 @@ export type Skill = {
   twopt: number;
   threept: number;
   pass: number;
-  dribble: number;
-  speedBall: number;
+  ballHandling: number;
+  speedWithBall: number;
   rebound: number;
   defense: number;
   steal: number;

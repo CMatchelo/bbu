@@ -42,7 +42,7 @@ export function calcOffAvg(
   let total = 0;
 
   players.forEach((p) => {
-    const base = p.skills.dribble + p.skills.pass + p.skills.speedBall;
+    const base = p.skills.ballHandling + p.skills.pass + p.skills.speedWithBall;
     const stamina = playerStats?.[p.id]?.stamina ?? 100;
     const staminaFactor = 0.95 + stamina / 2000;
     total += base * staminaFactor;

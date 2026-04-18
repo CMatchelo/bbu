@@ -4,36 +4,68 @@ import { University } from "../../types/University";
 import { Skill } from "../../types/Skill";
 
 interface DataState {
-  universitiesById: Record<string, University>;
-  playersById: Record<string, Player>;
+  /** universities grouped by leagueId */
+  universitiesByLeague: Record<string, University[]>;
+  /** players grouped by universityId */
+  playersByUniversity: Record<string, Player[]>;
   loading: boolean;
 }
 
 const initialState: DataState = {
-  universitiesById: {},
-  playersById: {},
+  universitiesByLeague: {},
+  playersByUniversity: {},
   loading: false,
 };
 
-export const loadGameData = createAsyncThunk("data/loadGameData", async () => {
-  const universities = await window.api.loadJson("universities");
-  const players = await window.api.loadJson("players");
-  return { universities, players };
-});
+/** Loads universities from the original asset files (for New Game). */
+export const loadUniversitiesFromFiles = createAsyncThunk(
+  "data/loadUniversitiesFromFiles",
+  async () => {
+    const universities: University[] = await window.api.loadJson("universities");
+    return universities;
+  },
+);
+
+function groupByLeague(universities: University[]): Record<string, University[]> {
+  const result: Record<string, University[]> = {};
+  for (const uni of universities) {
+    if (!result[uni.leagueId]) result[uni.leagueId] = [];
+    result[uni.leagueId].push(uni);
+  }
+  return result;
+}
+
+function groupByUniversity(players: Player[]): Record<string, Player[]> {
+  const result: Record<string, Player[]> = {};
+  for (const player of players) {
+    if (!result[player.currentUniversity]) result[player.currentUniversity] = [];
+    result[player.currentUniversity].push(player);
+  }
+  return result;
+}
 
 const dataSlice = createSlice({
   name: "data",
   initialState,
   reducers: {
+    setUniversities(state, action: PayloadAction<University[]>) {
+      state.universitiesByLeague = groupByLeague(action.payload);
+    },
+    setPlayers(state, action: PayloadAction<Record<string, Player>>) {
+      state.playersByUniversity = groupByUniversity(Object.values(action.payload));
+    },
     updatePlayer(
       state,
-      action: PayloadAction<{ id: string; changes: Partial<Player> }>
+      action: PayloadAction<{ id: string; changes: Partial<Player> }>,
     ) {
-      const player = state.playersById[action.payload.id];
-
-      if (!player) return;
-
-      Object.assign(player, action.payload.changes);
+      const { id, changes } = action.payload;
+      for (const players of Object.values(state.playersByUniversity)) {
+        const player = players.find((p) => p.id === id);
+        if (player) {
+          Object.assign(player, changes);
+          return;
+        }
+      }
     },
     updatePlayerSkill(
       state,
@@ -41,34 +73,33 @@ const dataSlice = createSlice({
         id: string;
         skill: keyof Skill;
         value: number;
-      }>
+      }>,
     ) {
-      const player = state.playersById[action.payload.id];
-      if (!player) return;
-      player.skills[action.payload.skill] = action.payload.value;
+      const { id, skill, value } = action.payload;
+      for (const players of Object.values(state.playersByUniversity)) {
+        const player = players.find((p) => p.id === id);
+        if (player?.skills) {
+          player.skills[skill] = value;
+          return;
+        }
+      }
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(loadGameData.pending, (state) => {
+      .addCase(loadUniversitiesFromFiles.pending, (state) => {
         state.loading = true;
       })
-      .addCase(loadGameData.fulfilled, (state, action) => {
+      .addCase(loadUniversitiesFromFiles.fulfilled, (state, action) => {
         state.loading = false;
-
-        for (const uni of action.payload.universities) {
-          state.universitiesById[uni.id] = uni;
-        }
-
-        for (const player of action.payload.players) {
-          state.playersById[player.id] = player;
-        }
+        state.universitiesByLeague = groupByLeague(action.payload);
       })
-      .addCase(loadGameData.rejected, (state) => {
+      .addCase(loadUniversitiesFromFiles.rejected, (state) => {
         state.loading = false;
       });
   },
 });
 
-export const { updatePlayer, updatePlayerSkill } = dataSlice.actions;
+export const { setUniversities, setPlayers, updatePlayer, updatePlayerSkill } =
+  dataSlice.actions;
 export default dataSlice.reducer;

@@ -6,12 +6,14 @@ import { mainMenu as mainMenuEN } from "./en/mainMenu";
 import { universityStrings as universityStringsEN } from "./en/university";
 import { championshipLocale as championshipLocaleEN } from "./en/championship";
 import { generalLocale as generalLocaleEN } from "./en/generalLocale";
+import { courseLocale as courseLocaleEN } from "./en/coursesLocale";
 
 import { inGame as inGamePT } from "./pt/inGame";
 import { mainMenu as mainMenuPT } from "./pt/mainMenu";
 import { universityStrings as universityStringsPT } from "./pt/university";
 import { championshipLocale as championshipLocalePT } from "./pt/championship";
 import { generalLocale as generalLocalePT } from "./pt/generalLocale";
+import { courseLocale as courseLocalePT } from "./pt/coursesLocale";
 
 
 i18n.use(initReactI18next).init({
@@ -22,7 +24,8 @@ i18n.use(initReactI18next).init({
         mainMenu: mainMenuEN,
         universityStrings: universityStringsEN,
         championshipLocale: championshipLocaleEN,
-        generalLocale: generalLocaleEN
+        generalLocale: generalLocaleEN,
+        courseLocale: courseLocaleEN,
       },
     },
     pt: {
@@ -31,7 +34,8 @@ i18n.use(initReactI18next).init({
         mainMenu: mainMenuPT,
         universityStrings: universityStringsPT,
         championshipLocale: championshipLocalePT,
-        generalLocale: generalLocalePT
+        generalLocale: generalLocalePT,
+        courseLocale: courseLocalePT,
       },
     },
   },
