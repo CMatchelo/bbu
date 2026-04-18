@@ -19,7 +19,7 @@ import {
 } from "../../store/slices/scheduleSlice";
 import { simulateMatchWithoutPlayer } from "../../game/simulateMatch";
 import { useSelector } from "react-redux";
-import { selectAllMatches } from "../../selectors/data.scheduleSelector";
+import { selectMatchesToSimulate } from "../../selectors/data.scheduleSelector";
 
 export default function GameScreen() {
   const { user } = useUser();
@@ -30,7 +30,13 @@ export default function GameScreen() {
     selectGameContext(state, user?.currentUniversity.id),
   );
 
-  const schedule = useSelector(selectAllMatches);
+  const matchesToSimulate = useSelector((state: RootState) =>
+    selectMatchesToSimulate(
+      state,
+      gameContext?.match.week || 0,
+      user?.currentUniversity.id || "",
+    ),
+  );
 
   const starters = useAppSelector(
     (state: RootState) => state.gameSettings.starters,
@@ -93,8 +99,13 @@ export default function GameScreen() {
     };
     const folderName = `${user.name}_${user.id}`;
     dispatch(setMatchResult(matchResult));
-    
-    simulateMatchWithoutPlayer(schedule, gameContext.match.week, user.currentUniversity.id, dispatch)
+
+    simulateMatchWithoutPlayer(
+      matchesToSimulate,
+      gameContext.match.week,
+      user.currentUniversity.id,
+      dispatch,
+    );
     dispatch(incrementWeek());
     //dispatch(saveScheduleThunk(folderName));
   };

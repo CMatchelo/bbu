@@ -19,4 +19,6 @@ export type Player = {
   potential: number;
   stamina: number;
   injuryProne: number;
+  active: boolean;
+  injured: boolean
 };

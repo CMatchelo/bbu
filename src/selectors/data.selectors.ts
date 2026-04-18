@@ -12,12 +12,22 @@ export const selectUniversitiesWithPlayers = createSelector(
       ...uni,
       players: uni.roster.map((id) => playersById[id]),
     }));
-  }
+  },
 );
 
-export const selectUniversitiesArray = (state: RootState): University[] =>
-  Object.values(state.data.universitiesById);
-
+export const selectUniversitiesGrouped = createSelector(
+  [(state: RootState) => state.data.universitiesById],
+  (byId) => {
+    const grouped: Record<string, University[]> = {};
+    Object.values(byId).forEach((uni) => {
+      if (!grouped[uni.leagueId]) {
+        grouped[uni.leagueId] = [];
+      }
+      grouped[uni.leagueId].push(uni);
+    });
+    return grouped;
+  },
+);
 export const selectUniversityById =
   (uniId: string | null | undefined) =>
   (state: RootState): University => {

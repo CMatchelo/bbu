@@ -6,7 +6,32 @@ type Streak = {
   count: number;
 };
 
-export function GenerateSchedule(universities: University[], championship: string): Match[] {
+type LeagueId = string;
+
+export function generateLeagueSchedules(universities: University[]): Match[] {
+  const grouped: Record<LeagueId, University[]> = {};
+
+  universities.forEach((uni) => {
+    if (!grouped[uni.leagueId]) {
+      grouped[uni.leagueId] = [];
+    }
+    grouped[uni.leagueId].push(uni);
+  });
+
+  let allMatches: Match[] = [];
+
+  Object.entries(grouped).forEach(([leagueId, teams]) => {
+    const leagueMatches = GenerateSchedule([...teams], leagueId);
+    allMatches = allMatches.concat(leagueMatches);
+  });
+  return allMatches;
+}
+
+export function GenerateSchedule(
+  universities: University[],
+  championship: string,
+): Match[] {
+  console.log(universities.length);
   if (universities.length % 2 !== 0) {
     throw new Error("Number of teams must be even");
   }
@@ -67,8 +92,8 @@ export function GenerateSchedule(universities: University[], championship: strin
         away: m.home,
         played: false,
         week: total + i + 1,
-      })
-    )
+      }),
+    ),
   );
   baseWeeks.forEach((r, i) =>
     r.forEach((m) =>
@@ -76,8 +101,8 @@ export function GenerateSchedule(universities: University[], championship: strin
         ...m,
         id: crypto.randomUUID(),
         week: total * 2 + i + 1,
-      })
-    )
+      }),
+    ),
   );
   baseWeeks.forEach((r, i) =>
     r.forEach((m) =>
@@ -88,8 +113,8 @@ export function GenerateSchedule(universities: University[], championship: strin
         away: m.home,
         played: false,
         week: total * 3 + i + 1,
-      })
-    )
+      }),
+    ),
   );
 
   return schedule;
@@ -98,7 +123,7 @@ export function GenerateSchedule(universities: University[], championship: strin
 function balanceHomeAway(
   home: University,
   away: University,
-  streaks: Map<string, Streak>
+  streaks: Map<string, Streak>,
 ): { home: University; away: University } {
   const h = streaks.get(home.id)!;
   const a = streaks.get(away.id)!;

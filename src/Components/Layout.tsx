@@ -19,13 +19,15 @@ export default function Layout() {
   }
 
   return (
-    <div className="flex min-h-screen min-w-screen">
+    <div className="flex h-screen overflow-hidden min-w-screen">
       <div className="w-64">
         <SideMenu />
       </div>
-      <div className="flex-1">
+      <div className="flex flex-col flex-1 overflow-hidden">
         <HeaderBar />
-        <Outlet />
+        <div className="flex-1 overflow-auto">
+          <Outlet />
+        </div>
       </div>
     </div>
   );

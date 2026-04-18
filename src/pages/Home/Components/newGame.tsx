@@ -5,18 +5,20 @@ import { useNavigate } from "react-router-dom";
 import { User } from "../../../types/User";
 import { University } from "../../../types/University";
 import { useUser } from "../../../Context/UserContext";
-import { selectUniversitiesArray } from "../../../selectors/data.selectors";
-import { GenerateSchedule } from "../../../utils/managerSchedule";
+import { selectUniversitiesGrouped } from "../../../selectors/data.selectors";
+import { generateLeagueSchedules } from "../../../utils/managerSchedule";
+import { useTranslation } from "react-i18next";
 
 export default function NewGame() {
   const universities = useSelector(
-    (state: RootState) => state.data.universitiesById
+    (state: RootState) => state.data.universitiesById,
   );
 
-  const universitiesArray = useSelector(selectUniversitiesArray);
+  const grouped = useSelector(selectUniversitiesGrouped);
 
   const { loadUser } = useUser();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [name, setName] = useState<string>("");
   const [uni, setUni] = useState<University | null>(null);
@@ -28,8 +30,21 @@ export default function NewGame() {
     }
   };
 
+  const test = () => {
+    const schedule = generateLeagueSchedules(
+      Object.values(universities)
+    );
+    const newSchedule = {
+      matches: schedule,
+      currentWeek: 1,
+    };
+    console.log(newSchedule);
+  };
+
   const startGame = async () => {
+    console.log("0", name, uni)
     if (!uni || !name) return;
+    console.log("1")
     const newUser: User = {
       id: crypto.randomUUID(),
       name: name,
@@ -38,14 +53,15 @@ export default function NewGame() {
       currentSeason: 2025,
       isStartSeason: false,
     };
+    console.log("2")
     await window.api.saveGame(newUser);
-    const schedule = GenerateSchedule(universitiesArray, 'testChampionship')
+    const schedule = generateLeagueSchedules(Object.values(universities));
     const newSchedule = {
       matches: schedule,
-      currentWeek: 1
-    }
-    const folderName = `${newUser.name}_${newUser.id}`
-    await window.api.saveSchedule(folderName, newSchedule)
+      currentWeek: 1,
+    };
+    const folderName = `${newUser.name}_${newUser.id}`;
+    await window.api.saveSchedule(folderName, newSchedule);
     loadUser(newUser);
     navigate("/team");
   };
@@ -59,13 +75,22 @@ export default function NewGame() {
         onChange={(e) => setName(e.target.value)}
       />
       <span>Selecione uma universidade para treinar</span>
-      <select onChange={(e) => selectUni(e.target.value)}>
-        {Object.values(universities).map((uni) => (
-          <option key={uni.id} value={uni.id}>
-            {uni.name} {uni.nickname}
-          </option>
+      <select
+        className="bg-amber-950"
+        onChange={(e) => selectUni(e.target.value)}
+      >
+        {Object.entries(grouped).map(([leagueId, unis]) => (
+          <optgroup key={leagueId} label={t(`championshipLocale.${leagueId}`)}>
+            {unis.map((uni) => (
+              <option key={uni.id} value={uni.id}>
+                {uni.name} {uni.nickname}
+              </option>
+            ))}
+          </optgroup>
         ))}
       </select>
+
+      <button onClick={test}>Gerar tabelas</button>
       <button onClick={startGame}>Começar jogo</button>
     </div>
   );

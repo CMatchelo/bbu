@@ -1,56 +1,86 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { Match } from "../types/Match";
-import { selectUniversitiesArray } from "./data.selectors";
+import { selectUniversitiesGrouped } from "./data.selectors";
 import { University } from "../types/University";
 
-export const selectMatchesByWeek = createSelector(
+export const selectMatchesToSimulate = createSelector(
   [
-    (state: RootState) => state.schedule.matchesByWeek,
     (state: RootState) => state.schedule.matchesById,
-    (_: RootState, week: number) => week,
+    selectUniversitiesGrouped,
+    (_: RootState, currentWeek: number) => currentWeek,
+    (_: RootState, __: number, userUni: string) => userUni,
   ],
-  (matchesByWeek, matchesById, week) => {
-    const ids = matchesByWeek[week] ?? [];
-    return ids.map((id) => matchesById[id]);
-  },
-);
+  (matchesById, universities, currentWeek, userUni) => {
+    const matches = Object.values(matchesById);
 
-export const selectAllMatches = createSelector(
-  [
-    (state: RootState) => Object.values(state.schedule.matchesById),
-    selectUniversitiesArray,
-  ],
-  (matches, universities) => {
     const uniById = Object.fromEntries(
-      universities.map((uni: University) => [uni.id, uni]),
+      Object.values(universities)
+        .flat()
+        .map((u) => [u.id, u]),
     );
-    return matches.map((match: Match) => ({
-      ...match,
-      homeTeam: uniById[match.home],
-      awayTeam: uniById[match.away],
-    }));
+
+    return matches
+      .filter(
+        (m) =>
+          m.away !== userUni &&
+          m.home !== userUni &&
+          !m.played &&
+          m.week <= currentWeek,
+      )
+      .map((m) => ({
+        ...m,
+        homeTeam: uniById[m.home],
+        awayTeam: uniById[m.away],
+      }));
   },
 );
 
-export const selectMatchesByTeam =
-  (teamId: string) =>
-  (state: RootState): Match[] => {
-    return Object.values(state.schedule.matchesById).filter(
-      (match) => match.home === teamId || match.away === teamId,
-    );
-  };
+export const selectAllMatchesByLeague = createSelector(
+  [
+    (state: RootState) => state.schedule.matchesById,
+    selectUniversitiesGrouped,
+    (_: RootState, leagueId: string) => leagueId,
+  ],
+  (matchesById, universities, leagueId) => {
+    const matches = Object.values(matchesById);
 
-export const selectTeamSchedule = (teamId: string) =>
+    const uniById = Object.fromEntries(
+      Object.values(universities)
+        .flat()
+        .map((uni: University) => [uni.id, uni]),
+    );
+    return matches
+      .filter((match) => match.championship === leagueId)
+      .map((match: Match) => ({
+        ...match,
+        homeTeam: uniById[match.home],
+        awayTeam: uniById[match.away],
+      }));
+  },
+);
+
+export const selectMatchesByTeam = (teamId: string) =>
   createSelector(
-    [
-      (state: RootState) => selectMatchesByTeam(teamId)(state),
-      selectUniversitiesArray,
-    ],
+    [(state: RootState) => state.schedule.matchesById],
+    (matchesById): Match[] => {
+      return Object.values(matchesById).filter(
+        (match) => match.home === teamId || match.away === teamId,
+      );
+    },
+  );
+
+export const selectTeamSchedule = (teamId: string) => {
+  const selectMatches = selectMatchesByTeam(teamId);
+  return createSelector(
+    [selectMatches, selectUniversitiesGrouped],
     (matches, universities) => {
       const uniById = Object.fromEntries(
-        universities.map((uni) => [uni.id, uni]),
+        Object.values(universities)
+          .flat()
+          .map((uni: University) => [uni.id, uni]),
       );
+
       return matches.map((match) => ({
         ...match,
         homeTeam: uniById[match.home],
@@ -58,6 +88,7 @@ export const selectTeamSchedule = (teamId: string) =>
       }));
     },
   );
+};
 
 export const selectcurrentWeekMatchByUniversity = createSelector(
   [
