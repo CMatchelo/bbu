@@ -20,7 +20,7 @@ export function updateTeamStats(
 
   const atkStats = { ...(homeIsAttacking ? homeStats : awayStats) };
   const defStats = { ...(homeIsAttacking ? awayStats : homeStats) };
-
+  console.log(possession);
   if (possession.success) {
     atkStats.points += possession.points;
     atkStats.assists += 1;
@@ -93,13 +93,13 @@ function applyShotStats(
   stats: Record<string, PlayerGameStats>,
   possession: PossessionResult,
 ) {
-
+  if(!possession.success) return stats
   const shooterId = possession.selectedPlayer.id;
   const shooter = stats[shooterId];
   if (!shooter) return stats;
 
   const isThree = possession.shotType === "THREE";
-  
+
   return {
     ...stats,
     [shooterId]: {

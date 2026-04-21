@@ -1,18 +1,7 @@
+import { SeasonStats } from "./SeasonStats";
 import type { Skill } from "./Skill";
 
-type Stats = {
-  matches: number;
-  points: number;
-  fgm: number;
-  fga: number;
-  tpm: number;
-  tpa: number;
-  turnovers: number;
-  blocks: number;
-  rebounds: number;
-  assists: number;
-  steals: number;
-};
+
 
 export type Position = "SG" | "PG" | "SF" | "PF" | "C"
 
@@ -36,5 +25,5 @@ export type Player = {
   injuryProne: number;
   active: boolean;
   injured: boolean;
-  stats: Stats;
+  stats: Record<number, SeasonStats>;
 };

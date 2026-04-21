@@ -1,6 +1,7 @@
 import { firtNames, lastNames } from "../constants/names.constants";
 import { CourseId } from "../types/Courses";
 import { Player, Position } from "../types/Player";
+import { SeasonStats } from "../types/SeasonStats";
 import { University } from "../types/University";
 
 const SKILL_CAP = 80;
@@ -90,7 +91,7 @@ function skillByPosition(pos: Position, rating: 1 | 2 | 3 | 4 | 5) {
   return base;
 }
 
-export function createPlayer(university: University, pos: Position) {
+export function createPlayer(university: University, pos: Position): Player {
   const firstName = firtNames[rand(0, firtNames.length - 1)];
   const lastName = lastNames[rand(0, lastNames.length - 1)];
   const rating = rand(1, 5) as 1 | 2 | 3 | 4 | 5;
@@ -103,15 +104,15 @@ export function createPlayer(university: University, pos: Position) {
     firstName,
     lastName,
     age: rand(18, 23),
+
     grades: rand(60, 100),
     yearsInCollege,
     yearsToGraduate,
     course: courses[rand(0, courses.length - 1)],
     currentUniversity: university.id,
-    naturalPosition: pos,
-    inCourtPosition: pos,
+
     skills: skillByPosition(pos, rating),
-    recruitRating: rating,
+    inCourtPosition: pos,
     scholarship: Math.random() > 0.4,
     potential: rand(rating * 10, Math.min(rating * 15, 99)), // tied to recruit rating
     stamina: rand(60, 90),
@@ -119,17 +120,7 @@ export function createPlayer(university: University, pos: Position) {
     active: true,
     injured: false,
     stats: {
-      matches: 0,
-      points: 0,
-      fgm: 0,
-      fga: 0,
-      tpm: 0,
-      tpa: 0,
-      turnovers: 0,
-      blocks: 0,
-      rebounds: 0,
-      assists: 0,
-      steals: 0,
+      [2026]: createEmptySeasonStats(2026),
     },
   };
 }
@@ -167,4 +158,21 @@ export function generateAllPlayers(universities: University[]) {
   });
 
   return players;
+}
+
+function createEmptySeasonStats(currentYear: number): SeasonStats {
+  return {
+    year: currentYear,
+    matches: 0,
+    points: 0,
+    fgm: 0,
+    fga: 0,
+    tpm: 0,
+    tpa: 0,
+    turnovers: 0,
+    blocks: 0,
+    rebounds: 0,
+    assists: 0,
+    steals: 0,
+  };
 }

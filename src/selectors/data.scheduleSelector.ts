@@ -81,7 +81,6 @@ export const selectTeamSchedule = (teamId: string) => {
     [selectMatches, selectUniversitiesGrouped],
     (matches, universities): MatchWithTeams[] => {
       const uniById = buildUniById(universities);
-
       return matches
         .filter((match) => uniById[match.home] && uniById[match.away])
         .map((match) => ({

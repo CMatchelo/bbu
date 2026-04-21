@@ -1,4 +1,5 @@
 import { Player } from "./Player";
+import { SeasonStats } from "./SeasonStats";
 
 export type University = {
   id: string;
@@ -19,6 +20,7 @@ export type University = {
   budget: number;
   fanbase: number;
   leagueId: string;
+  stats: Record<number, SeasonStats>[];
 };
 
 export type TeamSimInfo = {

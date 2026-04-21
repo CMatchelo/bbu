@@ -18,6 +18,7 @@ import {
 } from "../../../store/slices/dataSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { RootState } from "../../../store";
+import { toRecord } from "../../../utils/toRecord";
 
 export default function NewGame() {
   const dispatch = useAppDispatch();
@@ -62,9 +63,6 @@ export default function NewGame() {
       roster: playersByUni[uni.id] || [],
     }));
   };
-
-  const toRecord = <T extends { id: string }>(arr: T[]) =>
-    Object.fromEntries(arr.map((i) => [i.id, i]));
 
   const createUser = (uni: University): User => ({
     id: crypto.randomUUID(),
@@ -112,20 +110,22 @@ export default function NewGame() {
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-3 mt-4">
       <input
-        className="bg-white w-48 text-black"
+        className="bg-cardbglight text-text1 p-2 rounded-md outline-none focus:ring-2 focus:ring-highlights1"
         placeholder="Nome"
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
 
-      <span>Selecione uma universidade para treinar</span>
+      <span className="text-text2 text-sm">
+        Selecione uma universidade
+      </span>
 
-      {loading && <span>Carregando universidades...</span>}
+      {loading && <span className="text-sm">Carregando...</span>}
 
       <select
-        className="bg-amber-950"
+        className="bg-cardbglight text-text1 p-2 rounded-md"
         value={selectedUniId ?? ""}
         onChange={(e) => setSelectedUniId(e.target.value)}
         disabled={loading}
@@ -145,7 +145,11 @@ export default function NewGame() {
         ))}
       </select>
 
-      <button onClick={startGame} disabled={!name || !selectedUni || loading}>
+      <button
+        onClick={startGame}
+        disabled={!name || !selectedUni || loading}
+        className="btn-primary disabled:opacity-50"
+      >
         Começar jogo
       </button>
     </div>

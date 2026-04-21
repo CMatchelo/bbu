@@ -1,6 +1,7 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { University } from "../types/University";
+import { Player } from "../types/Player";
 
 /** Flat array of all universities across all leagues. */
 export const selectAllUniversities = createSelector(
@@ -40,3 +41,7 @@ export const selectUniversityById =
     }
     throw new Error(`University ${uniId} not found`);
   };
+
+// selectors/dataSelectors.ts
+export const selectAllPlayers = (state: RootState): Player[] =>
+  Object.values(state.data.playersByUniversity).flat();

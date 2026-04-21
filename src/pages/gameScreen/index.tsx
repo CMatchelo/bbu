@@ -76,6 +76,7 @@ function GameScreenInner() {
     playerTeamId: user!.currentUniversity.id,
     homePoints: homeStats.points,
     awayPoints: awayStats.points,
+    playerGameStats: playerStats,
   });
 
   // ── CPU timeout side-effect ──────────────────────────────────────────────

@@ -34,7 +34,7 @@ export const LoadGame = ({ saveIds }: LoadGameProps) => {
 
     // Carregar universidades da pasta de save (com roster já populado)
     dispatch(setUniversities(Object.values(userLoaded.universities)));
-
+    
     dispatch(setSchedule(userLoaded.schedule.matches));
     dispatch(setCurrentWeek(userLoaded.schedule.currentWeek));
     dispatch(setPlayers(userLoaded.players));
@@ -44,18 +44,30 @@ export const LoadGame = ({ saveIds }: LoadGameProps) => {
   };
 
   return (
-    <div className="flex flex-col">
-      <h2> Escolha um save para carregar</h2>
+    <div className="flex flex-col gap-3 mt-4">
+      <h2 className="text-text1 text-lg">
+        Escolha um save
+      </h2>
+
       {saveIds.map((save, i) => (
         <button
-          className={`p-2 bg-amber-950 ${chosenId === i ? "ring-2 ring-white" : ""}`}
           key={save}
           onClick={() => setChosenId(i)}
+          className={`text-left p-3 rounded-md transition
+        ${
+          chosenId === i
+            ? "bg-highlights2 text-black"
+            : "bg-cardbglight text-text1"
+        }
+      `}
         >
           {save.split("_")[0]}
         </button>
       ))}
-      <button onClick={loadGame}>Carregar</button>
+
+      <button onClick={loadGame} className="btn-primary">
+        Carregar
+      </button>
     </div>
   );
 };

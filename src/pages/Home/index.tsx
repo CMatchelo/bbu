@@ -38,15 +38,24 @@ export default function MainScreen() {
 
   return (
     <div
-      className="min-h-screen w-full bg-cover bg-center bg-no-repeat"
+      className="min-h-screen w-full bg-cover bg-center relative"
       style={{ backgroundImage: "url('/mainMenuBg.png')" }}
     >
-      <div className="flex flex-col">
-        <button onClick={openNewScreen}>New game</button>
-        <button onClick={openLoadScreen}>Load game</button>
+      <div className="absolute inset-0 bg-mainbg/50 backdrop-blur-sm" />
+
+      <div className="relative flex items-center justify-center min-h-screen">
+        <div className="bg-cardbg p-8 rounded-2xl shadow-xl w-[320px] flex flex-col gap-4">
+          <button onClick={openNewScreen} className="btn-primary">
+            New game
+          </button>
+          <button onClick={openLoadScreen} className="btn-secondary">
+            Load game
+          </button>
+
+          {!isLoad && isNew && <NewGame />}
+          {isLoad && !isNew && <LoadGame saveIds={savesIds} />}
+        </div>
       </div>
-      {!isLoad && isNew && <NewGame />}
-      {isLoad && !isNew && <LoadGame saveIds={savesIds} />}
     </div>
   );
 }

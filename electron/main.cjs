@@ -3,7 +3,16 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const { saveGame, loadGame, loadFolders, saveSchedule, loadSchedule, savePlayers, loadPlayers, saveUniversities, loadUniversities } = require('./saveManager.cjs');
+const { saveGame, 
+        loadGame, 
+        loadFolders,
+        saveSchedule,
+        loadSchedule,
+        savePlayers,
+        loadPlayers,
+        saveUniversities,
+        loadUniversities 
+      } = require('./saveManager.cjs');
 
 const isDev = !app.isPackaged;
 

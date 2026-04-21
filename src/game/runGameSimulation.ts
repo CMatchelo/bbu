@@ -44,13 +44,21 @@ export function useGameSimulation({
   const [quarter, setQuarter] = useState(1);
   const [timeLeft, setTimeLeft] = useState(QUARTER_DURATION);
   const [isGameOver, setIsGameOver] = useState(false);
-  const [currentPoss, setCurrentPoss] = useState<string | null>(null);
+  const [currentPoss, setCurrentPoss] = useState<string>(() =>
+    Math.random() < 0.5 ? homeUniversity.id : awayUniversity.id,
+  );
   const [logPlays, setLogPlays] = useState<PlayLog[]>([]);
   const [cpuWantsTimeout, setCpuWantsTimeout] = useState(false);
-  const [playerStats, setPlayerStats] = useState<Record<
-    string,
-    PlayerGameStats
-  > | null>(null);
+  const [playerStats, setPlayerStats] = useState<
+    Record<string, PlayerGameStats>
+  >(() =>
+    initializePlayerStats(
+      homeUniversity.id,
+      awayUniversity.id,
+      homeUniversity.players ?? [],
+      awayUniversity.players ?? [],
+    ),
+  );
 
   const isPlayerHome = homeUniversity.id === playerTeamId;
 
@@ -73,25 +81,7 @@ export function useGameSimulation({
   // ─────────────────────────────────────────────
   // Initialization
   // ─────────────────────────────────────────────
-  useEffect(() => {
-    if (!homeUniversity.players || !awayUniversity.players) return;
 
-    setQuarter(1);
-    setTimeLeft(QUARTER_DURATION);
-    setIsGameOver(false);
-    setLogPlays([]);
-
-    setPlayerStats(
-      initializePlayerStats(
-        homeUniversity.id,
-        awayUniversity.id,
-        homeUniversity.players,
-        awayUniversity.players,
-      ),
-    );
-
-    setCurrentPoss(Math.random() < 0.5 ? homeUniversity.id : awayUniversity.id);
-  }, [homeUniversity, awayUniversity]);
 
   // ─────────────────────────────────────────────
   // Helpers (private)
