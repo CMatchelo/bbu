@@ -16,11 +16,10 @@ export function updateTeamStats(
   const isThree = possession.shotType === "THREE";
 
   const homeIsAttacking =
-    homeStats.teamId === possession.selectedPlayer.currentUniversity;
+    homeStats.id === possession.selectedPlayer.currentUniversity;
 
   const atkStats = { ...(homeIsAttacking ? homeStats : awayStats) };
   const defStats = { ...(homeIsAttacking ? awayStats : homeStats) };
-  console.log(possession);
   if (possession.success) {
     atkStats.points += possession.points;
     atkStats.assists += 1;
@@ -46,10 +45,10 @@ export function updateTeamStats(
     defStats.steals += 1;
   }
 
-  if (possession.reboundWinnerPlayer?.currentUniversity === atkStats.teamId) {
+  if (possession.reboundWinnerPlayer?.currentUniversity === atkStats.id) {
     atkStats.rebounds += 1;
   }
-  if (possession.reboundWinnerPlayer?.currentUniversity === defStats.teamId) {
+  if (possession.reboundWinnerPlayer?.currentUniversity === defStats.id) {
     defStats.rebounds += 1;
   }
 

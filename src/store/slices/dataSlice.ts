@@ -55,6 +55,16 @@ function findPlayer(
   }
 }
 
+function findUniversity(
+  universitiesByLeague: Record<string, University[]>,
+  id: string,
+): University | undefined {
+  for (const universities of Object.values(universitiesByLeague)) {
+    const uni = universities.find((u) => u.id === id);
+    if (uni) return uni;
+  }
+}
+
 const dataSlice = createSlice({
   name: "data",
   initialState,
@@ -108,6 +118,32 @@ const dataSlice = createSlice({
         }
       }
     },
+    updateUniversityStats(
+      state,
+      action: PayloadAction<
+        {
+          id: string;
+          statDeltas?: Partial<SeasonStats>;
+        }[]
+      >,
+    ) {
+      for (const { id, statDeltas } of action.payload) {
+        const university = findUniversity(state.universitiesByLeague, id);
+        if (!university) continue;
+
+        if (
+          statDeltas &&
+          statDeltas.year &&
+          university.stats[statDeltas.year]
+        ) {
+          for (const key of Object.keys(statDeltas) as (keyof SeasonStats)[]) {
+            if (statDeltas[key] !== undefined) {
+              university.stats[statDeltas.year][key] += statDeltas[key]!;
+            }
+          }
+        }
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -126,6 +162,6 @@ const dataSlice = createSlice({
   },
 });
 
-export const { setUniversities, setPlayers, updatePlayer, updatePlayerStats } =
+export const { setUniversities, setPlayers, updatePlayer, updatePlayerStats, updateUniversityStats } =
   dataSlice.actions;
 export default dataSlice.reducer;

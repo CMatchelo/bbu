@@ -19,6 +19,11 @@ import {
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { RootState } from "../../../store";
 import { toRecord } from "../../../utils/toRecord";
+import {
+  setCurrentWeek,
+  setSchedule,
+} from "../../../store/slices/scheduleSlice";
+import { createEmptySeasonStats } from "../../../utils/createEmptySeasonStats";
 
 export default function NewGame() {
   const dispatch = useAppDispatch();
@@ -60,6 +65,9 @@ export default function NewGame() {
 
     return universities.map((uni) => ({
       ...uni,
+      stats: {
+        [2026]: createEmptySeasonStats(2026),
+      },
       roster: playersByUni[uni.id] || [],
     }));
   };
@@ -83,10 +91,14 @@ export default function NewGame() {
       // schedule
       const schedule = generateLeagueSchedules(universities);
       const scheduleData = { matches: schedule, currentWeek: 1 };
+      dispatch(setSchedule(schedule));
 
       // players + roster
       const players = generateAllPlayers(universities);
       const universitiesWithRoster = buildUniversitiesWithRoster(players);
+      dispatch(setPlayers(players));
+
+      dispatch(setCurrentWeek(1));
 
       // persist
       await window.api.saveGame(user);
@@ -118,9 +130,7 @@ export default function NewGame() {
         onChange={(e) => setName(e.target.value)}
       />
 
-      <span className="text-text2 text-sm">
-        Selecione uma universidade
-      </span>
+      <span className="text-text2 text-sm">Selecione uma universidade</span>
 
       {loading && <span className="text-sm">Carregando...</span>}
 

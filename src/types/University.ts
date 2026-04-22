@@ -20,7 +20,7 @@ export type University = {
   budget: number;
   fanbase: number;
   leagueId: string;
-  stats: Record<number, SeasonStats>[];
+  stats: Record<number, SeasonStats>;
 };
 
 export type TeamSimInfo = {

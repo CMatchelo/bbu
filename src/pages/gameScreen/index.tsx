@@ -77,6 +77,8 @@ function GameScreenInner() {
     homePoints: homeStats.points,
     awayPoints: awayStats.points,
     playerGameStats: playerStats,
+    homeStats,
+    awayStats
   });
 
   // ── CPU timeout side-effect ──────────────────────────────────────────────

@@ -78,7 +78,6 @@ export function simulateFullMatch(
   };
 
   while (!state.isGameOver) {
-    console.log(state);
     runNextPossessionPure(state, homeUniversity, awayUniversity);
   }
 
@@ -97,7 +96,7 @@ function runNextPossessionPure(
     return state;
   }
 
-  const offenseIsHome = state.currentPoss === state.homeStats.teamId;
+  const offenseIsHome = state.currentPoss === state.homeStats.id;
 
   const offensePlayers = offenseIsHome ? state.homeLineup : state.awayLineup;
 
@@ -155,9 +154,9 @@ function runNextPossessionPure(
     result.result === "turnover"
   ) {
     state.currentPoss =
-      state.currentPoss === state.homeStats.teamId
-        ? state.awayStats.teamId
-        : state.homeStats.teamId;
+      state.currentPoss === state.homeStats.id
+        ? state.awayStats.id
+        : state.homeStats.id;
   }
 
   return state;

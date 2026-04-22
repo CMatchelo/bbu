@@ -1,7 +1,7 @@
 import { TeamGameStats } from "../types/TeamGameStats";
 
-export const createEmptyTeamStats = (teamId: string): TeamGameStats => ({
-  teamId,
+export const createEmptyTeamStats = (id: string): TeamGameStats => ({
+  id,
   points: 0,
   fgm: 0,
   fga: 0,

@@ -1,5 +1,5 @@
 export type TeamGameStats = {
-  teamId: string,
+  id: string,
   points: number;
   fgm: number;
   fga: number;
