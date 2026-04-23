@@ -1,9 +1,8 @@
 import { firtNames, lastNames } from "../constants/names.constants";
 import { CourseId } from "../types/Courses";
 import { Player, Position } from "../types/Player";
-import { SeasonStats } from "../types/SeasonStats";
 import { University } from "../types/University";
-import { createEmptySeasonStats } from "./createEmptySeasonStats";
+import { createEmptyPlayerSeasonStats } from "./createEmptySeasonStats";
 
 const SKILL_CAP = 80;
 let idCounter = 1;
@@ -121,7 +120,7 @@ export function createPlayer(university: University, pos: Position): Player {
     active: true,
     injured: false,
     stats: {
-      [2026]: createEmptySeasonStats(2026),
+      [2026]: createEmptyPlayerSeasonStats(2026),
     },
   };
 }

@@ -23,7 +23,7 @@ import {
   setCurrentWeek,
   setSchedule,
 } from "../../../store/slices/scheduleSlice";
-import { createEmptySeasonStats } from "../../../utils/createEmptySeasonStats";
+import { createEmptyTeamSeasonStats } from "../../../utils/createEmptySeasonStats";
 
 export default function NewGame() {
   const dispatch = useAppDispatch();
@@ -66,7 +66,7 @@ export default function NewGame() {
     return universities.map((uni) => ({
       ...uni,
       stats: {
-        [2026]: createEmptySeasonStats(2026),
+        [2026]: createEmptyTeamSeasonStats(2026),
       },
       roster: playersByUni[uni.id] || [],
     }));

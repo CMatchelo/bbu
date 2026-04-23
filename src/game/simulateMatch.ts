@@ -10,6 +10,10 @@ import { MatchWithTeams } from "../types/Match";
 import { AppDispatch, store } from "../store";
 import { selectUniversitiesWithPlayers } from "../selectors/data.selectors";
 import { setMultipleMatchResults } from "../store/slices/scheduleSlice";
+import { PlayerGameStats } from "../types/PlayerGameStats";
+import { TeamGameStats } from "../types/TeamGameStats";
+import { updatePlayerStats, updateUniversityStats } from "../store/slices/dataSlice";
+import { playerGameStatsToDeltas, teamGameStatsToDeltas } from "../utils/gameStatsToMatchResults";
 
 export function simulateMatchWithoutPlayer(
   schedule: MatchWithTeams[],
@@ -35,22 +39,51 @@ export function simulateMatchWithoutPlayer(
       if (!home || !away) return null;
 
       const result = simulateFullMatch(home, away);
+      if (!result) return null;
 
       return {
         matchId: match.id,
         homeScore: result?.homeScore || 0,
         awayScore: result?.awayScore || 0,
+        playerStats: result.playerStats,
+        homeStats: result.homeStats,
+        awayStats: result.awayStats,
       };
     })
     .filter(Boolean);
+
   const matchesSimulated = results.filter(
-    (item): item is { matchId: string; homeScore: number; awayScore: number } =>
-      item !== null,
+    (item): item is NonNullable<typeof item> => item !== null,
   );
-  dispatch(setMultipleMatchResults(matchesSimulated));
+  dispatch(
+    setMultipleMatchResults(
+      matchesSimulated.map(({ matchId, homeScore, awayScore }) => ({
+        matchId,
+        homeScore,
+        awayScore,
+      })),
+    ),
+  );
+
+  const allPlayerStats: Record<string, PlayerGameStats> = {};
+  const allTeamStats: Record<string, TeamGameStats> = {};
+
+  for (const match of matchesSimulated) {
+    // PlayerStats — merge somando campos
+    for (const [playerId, stats] of Object.entries(match.playerStats)) {
+      allPlayerStats[playerId] = stats; // playerStats já vem no formato certo
+    }
+
+    // TeamStats
+    allTeamStats[match.homeStats.id] = match.homeStats;
+    allTeamStats[match.awayStats.id] = match.awayStats;
+  }
+
+  dispatch(updatePlayerStats(playerGameStatsToDeltas(2026, allPlayerStats)));
+  dispatch(updateUniversityStats(teamGameStatsToDeltas(2026, allTeamStats)));
 }
 
-export function simulateFullMatch(
+function simulateFullMatch(
   homeUniversity: University,
   awayUniversity: University,
 ) {
@@ -84,6 +117,9 @@ export function simulateFullMatch(
   return {
     homeScore: state.homeStats.points,
     awayScore: state.awayStats.points,
+    playerStats: state.playerStats,
+    homeStats: state.homeStats,
+    awayStats: state.awayStats,
   };
 }
 

@@ -1,6 +1,7 @@
 export type TeamGameStats = {
   id: string,
   points: number;
+  pointsAllowed: number;
   fgm: number;
   fga: number;
   tpm: number;

@@ -16,10 +16,17 @@ import {
 } from "../../../store/slices/dataSlice";
 import { User } from "../../../types/User";
 import { PlayerGameStats } from "../../../types/PlayerGameStats";
-import { gameStatsToMatchResults } from "../../../utils/gameStatsToMatchResults";
-import { selectAllPlayers, selectAllUniversities } from "../../../selectors/data.selectors";
+import {
+  playerGameStatsToDeltas,
+  teamGameStatsToDeltas,
+} from "../../../utils/gameStatsToMatchResults";
+import {
+  selectAllPlayers,
+  selectAllUniversities,
+} from "../../../selectors/data.selectors";
 import { toRecord } from "../../../utils/toRecord";
 import { TeamGameStats } from "../../../types/TeamGameStats";
+import { setStarters } from "../../../store/slices/gameSettingsSlice";
 
 interface UseSaveGameParams {
   user: User;
@@ -83,9 +90,7 @@ export function useSaveGame({
 
       dispatch(incrementWeek());
       dispatch(
-        updatePlayerStats(
-          gameStatsToMatchResults({ currentYear: 2026, playerGameStats }),
-        ),
+        updatePlayerStats(playerGameStatsToDeltas(2026, playerGameStats)),
       );
       const players = selectAllPlayers(store.getState());
 
@@ -93,14 +98,13 @@ export function useSaveGame({
       await window.api.savePlayers(folderName, toRecord(players));
       const uniGameStats = toRecord([homeStats, awayStats]);
       dispatch(
-        updateUniversityStats(
-          gameStatsToMatchResults({ currentYear: 2026, uniGameStats }),
-        ),
+        updateUniversityStats(teamGameStatsToDeltas(2026, uniGameStats)),
       );
       const universities = selectAllUniversities(store.getState());
       console.log(universities);
       await window.api.saveUniversities(folderName, toRecord(universities));
       await dispatch(saveScheduleThunk(folderName));
+      dispatch(setStarters([]))
 
       navigate("/team");
     } catch (err) {

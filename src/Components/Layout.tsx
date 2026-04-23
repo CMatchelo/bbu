@@ -20,7 +20,7 @@ export default function Layout() {
 
   return (
     <div className="flex h-screen overflow-hidden min-w-screen">
-      <div className="w-64">
+      <div className="w-fit">
         <SideMenu />
       </div>
       <div className="flex flex-col flex-1 overflow-hidden">

@@ -10,6 +10,7 @@ import UniversityPage from "./pages/university";
 import GameScreen from "./pages/gameScreen";
 import "./i18n/i18n";
 import { Leagues } from "./pages/leagues";
+import Stats from "./pages/stats";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/university" element={<UniversityPage />} />
             <Route path="/leagues" element={<Leagues />} />
+            <Route path="/stats" element={<Stats />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -24,6 +24,8 @@ export function initializePlayerStats(
           player.currentUniversity === homeUniversityId
             ? awayUniversityId
             : homeUniversityId,
+        teamPoints: 0,
+        teamPointsAllowed: 0,
         points: 0,
         fgm: 0,
         fga: 0,

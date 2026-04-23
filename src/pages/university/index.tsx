@@ -5,32 +5,35 @@ import { useAppSelector } from "../../hooks/useAppDispatch";
 import { selectUniversityById } from "../../selectors/data.selectors";
 import { FacilityCard } from "./components/facilityCard";
 import { useTranslation } from "react-i18next";
+import { ParentSecion } from "../../Components/ParentSection";
 
 export default function UniversityPage() {
   const { user } = useUser();
   const [uni, setUni] = useState<University | null>(null);
   const uniId = user?.currentUniversity.id ?? null;
   const selectedUni = useAppSelector(selectUniversityById(uniId));
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
-  useEffect(() => {
-    setUni(selectedUni);
-  }, [selectedUni]);
+  useEffect(() => { setUni(selectedUni); }, [selectedUni]);
 
-  const askImprovement = (depto: string) => {
-    console.log("Please pretty please", depto);
-  };
+  const askImprovement = (depto: string) => console.log("improve:", depto);
 
   return (
-    <div className="flex flex-col gap-4 p-4">
-      <div className="border-b border-border pb-2">
-        <h2 className="text-xl font-bold uppercase tracking-wide">
-          {uni?.name} - {uni?.city}/{uni?.state}
+    <ParentSecion>
+      {/* Header */}
+      <div className="pb-4 mb-2 border-b border-highlights1/15">
+        <h2 className="text-lg font-semibold tracking-widest uppercase text-text1">
+          {uni?.name}{" "}
+          <span className="text-highlights1">
+            — {uni?.city}/{uni?.state}
+          </span>
         </h2>
-        <h3 className="text-sm text-muted-foreground uppercase tracking-wide">
+        <p className="text-[11px] font-medium tracking-widest uppercase text-text2 mt-1">
           {uni?.nickname}
-        </h3>
+        </p>
       </div>
+
+      {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <FacilityCard
           title={t("universityStrings.court")}
@@ -38,35 +41,30 @@ export default function UniversityPage() {
           description={t("universityStrings.courtDesc")}
           onImprove={() => askImprovement("court")}
         />
-
         <FacilityCard
           title={t("universityStrings.gym")}
           level={uni?.gymLevel}
           description={t("universityStrings.gymDesc")}
           onImprove={() => askImprovement("gym")}
         />
-
         <FacilityCard
           title={t("universityStrings.medicalCenter")}
           level={uni?.medicalCenterLevel}
           description={t("universityStrings.medicalCenterDesc")}
           onImprove={() => askImprovement("medicalCenter")}
         />
-
         <FacilityCard
           title={t("universityStrings.physioDept")}
           level={uni?.physioLevel}
           description={t("universityStrings.physioDeptDesc")}
           onImprove={() => askImprovement("physio")}
         />
-
         <FacilityCard
           title={t("universityStrings.eduSupport")}
           level={uni?.educationSupportLevel}
           description={t("universityStrings.eduSupportDesc")}
           onImprove={() => askImprovement("education")}
         />
-
         <FacilityCard
           title={t("universityStrings.prestige")}
           level={uni?.academicPrestige}
@@ -74,6 +72,6 @@ export default function UniversityPage() {
           onImprove={() => askImprovement("academicPrestige")}
         />
       </div>
-    </div>
+    </ParentSecion>
   );
 }

@@ -3,6 +3,7 @@ import { TeamGameStats } from "../types/TeamGameStats";
 export const createEmptyTeamStats = (id: string): TeamGameStats => ({
   id,
   points: 0,
+  pointsAllowed: 0,
   fgm: 0,
   fga: 0,
   tpm: 0,

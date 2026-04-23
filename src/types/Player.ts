@@ -1,4 +1,4 @@
-import { SeasonStats } from "./SeasonStats";
+import { PlayerSeasonStats } from "./SeasonStats";
 import type { Skill } from "./Skill";
 
 
@@ -25,5 +25,5 @@ export type Player = {
   injuryProne: number;
   active: boolean;
   injured: boolean;
-  stats: Record<number, SeasonStats>;
+  stats: Record<number, PlayerSeasonStats>;
 };

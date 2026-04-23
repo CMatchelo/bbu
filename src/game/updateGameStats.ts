@@ -27,6 +27,7 @@ export function updateTeamStats(
     atkStats.fga += 1;
     atkStats.tpa += isThree ? 1 : 0;
     atkStats.tpm += isThree ? 1 : 0;
+    defStats.pointsAllowed += possession.points;
   }
 
   if (!possession.success && !possession.turnoverBy && !possession.blockBy) {
@@ -69,7 +70,12 @@ export function updateStats(
 ) {
   let updatedStats = { ...stats };
 
-  updatedStats = applyShotStats(updatedStats, possession);
+  updatedStats = applyShotStats(
+    updatedStats,
+    possession,
+    homeLineup,
+    awayLineup,
+  );
   updatedStats = applyTurnoverStats(updatedStats, possession);
   updatedStats = applyAssistStats(updatedStats, possession);
   updatedStats = applyReboundStats(updatedStats, possession);
@@ -91,25 +97,60 @@ export function updateStats(
 function applyShotStats(
   stats: Record<string, PlayerGameStats>,
   possession: PossessionResult,
+  homeLineup: Player[],
+  awayLineup: Player[],
 ) {
-  if(!possession.success) return stats
+  if (!possession.success) return stats;
+
   const shooterId = possession.selectedPlayer.id;
   const shooter = stats[shooterId];
   if (!shooter) return stats;
 
   const isThree = possession.shotType === "THREE";
 
-  return {
-    ...stats,
-    [shooterId]: {
-      ...shooter,
-      fga: shooter.fga + 1,
-      fgm: shooter.fgm + (possession.success ? 1 : 0),
-      tpa: shooter.tpa + (isThree ? 1 : 0),
-      tpm: shooter.tpm + (possession.success && isThree ? 1 : 0),
-      points: shooter.points + possession.points,
-    },
+  const scoringTeamId = possession.selectedPlayer.currentUniversity;
+
+  const updated = { ...stats };
+
+  updated[shooterId] = {
+    ...shooter,
+    fga: shooter.fga + 1,
+    fgm: shooter.fgm + 1,
+    tpa: shooter.tpa + (isThree ? 1 : 0),
+    tpm: shooter.tpm + (isThree ? 1 : 0),
+    points: shooter.points + possession.points,
   };
+
+  const homeIsScoring = homeLineup.some(
+    (p) => p.currentUniversity === scoringTeamId,
+  );
+
+  const scoringLineup = homeIsScoring ? homeLineup : awayLineup;
+  const defendingLineup = homeIsScoring ? awayLineup : homeLineup;
+
+  scoringLineup.forEach((player) => {
+    const pStats = updated[player.id];
+    if (!pStats) return;
+
+    updated[player.id] = {
+      ...pStats,
+      teamPoints: pStats.teamPoints + possession.points,
+    };
+  });
+
+  defendingLineup.forEach((player) => {
+    const pStats = updated[player.id];
+    if (!pStats) return;
+
+    updated[player.id] = {
+      ...pStats,
+      teamPointsAllowed: pStats.teamPointsAllowed + possession.points,
+    };
+  });
+
+  console.log(updated)
+
+  return updated;
 }
 
 function applyTurnoverStats(

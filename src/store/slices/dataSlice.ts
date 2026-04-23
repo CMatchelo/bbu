@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Player } from "../../types/Player";
 import { University } from "../../types/University";
 import { Skill } from "../../types/Skill";
-import { SeasonStats } from "../../types/SeasonStats";
+import { PlayerSeasonStats, TeamSeasonStats } from "../../types/SeasonStats";
 
 interface DataState {
   /** universities grouped by leagueId */
@@ -97,7 +97,7 @@ const dataSlice = createSlice({
         {
           id: string;
           skillChanges?: Partial<Skill>;
-          statDeltas?: Partial<SeasonStats>;
+          statDeltas?: Partial<PlayerSeasonStats>;
         }[]
       >,
     ) {
@@ -110,7 +110,7 @@ const dataSlice = createSlice({
         }
 
         if (statDeltas && statDeltas.year && player.stats[statDeltas.year]) {
-          for (const key of Object.keys(statDeltas) as (keyof SeasonStats)[]) {
+          for (const key of Object.keys(statDeltas) as (keyof PlayerSeasonStats)[]) {
             if (statDeltas[key] !== undefined) {
               player.stats[statDeltas.year][key] += statDeltas[key]!;
             }
@@ -123,7 +123,7 @@ const dataSlice = createSlice({
       action: PayloadAction<
         {
           id: string;
-          statDeltas?: Partial<SeasonStats>;
+          statDeltas?: Partial<TeamSeasonStats>;
         }[]
       >,
     ) {
@@ -136,7 +136,7 @@ const dataSlice = createSlice({
           statDeltas.year &&
           university.stats[statDeltas.year]
         ) {
-          for (const key of Object.keys(statDeltas) as (keyof SeasonStats)[]) {
+          for (const key of Object.keys(statDeltas) as (keyof TeamSeasonStats)[]) {
             if (statDeltas[key] !== undefined) {
               university.stats[statDeltas.year][key] += statDeltas[key]!;
             }
