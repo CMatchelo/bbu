@@ -9,6 +9,7 @@ interface DataState {
   universitiesByLeague: Record<string, University[]>;
   /** players grouped by universityId */
   playersByUniversity: Record<string, Player[]>;
+  playersById: Record<string, Player>;
   loading: boolean;
   error?: string;
 }
@@ -16,6 +17,7 @@ interface DataState {
 const initialState: DataState = {
   universitiesByLeague: {},
   playersByUniversity: {},
+  playersById: {},
   loading: false,
 };
 
@@ -44,17 +46,6 @@ function groupByUniversity(players: Player[]): Record<string, Player[]> {
   }, {});
 }
 
-/** Finds a player across all university buckets. Mutates via Immer — safe inside reducers. */
-function findPlayer(
-  playersByUniversity: Record<string, Player[]>,
-  id: string,
-): Player | undefined {
-  for (const players of Object.values(playersByUniversity)) {
-    const player = players.find((p) => p.id === id);
-    if (player) return player;
-  }
-}
-
 function findUniversity(
   universitiesByLeague: Record<string, University[]>,
   id: string,
@@ -72,8 +63,6 @@ const dataSlice = createSlice({
     setUniversities(state, action: PayloadAction<University[]>) {
       state.universitiesByLeague = groupByLeague(action.payload);
     },
-
-    /** Accepts either a Player[] or a Record<string, Player> for flexibility. */
     setPlayers(
       state,
       action: PayloadAction<Player[] | Record<string, Player>>,
@@ -82,14 +71,27 @@ const dataSlice = createSlice({
         ? action.payload
         : Object.values(action.payload);
       state.playersByUniversity = groupByUniversity(players);
+      state.playersById = {};
+      for (const p of players) {
+        state.playersById[p.id] = p;
+      }
     },
     updatePlayer(
       state,
       action: PayloadAction<{ id: string; changes: Partial<Player> }>,
     ) {
       const { id, changes } = action.payload;
-      const player = findPlayer(state.playersByUniversity, id);
+      const player = state.playersById[id];
       if (player) Object.assign(player, changes);
+    },
+    updatePlayers(
+      state,
+      action: PayloadAction<{ id: string; changes: Partial<Player> }[]>,
+    ) {
+      for (const { id, changes } of action.payload) {
+        const player = state.playersById[id];
+        if (player) Object.assign(player, changes);
+      }
     },
     updatePlayerStats(
       state,
@@ -102,7 +104,7 @@ const dataSlice = createSlice({
       >,
     ) {
       for (const { id, skillChanges, statDeltas } of action.payload) {
-        const player = findPlayer(state.playersByUniversity, id);
+        const player = state.playersById[id];
         if (!player) continue;
 
         if (skillChanges && player.skills) {
@@ -110,7 +112,9 @@ const dataSlice = createSlice({
         }
 
         if (statDeltas && statDeltas.year && player.stats[statDeltas.year]) {
-          for (const key of Object.keys(statDeltas) as (keyof PlayerSeasonStats)[]) {
+          for (const key of Object.keys(
+            statDeltas,
+          ) as (keyof PlayerSeasonStats)[]) {
             if (statDeltas[key] !== undefined) {
               player.stats[statDeltas.year][key] += statDeltas[key]!;
             }
@@ -136,7 +140,9 @@ const dataSlice = createSlice({
           statDeltas.year &&
           university.stats[statDeltas.year]
         ) {
-          for (const key of Object.keys(statDeltas) as (keyof TeamSeasonStats)[]) {
+          for (const key of Object.keys(
+            statDeltas,
+          ) as (keyof TeamSeasonStats)[]) {
             if (statDeltas[key] !== undefined) {
               university.stats[statDeltas.year][key] += statDeltas[key]!;
             }
@@ -162,6 +168,12 @@ const dataSlice = createSlice({
   },
 });
 
-export const { setUniversities, setPlayers, updatePlayer, updatePlayerStats, updateUniversityStats } =
-  dataSlice.actions;
+export const {
+  setUniversities,
+  setPlayers,
+  updatePlayer,
+  updatePlayers,
+  updatePlayerStats,
+  updateUniversityStats,
+} = dataSlice.actions;
 export default dataSlice.reducer;

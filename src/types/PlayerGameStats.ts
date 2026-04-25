@@ -16,4 +16,5 @@ export type PlayerGameStats = {
   rebounds: number;
   blocks: number;
   stamina: number;
+  minutes: number;
 };

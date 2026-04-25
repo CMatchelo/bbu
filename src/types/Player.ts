@@ -25,5 +25,6 @@ export type Player = {
   injuryProne: number;
   active: boolean;
   injured: boolean;
+  practicing: keyof Skill | null;
   stats: Record<number, PlayerSeasonStats>;
 };

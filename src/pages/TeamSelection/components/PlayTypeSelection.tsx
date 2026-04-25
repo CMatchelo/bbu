@@ -1,27 +1,25 @@
-import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useAppDispatch";
 import { RootState } from "../../../store";
 import { setAttackPreferences } from "../../../store/slices/gameSettingsSlice";
 import { PlayType } from "../../../types/PlayType";
 
+const ATTACK_OPTIONS = [
+  { label: "3 Pontos", value: "THREE" },
+  { label: "2 Pontos", value: "TWO"   },
+  { label: "Bandeja",  value: "LAYUP" },
+] as const;
+
+const ORDINALS = ["1ª", "2ª", "3ª"];
+
 export const PlayTypeSelection = () => {
   const dispatch = useAppDispatch();
-
   const attackPreferences = useAppSelector(
     (state: RootState) => state.gameSettings.attackPreferences
   );
 
-  const attackOptions = [
-    { label: "Three Points", value: "THREE" },
-    { label: "Two Points", value: "TWO" },
-    { label: "Layup", value: "LAYUP" },
-  ];
-
   const updateAttackPref = (index: number, newValue: string) => {
     const updated = [...attackPreferences];
-
     const oldIndex = updated.indexOf(newValue as PlayType);
-
     if (oldIndex !== -1) {
       [updated[index], updated[oldIndex]] = [updated[oldIndex], updated[index]];
     } else {
@@ -31,26 +29,39 @@ export const PlayTypeSelection = () => {
   };
 
   return (
-    <div className="bg-cardbg p-4 rounded-lg shadow w-full">
-      <h2 className="text-xl mb-3 text-highlights1 font-bold">
-        Ordem de Ataque
-      </h2>
+    <div className="rounded-xl overflow-hidden border border-highlights1/15 bg-mainbg">
+      <div className="flex items-center gap-2.5 px-5 py-3.5 bg-cardbg border-b border-highlights1/25">
+        <div className="w-1.5 h-1.5 rounded-full bg-highlights1 shrink-0" />
+        <span className="text-[13px] font-medium tracking-widest uppercase text-text2">
+          Ordem de Ataque
+        </span>
+      </div>
 
-      <div className="space-y-3">
+      <div className="px-5 py-4 flex flex-col gap-3">
         {attackPreferences.map((atk: PlayType, idx: number) => (
           <div key={idx} className="flex items-center gap-4">
-            <span className="w-32 font-semibold">{idx + 1}ª preferência:</span>
-            <select
-              value={atk}
-              onChange={(e) => updateAttackPref(idx, e.target.value)}
-              className="bg-cardbglight border border-highlights2 rounded p-2"
-            >
-              {attackOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+            <span className="text-[11px] font-medium tracking-wider text-text2 w-10">
+              {ORDINALS[idx]}
+            </span>
+
+            <div className="flex gap-2">
+              {ATTACK_OPTIONS.map((opt) => {
+                const active = atk === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    onClick={() => updateAttackPref(idx, opt.value)}
+                    className={`px-3.5 py-1.5 rounded-md text-[12px] font-medium border transition-all ${
+                      active
+                        ? "bg-highlights1/15 text-highlights1 border-highlights1/40"
+                        : "bg-white/3 text-text2 border-white/8 hover:bg-white/[0.07] hover:text-text1"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         ))}
       </div>

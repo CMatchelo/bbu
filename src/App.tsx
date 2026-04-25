@@ -11,6 +11,7 @@ import GameScreen from "./pages/gameScreen";
 import "./i18n/i18n";
 import { Leagues } from "./pages/leagues";
 import Stats from "./pages/stats";
+import Practice from "./pages/practice";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/team" element={<Team />} />
             <Route path="/teamSelection" element={<TeamSelection />} />
+            <Route path="/practice" element={<Practice />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/university" element={<UniversityPage />} />
             <Route path="/leagues" element={<Leagues />} />

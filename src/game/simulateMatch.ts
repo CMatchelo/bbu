@@ -69,9 +69,8 @@ export function simulateMatchWithoutPlayer(
   const allTeamStats: Record<string, TeamGameStats> = {};
 
   for (const match of matchesSimulated) {
-    // PlayerStats — merge somando campos
     for (const [playerId, stats] of Object.entries(match.playerStats)) {
-      allPlayerStats[playerId] = stats; // playerStats já vem no formato certo
+      allPlayerStats[playerId] = stats;
     }
 
     // TeamStats
@@ -109,6 +108,11 @@ function simulateFullMatch(
     awayTimeoutsOnQrt: 0,
     logPlays: [],
   };
+
+  if(state.isGameOver && state.homeStats.points === state.homeStats.points) {
+    state.isGameOver = false;
+    state.timeLeft += 60;
+  }
 
   while (!state.isGameOver) {
     runNextPossessionPure(state, homeUniversity, awayUniversity);

@@ -61,7 +61,6 @@ function getSkillRangeByRating(rating: 1 | 2 | 3 | 4 | 5): [number, number] {
 
 function skillByPosition(pos: Position, rating: 1 | 2 | 3 | 4 | 5) {
   const [min, max] = getSkillRangeByRating(rating);
-
   const base = {
     layup: rand(min, max),
     twopt: rand(min, max),
@@ -97,8 +96,8 @@ export function createPlayer(university: University, pos: Position): Player {
   const rating = rand(1, 5) as 1 | 2 | 3 | 4 | 5;
 
   const yearsInCollege = rand(1, 4);
-  const yearsToGraduate = clamp(4 - yearsInCollege + rand(0, 1), 1, 4); // slight randomness for repeated years
-
+  const yearsToGraduate = clamp(4 - yearsInCollege + rand(0, 1), 1, 4);
+  const [min, max] = getSkillRangeByRating(rating)
   return {
     id: `p${String(idCounter++).padStart(5, "0")}`,
     firstName,
@@ -114,11 +113,12 @@ export function createPlayer(university: University, pos: Position): Player {
     skills: skillByPosition(pos, rating),
     inCourtPosition: pos,
     scholarship: Math.random() > 0.4,
-    potential: rand(rating * 10, Math.min(rating * 15, 99)), // tied to recruit rating
+    potential: rand(max, 99),
     stamina: rand(60, 90),
     injuryProne: rand(1, 25),
     active: true,
     injured: false,
+    practicing: null,
     stats: {
       [2026]: createEmptyPlayerSeasonStats(2026),
     },

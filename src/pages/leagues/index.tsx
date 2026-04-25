@@ -38,7 +38,6 @@ export const Leagues = () => {
             key={league.value}
             onClick={() => setLeagueId(league.value)}
             className={`px-4 py-2 text-[12px] font-medium whitespace-nowrap transition-all
-        ${i < LEAGUES.length - 1 ? "border-r border-highlights1/12" : ""}
         ${
           leagueId === league.value
             ? "bg-highlights1/12 text-highlights1"

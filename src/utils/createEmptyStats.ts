@@ -12,6 +12,5 @@ export const createEmptyTeamStats = (id: string): TeamGameStats => ({
   steals: 0,
   turnovers: 0,
   rebounds: 0,
-  blocks: 0,
-  stamina: 0,
+  blocks: 0
 });

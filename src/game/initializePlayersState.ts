@@ -36,7 +36,8 @@ export function initializePlayerStats(
         turnovers: 0,
         rebounds: 0,
         blocks: 0,
-        stamina: 100
+        stamina: 100,
+        minutes: 0
       },
     ])
   );

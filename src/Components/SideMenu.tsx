@@ -67,7 +67,7 @@ export const SideMenu = () => {
         <SectionLabel>{t("mainMenu.sections.team", "Time")}</SectionLabel>
         <NavItem goTo="/team" text={t("mainMenu.team")} icon={Icons.roster} />
         <NavItem
-          goTo="/team"
+          goTo="/practice"
           text={t("mainMenu.practice")}
           icon={Icons.practice}
         />

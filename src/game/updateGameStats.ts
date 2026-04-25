@@ -280,6 +280,7 @@ function updateStamina(
 
       updatedStats[player.id] = {
         ...playerStats,
+        minutes: playerStats.minutes + duration,
         stamina: Number(
           Math.min(
             100,
