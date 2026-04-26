@@ -1,3 +1,4 @@
+import { TIMEOUTS_QTY } from "../constants/game.constants";
 import { Player } from "../types/Player";
 import { PlayerGameStats } from "../types/PlayerGameStats";
 import { playerAverage } from "./skillsAverage";
@@ -6,8 +7,6 @@ export type TimeoutState = {
   used: number;
   usedThisQuarter: number;
 };
-
-const MAX_TIMEOUTS = 8;
 
 const QUARTER_LIMITS: Record<number, number> = {
   1: 1,
@@ -89,7 +88,7 @@ export function shouldCallTimeout(
   onCourt: Player[],
   scoreDiff: number,
 ): boolean {
-  if (timeoutState.used >= MAX_TIMEOUTS) return false;
+  if (timeoutState.used >= TIMEOUTS_QTY) return false;
   if (timeoutState.usedThisQuarter >= QUARTER_LIMITS[quarter]) return false;
 
   if (timeLeft >= 3 * 60) return false;

@@ -11,6 +11,7 @@ import {
   setMatchResult,
 } from "../../../store/slices/scheduleSlice";
 import {
+  updatePlayersSkills,
   updatePlayerStats,
   updateUniversityStats,
 } from "../../../store/slices/dataSlice";
@@ -27,6 +28,8 @@ import {
 import { toRecord } from "../../../utils/toRecord";
 import { TeamGameStats } from "../../../types/TeamGameStats";
 import { setStarters } from "../../../store/slices/gameSettingsSlice";
+import { savePlayers, saveUniversities } from "../../../utils/saveGame";
+import { progressPlayers } from "../../../game/playerProgression";
 
 interface UseSaveGameParams {
   user: User;
@@ -71,7 +74,6 @@ export function useSaveGame({
 
     setIsSaving(true);
     setSaveError(null);
-
     try {
       const matchResult = {
         matchId,
@@ -80,31 +82,38 @@ export function useSaveGame({
       };
 
       dispatch(setMatchResult(matchResult));
-
       simulateMatchWithoutPlayer(
         matchesToSimulate,
         week,
         playerTeamId,
         dispatch,
       );
-
-      dispatch(incrementWeek());
-      dispatch(
-        updatePlayerStats(playerGameStatsToDeltas(2026, playerGameStats)),
-      );
-      const players = selectAllPlayers(store.getState());
-
       const folderName = `${user.name}_${user.id}`;
-      await window.api.savePlayers(folderName, toRecord(players));
+      // Update week
+      dispatch(incrementWeek());
+      // Update players stats
+      dispatch(
+        updatePlayerStats(playerGameStatsToDeltas(user.currentSeason, playerGameStats)),
+      );
+      // Update players skills
+      const allPlayers = selectAllPlayers(store.getState());
+      const unis = toRecord(selectAllUniversities(store.getState()));
+      const playersWithProgress = progressPlayers(
+        allPlayers,
+        playerGameStats,
+        unis,
+      );
+      dispatch(updatePlayersSkills(playersWithProgress));
+      await savePlayers(folderName);
+
+      // Update universities
       const uniGameStats = toRecord([homeStats, awayStats]);
       dispatch(
         updateUniversityStats(teamGameStatsToDeltas(2026, uniGameStats)),
       );
-      const universities = selectAllUniversities(store.getState());
-      console.log(universities);
-      await window.api.saveUniversities(folderName, toRecord(universities));
+      await saveUniversities(folderName);
       await dispatch(saveScheduleThunk(folderName));
-      dispatch(setStarters([]))
+      dispatch(setStarters([]));
 
       navigate("/team");
     } catch (err) {

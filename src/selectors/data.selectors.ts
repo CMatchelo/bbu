@@ -3,17 +3,26 @@ import { RootState } from "../store";
 import { University } from "../types/University";
 import { Player } from "../types/Player";
 
-/** Flat array of all universities across all leagues. */
 export const selectAllUniversities = createSelector(
   [(state: RootState) => state.data.universitiesByLeague],
   (byLeague): University[] => Object.values(byLeague).flat(),
 );
 
-/** All universities enriched with their Player objects. */
+export const selectPlayersByUniversity = createSelector(
+  (state: RootState) => state.data.playersById,
+  (playersById) => {
+    const result: Record<string, Player[]> = {};
+    for (const player of Object.values(playersById)) {
+      (result[player.currentUniversity] ??= []).push(player);
+    }
+    return result;
+  },
+);
+
 export const selectUniversitiesWithPlayers = createSelector(
   [
     (state: RootState) => state.data.universitiesByLeague,
-    (state: RootState) => state.data.playersByUniversity,
+    selectPlayersByUniversity,
   ],
   (byLeague, byUniversity): University[] => {
     return Object.values(byLeague)
@@ -42,6 +51,7 @@ export const selectUniversityById =
     throw new Error(`University ${uniId} not found`);
   };
 
-// selectors/dataSelectors.ts
-export const selectAllPlayers = (state: RootState): Player[] =>
-  Object.values(state.data.playersByUniversity).flat();
+export const selectAllPlayers = createSelector(
+  [(state: RootState) => state.data.playersById],
+  (playersById): Player[] => Object.values(playersById),
+);

@@ -9,5 +9,6 @@ export const generalLocale = {
   season: "Temporada",
   matches: "Jogos",
   score: "Placar",
-  team: "Time"
+  team: "Time",
+  level: "Nível"
 };

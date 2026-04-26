@@ -20,13 +20,13 @@ export function TableHead({
   }[align];
 
   return (
-    <th
-      className={`py-2.5 px-2 text-[10px] font-medium tracking-widest uppercase border-b border-highlights1/15 whitespace-nowrap ${alignClass} ${
+    <div
+      className={`table-cell py-2.5 px-2 text-[10px] font-medium tracking-widest uppercase border-b border-highlights1/15 whitespace-nowrap ${alignClass} ${
         accent ? "text-highlights1" : "text-text2"
       } ${className}`}
       onClick={onClick}
     >
       {children}
-    </th>
+    </div>
   );
 }

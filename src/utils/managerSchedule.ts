@@ -31,7 +31,6 @@ export function GenerateSchedule(
   universities: University[],
   championship: string,
 ): Match[] {
-  console.log(universities.length);
   if (universities.length % 2 !== 0) {
     throw new Error("Number of teams must be even");
   }

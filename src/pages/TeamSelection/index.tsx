@@ -11,7 +11,6 @@ export default function TeamSelection() {
 
   const startGame = () => {
     if (starters.length < 5) {
-      console.log("Select all players");
       return;
     }
     navigate("/gameScreen");

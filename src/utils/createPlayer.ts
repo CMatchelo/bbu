@@ -1,4 +1,5 @@
 import { firtNames, lastNames } from "../constants/names.constants";
+import { clamp, rand } from "../game/matchAuxFunctions";
 import { CourseId } from "../types/Courses";
 import { Player, Position } from "../types/Player";
 import { University } from "../types/University";
@@ -40,14 +41,6 @@ const courses: CourseId[] = [
   "international_relations",
 ];
 
-function clamp(val: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, val));
-}
-
-function rand(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 function getSkillRangeByRating(rating: 1 | 2 | 3 | 4 | 5): [number, number] {
   const ranges: Record<number, [number, number]> = {
     1: [48, 58],
@@ -57,6 +50,21 @@ function getSkillRangeByRating(rating: 1 | 2 | 3 | 4 | 5): [number, number] {
     5: [64, 74],
   };
   return ranges[rating];
+}
+
+function getRatingByDifficulty(
+  isPlayerUni: boolean,
+  difficulty: number,
+): 1 | 2 | 3 | 4 | 5 {
+  if (!isPlayerUni) {
+    return rand(1, 5) as 1 | 2 | 3 | 4 | 5;
+  }
+
+  if (difficulty === 1) return rand(3, 5) as 1 | 2 | 3 | 4 | 5;
+  if (difficulty === 2) return rand(1, 5) as 1 | 2 | 3 | 4 | 5;
+  if (difficulty === 3) return rand(1, 3) as 1 | 2 | 3 | 4 | 5;
+
+  return rand(1, 5) as 1 | 2 | 3 | 4 | 5;
 }
 
 function skillByPosition(pos: Position, rating: 1 | 2 | 3 | 4 | 5) {
@@ -90,14 +98,21 @@ function skillByPosition(pos: Position, rating: 1 | 2 | 3 | 4 | 5) {
   return base;
 }
 
-export function createPlayer(university: University, pos: Position): Player {
+export function createPlayer(
+  university: University,
+  pos: Position,
+  difficulty: number,
+  playerUni: string,
+): Player {
   const firstName = firtNames[rand(0, firtNames.length - 1)];
   const lastName = lastNames[rand(0, lastNames.length - 1)];
-  const rating = rand(1, 5) as 1 | 2 | 3 | 4 | 5;
+
+  const isPlayerUni = university.id === playerUni
+  const rating = getRatingByDifficulty(isPlayerUni, difficulty)
 
   const yearsInCollege = rand(1, 4);
   const yearsToGraduate = clamp(4 - yearsInCollege + rand(0, 1), 1, 4);
-  const [min, max] = getSkillRangeByRating(rating)
+  const [min, max] = getSkillRangeByRating(rating);
   return {
     id: `p${String(idCounter++).padStart(5, "0")}`,
     firstName,
@@ -125,7 +140,11 @@ export function createPlayer(university: University, pos: Position): Player {
   };
 }
 
-export function generateAllPlayers(universities: University[]) {
+export function generateAllPlayers(
+  universities: University[],
+  difficulty: number,
+  playerUni: string,
+) {
   const players: Player[] = [];
 
   universities.forEach((uni) => {
@@ -153,10 +172,9 @@ export function generateAllPlayers(universities: University[]) {
     ];
 
     dist.forEach((pos) => {
-      players.push(createPlayer(uni, pos));
+      players.push(createPlayer(uni, pos, difficulty, playerUni));
     });
   });
 
   return players;
 }
-

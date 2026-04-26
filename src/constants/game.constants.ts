@@ -1,5 +1,2 @@
 export const MIN_STARTERS = 5;
-
-export const GAME_CONSTANTS = {
-  MIN_STARTERS,
-} as const;
+export const TIMEOUTS_QTY = 6

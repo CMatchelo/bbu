@@ -24,6 +24,70 @@ import {
   setSchedule,
 } from "../../../store/slices/scheduleSlice";
 import { createEmptyTeamSeasonStats } from "../../../utils/createEmptySeasonStats";
+import { UniCard } from "./uniCard";
+import { UniSelect } from "./UniSelect";
+
+/* ── Difficulty config ────────────────────────────────────────────────────── */
+type Difficulty = 1 | 2 | 3;
+
+const DIFFICULTIES: {
+  key: Difficulty;
+  label: string;
+  description: string;
+  activeClasses: string;
+  dotColor: string;
+}[] = [
+  {
+    key: 1,
+    label: "Fácil",
+    description: "Adversários mais fracos e progressão mais rápida.",
+    activeClasses: "bg-highlights1/10 border-highlights1/40",
+    dotColor: "bg-highlights1",
+  },
+  {
+    key: 2,
+    label: "Médio",
+    description: "Experiência balanceada e desafios graduais.",
+    activeClasses: "bg-highlights2/10 border-highlights2/40",
+    dotColor: "bg-highlights2",
+  },
+  {
+    key: 3,
+    label: "Difícil",
+    description: "Rivais implacáveis. Cada decisão importa.",
+    activeClasses: "bg-red-500/10 border-red-500/40",
+    dotColor: "bg-red-400",
+  },
+];
+
+/* ── Section wrapper ─────────────────────────────────────────────────────── */
+function Section({
+  label,
+  loading,
+  children,
+}: {
+  label: string;
+  loading?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="bg-cardbgdark border border-cardbglight/40 rounded-xl overflow-hidden shadow-lg">
+      <div className="px-5 py-3 border-b border-cardbglight/40 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="h-3.5 w-0.5 bg-highlights1 rounded-full opacity-80" />
+          <span className="text-xs font-bold uppercase tracking-widest text-highlights1 opacity-80">
+            {label}
+          </span>
+        </div>
+        {loading && (
+          <span className="text-xs text-text2 animate-pulse">Carregando…</span>
+        )}
+      </div>
+      <div className="px-5 py-4">{children}</div>
+    </div>
+  );
+}
+
 
 export default function NewGame() {
   const dispatch = useAppDispatch();
@@ -33,17 +97,14 @@ export default function NewGame() {
 
   const grouped = useSelector(selectUniversitiesGrouped);
   const universities = useSelector(selectAllUniversities);
-
   const loading = useSelector((state: RootState) => state.data.loading);
 
   const [name, setName] = useState<string>("");
   const [selectedUniId, setSelectedUniId] = useState<string | null>(null);
+  const [difficulty, setDifficulty] = useState<Difficulty>(2);
 
-  // Load universities from original files when component mounts (new game always uses originals)
   useMemo(() => {
-    if (universities.length === 0) {
-      dispatch(loadUniversitiesFromFiles());
-    }
+    if (universities.length === 0) dispatch(loadUniversitiesFromFiles());
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const selectedUni = useMemo(
@@ -55,19 +116,14 @@ export default function NewGame() {
     players: ReturnType<typeof generateAllPlayers>,
   ) => {
     const playersByUni: Record<string, string[]> = {};
-
     for (const p of players) {
-      if (!playersByUni[p.currentUniversity]) {
+      if (!playersByUni[p.currentUniversity])
         playersByUni[p.currentUniversity] = [];
-      }
       playersByUni[p.currentUniversity].push(p.id);
     }
-
     return universities.map((uni) => ({
       ...uni,
-      stats: {
-        [2026]: createEmptyTeamSeasonStats(2026),
-      },
+      stats: { [2026]: createEmptyTeamSeasonStats(2026) },
       roster: playersByUni[uni.id] || [],
     }));
   };
@@ -83,37 +139,31 @@ export default function NewGame() {
 
   const startGame = async () => {
     if (!selectedUni || !name.trim()) return;
-
     try {
       const user = createUser(selectedUni);
       const folderName = `${user.name}_${user.id}`;
-
-      // schedule
       const schedule = generateLeagueSchedules(universities);
-      const scheduleData = { matches: schedule, currentWeek: 1 };
       dispatch(setSchedule(schedule));
+      dispatch(setCurrentWeek(1));
 
-      // players + roster
-      const players = generateAllPlayers(universities);
+      const players = generateAllPlayers(universities, difficulty, selectedUni.id);
       const universitiesWithRoster = buildUniversitiesWithRoster(players);
       dispatch(setPlayers(players));
 
-      dispatch(setCurrentWeek(1));
-
-      // persist
       await window.api.saveGame(user);
-      await window.api.saveSchedule(folderName, scheduleData);
+      await window.api.saveSchedule(folderName, {
+        matches: schedule,
+        currentWeek: 1,
+      });
       await window.api.savePlayers(folderName, toRecord(players));
       await window.api.saveUniversities(
         folderName,
         toRecord(universitiesWithRoster),
       );
 
-      // redux — update stores with generated data
       dispatch(setUniversities(universitiesWithRoster));
       dispatch(setPlayers(toRecord(players)));
 
-      // context + navigation
       loadUser(user);
       navigate("/team");
     } catch (err) {
@@ -121,47 +171,128 @@ export default function NewGame() {
     }
   };
 
+  const canStart = !!name.trim() && !!selectedUni && !loading;
+
   return (
-    <div className="flex flex-col gap-3 mt-4">
-      <input
-        className="bg-cardbglight text-text1 p-2 rounded-md outline-none focus:ring-2 focus:ring-highlights1"
-        placeholder="Nome"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
+    <div className="flex flex-row gap-6 mt-2 min-w-[600px] items-start">
+      <div className="flex flex-col gap-3 w-[600px] max-w-md">
+        <Section label="Manager">
+          <input
+            className="
+              w-full bg-mainbgdark border border-cardbglight rounded-lg
+              text-[13px] text-text1 font-medium
+              px-3 py-2.5 placeholder-text2/30
+              hover:border-highlights1/40 focus:border-highlights1/60 focus:outline-none
+              transition-colors duration-150
+            "
+            placeholder="Seu nome"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </Section>
 
-      <span className="text-text2 text-sm">Selecione uma universidade</span>
+        <Section label="Universidade" loading={loading}>
+          <UniSelect
+            grouped={grouped}
+            selectedUniId={selectedUniId}
+            onSelect={setSelectedUniId}
+            disabled={loading}
+            t={t}
+          />
+        </Section>
 
-      {loading && <span className="text-sm">Carregando...</span>}
+        <Section label="Dificuldade">
+          <div className="flex flex-col min-w-1/2 gap-2">
+            {DIFFICULTIES.map((d) => {
+              const isSelected = difficulty === d.key;
+              return (
+                <button
+                  key={d.key}
+                  type="button"
+                  onClick={() => setDifficulty(d.key)}
+                  className={`
+                    flex items-center gap-3 w-full px-4 py-3 rounded-lg border
+                    text-left transition-all duration-150 cursor-pointer
+                    ${
+                      isSelected
+                        ? d.activeClasses
+                        : "bg-mainbgdark border-cardbglight hover:border-cardbglight/80"
+                    }
+                  `}
+                >
+                  <span
+                    className={`
+                    w-2 h-2 rounded-full transition-colors duration-150
+                    ${isSelected ? d.dotColor : "bg-cardbglight"}
+                  `}
+                  />
 
-      <select
-        className="bg-cardbglight text-text1 p-2 rounded-md"
-        value={selectedUniId ?? ""}
-        onChange={(e) => setSelectedUniId(e.target.value)}
-        disabled={loading}
-      >
-        <option value="" disabled>
-          -- selecionar --
-        </option>
+                  <div className="flex-1 flex flex-row gap-3 min-w-0 items-baseline">
+                    <span
+                      className={`text-sm font-semibold transition-colors duration-150 ${isSelected ? "text-text1" : "text-text2"}`}
+                    >
+                      {d.label}
+                    </span>
+                    <p className="text-xs text-text2 leading-relaxed truncate">
+                      {d.description}
+                    </p>
+                  </div>
 
-        {Object.entries(grouped).map(([leagueId, unis]) => (
-          <optgroup key={leagueId} label={t(`championshipLocale.${leagueId}`)}>
-            {unis.map((uni) => (
-              <option key={uni.id} value={uni.id}>
-                {uni.name} {uni.nickname}
-              </option>
-            ))}
-          </optgroup>
-        ))}
-      </select>
+                  {isSelected && (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2.5}
+                      stroke="currentColor"
+                      className="size-3.5 text-text2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="m4.5 12.75 6 6 9-13.5"
+                      />
+                    </svg>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </Section>
 
-      <button
-        onClick={startGame}
-        disabled={!name || !selectedUni || loading}
-        className="btn-primary disabled:opacity-50"
-      >
-        Começar jogo
-      </button>
+        {/* Start button */}
+        <button
+          onClick={startGame}
+          disabled={!canStart}
+          className="
+            flex items-center justify-center gap-2 w-full
+            bg-highlights1 text-mainbgdark font-bold text-sm uppercase tracking-widest
+            px-5 py-3 rounded-xl
+            hover:bg-highlights1light active:bg-highlights1dark
+            disabled:opacity-30 disabled:cursor-not-allowed
+            transition-colors duration-150 shadow-lg shadow-highlights1/20
+          "
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2.5}
+            stroke="currentColor"
+            className="size-4"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z"
+            />
+          </svg>
+          Começar jogo
+        </button>
+      </div>
+      {selectedUni && <UniCard university={selectedUni} />}
     </div>
   );
 }
+
+

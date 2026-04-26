@@ -1,14 +1,13 @@
-/* import { User } from "../types/User";
+import { selectAllPlayers, selectAllUniversities } from "../selectors/data.selectors";
+import { store } from "../store";
+import { toRecord } from "./toRecord";
 
-export function saveGame(user: User) {
-  const data = JSON.stringify(user, null, 2);
-  const blob = new Blob([data], { type: "application/json " });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `save_${user.id}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
+export async function savePlayers(folderName: string) {
+  const players = selectAllPlayers(store.getState());
+  await window.api.savePlayers(folderName, toRecord(players));
 }
- */
+
+export async function saveUniversities(folderName: string) {
+  const universities = selectAllUniversities(store.getState());
+  await window.api.saveUniversities(folderName, toRecord(universities));
+}

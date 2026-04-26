@@ -12,6 +12,7 @@ import { Player } from "../../types/Player";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { updatePlayers } from "../../store/slices/dataSlice";
 import { PracticeSelect } from "./components/PracticeSelect";
+import { savePlayers } from "../../utils/saveGame";
 
 export default function Practice() {
   const user = useAuthUser();
@@ -36,9 +37,11 @@ export default function Practice() {
     });
   };
 
-  const savePractice = () => {
+  const savePractice = async () => {
     dispatch(updatePlayers(pendingUpdates));
     setPendingUpdates([]);
+    const folderName = `${user.name}_${user.id}`;
+    await savePlayers(folderName);
   };
 
   const pairs: [Player, Player | null][] = [];
@@ -79,7 +82,7 @@ export default function Practice() {
             {pairs.map(([left, right], index) => (
               <TableRow key={left.id} index={index}>
                 <td className="pl-5 py-2.5">
-                  <Pill variant="yellow">{left.inCourtPosition}</Pill>
+                  <Pill variant="muted">{left.inCourtPosition}</Pill>
                 </td>
                 <td className="pl-3 py-2.5">
                   <span className="text-[13px] font-medium text-text1">
@@ -99,7 +102,7 @@ export default function Practice() {
                 {right ? (
                   <>
                     <td className="pl-5 py-2.5">
-                      <Pill variant="yellow">{right.inCourtPosition}</Pill>
+                      <Pill variant="muted">{right.inCourtPosition}</Pill>
                     </td>
                     <td className="pl-3 py-2.5">
                       <span className="text-[13px] font-medium text-text1">

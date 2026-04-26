@@ -1,40 +1,36 @@
-import { useSelector } from "react-redux";
-import { RootState } from "../store";
+import { useTranslation } from "react-i18next";
 import { useUser } from "../Context/UserContext";
 import { TableCard } from "./TableCard";
 import { TableHead } from "./TableHead";
+import { useMemo, useState } from "react";
+import { PlayerSeasonStats } from "../types/SeasonStats";
+import { Player } from "../types/Player";
 import { TableRow } from "./TableRow";
 import { Pill } from "./Pill";
-import { useTranslation } from "react-i18next";
-import { useMemo, useState } from "react";
-import { TeamSeasonStats } from "../types/SeasonStats";
 
-interface StandingsTableProps {
-  leagueId: string;
+interface PlayerStatsProps {
+  players: Player[]
 }
 
-export function StandingsTable({ leagueId }: StandingsTableProps) {
-  const universities = useSelector(
-    (state: RootState) => state.data.universitiesByLeague[leagueId],
-  );
-  const [orderKey, setOrderKey] = useState<keyof TeamSeasonStats>("wins");
+export const PlayerStatsTwo = ({players}: PlayerStatsProps) => {
   const { user } = useUser();
   const { t } = useTranslation();
 
-  const sortedUniversities = useMemo(() => {
+  const[orderKey, setOrderKey] = useState<keyof PlayerSeasonStats>("points");
+
+  const sortedPlayers = useMemo(() => {
     if (!user) return [];
 
-    return [...universities].sort((a, b) => {
+    return [...players].sort((a, b) => {
       const aValue = a.stats[user.currentSeason][orderKey];
       const bValue = b.stats[user.currentSeason][orderKey];
 
       return bValue - aValue;
     });
-  }, [universities, orderKey, user]);
+  }, [players, orderKey, user]);
 
   const f = (val: number, decimals = 1) =>
     isNaN(val) ? "—" : val.toFixed(decimals);
-
   return (
     <TableCard
       title={t("generalLocale.standings")}
@@ -44,29 +40,31 @@ export function StandingsTable({ leagueId }: StandingsTableProps) {
         <thead>
           <tr className="bg-cardbglight">
             <TableHead className="w-6" children={undefined} />
-            <TableHead align="left" className="w-44 pl-5">
-              {t("generalLocale.team")}
-            </TableHead>
-            <TableHead>G</TableHead>
+            <TableHead>Player</TableHead>
+            <TableHead>UNI</TableHead>
             <TableHead
               className="cursor-pointer"
-              accent
-              onClick={() => setOrderKey("wins")}
-            >
-              W%
-            </TableHead>
-            <TableHead
-              className="cursor-pointer"
-              accent
               onClick={() => setOrderKey("points")}
             >
               PPG
             </TableHead>
             <TableHead
               className="cursor-pointer"
-              onClick={() => setOrderKey("pointsAllowed")}
+              onClick={() => setOrderKey("assists")}
             >
-              PAPG
+              AST
+            </TableHead>
+            <TableHead
+              className="cursor-pointer"
+              onClick={() => setOrderKey("blocks")}
+            >
+              BLK
+            </TableHead>
+            <TableHead
+              className="cursor-pointer"
+              onClick={() => setOrderKey("rebounds")}
+            >
+              REB
             </TableHead>
             <TableHead
               className="cursor-pointer"
@@ -94,24 +92,6 @@ export function StandingsTable({ leagueId }: StandingsTableProps) {
             </TableHead>
             <TableHead
               className="cursor-pointer"
-              onClick={() => setOrderKey("assists")}
-            >
-              AST
-            </TableHead>
-            <TableHead
-              className="cursor-pointer"
-              onClick={() => setOrderKey("blocks")}
-            >
-              BLK
-            </TableHead>
-            <TableHead
-              className="cursor-pointer"
-              onClick={() => setOrderKey("rebounds")}
-            >
-              REB
-            </TableHead>
-            <TableHead
-              className="cursor-pointer"
               onClick={() => setOrderKey("steals")}
             >
               STL
@@ -122,63 +102,65 @@ export function StandingsTable({ leagueId }: StandingsTableProps) {
             >
               TO
             </TableHead>
+            <TableHead>+-</TableHead>
           </tr>
         </thead>
         <tbody>
-          {sortedUniversities.map((uni, index) => {
-            const s = uni.stats[user?.currentSeason || 0];
-            const m = s.matches || 1;
+          {sortedPlayers.map((player, index) => {
+            const stat = player.stats[user?.currentSeason || 0];
+            const matches = stat.matches || 1;
             return (
-              <TableRow key={uni.id} index={index}>
+              <TableRow key={player.id} index={index}>
                 <td className="text-right pr-1 text-[11px] text-text2">
                   {index + 1}
                 </td>
                 <td className="pl-5 py-2.5">
                   <div className="flex items-center gap-2.5">
-                    <Pill variant="green" className="w-20">{uni.id.toUpperCase()}</Pill>
+                    <Pill variant="green">
+                      {player.inCourtPosition.toUpperCase()}
+                    </Pill>
                     <span className="text-[13px] font-medium text-text1">
-                      {uni.nickname}
+                      {`${player.firstName.slice(0, 1)}. ${player.lastName}`}
                     </span>
                   </div>
                 </td>
-                <td className="text-center text-[12px] text-text2 px-2">
-                  {s.matches}
-                </td>
                 <td className="text-center text-[12px] font-medium text-highlights1 px-2">
-                  {f((s.wins / m) * 100, 0)}%
+                  <Pill variant="green">
+                    {player.currentUniversity.toUpperCase()}
+                  </Pill>
                 </td>
                 <td className="text-center text-[12px] text-highlights2 px-2">
-                  {f(s.points / m)}
+                  {f(stat.points / matches)}
+                </td>
+                <td className="text-center text-[12px] text-text1 px-2">
+                  {f(stat.assists / matches)}
                 </td>
                 <td className="text-center text-[12px] text-text2 px-2">
-                  {f(s.pointsAllowed / m)}
+                  {f(stat.blocks / matches)}
                 </td>
                 <td className="text-center text-[12px] text-text1 px-2">
-                  {f(s.fgm / m)}
+                  {f(stat.rebounds / matches)}
                 </td>
                 <td className="text-center text-[12px] text-text2 px-2">
-                  {f(s.fga / m)}
+                  {f(stat.fgm / matches)}
                 </td>
                 <td className="text-center text-[12px] text-text1 px-2">
-                  {f(s.tpm / m)}
+                  {f(stat.fga / matches)}
+                </td>
+                <td className="text-center text-[12px] text-text1 px-2">
+                  {f(stat.tpm / matches)}
+                </td>
+                <td className="text-center text-[12px] text-text1 px-2">
+                  {f(stat.tpa / matches)}
+                </td>
+                <td className="text-center text-[12px] text-text1 px-2">
+                  {f(stat.steals / matches)}
                 </td>
                 <td className="text-center text-[12px] text-text2 px-2">
-                  {f(s.tpa / m)}
-                </td>
-                <td className="text-center text-[12px] text-text1 px-2">
-                  {f(s.assists / m)}
-                </td>
-                <td className="text-center text-[12px] text-text1 px-2">
-                  {f(s.blocks / m)}
-                </td>
-                <td className="text-center text-[12px] text-text1 px-2">
-                  {f(s.rebounds / m)}
-                </td>
-                <td className="text-center text-[12px] text-text1 px-2">
-                  {f(s.steals / m)}
+                  {f(stat.turnovers / matches)}
                 </td>
                 <td className="text-center text-[12px] text-text2 px-2">
-                  {f(s.turnovers / m)}
+                  {f(stat.teamPoints - stat.teamPointsAllowed)}
                 </td>
               </TableRow>
             );
@@ -187,4 +169,4 @@ export function StandingsTable({ leagueId }: StandingsTableProps) {
       </table>
     </TableCard>
   );
-}
+};

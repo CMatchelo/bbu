@@ -8,12 +8,22 @@ import { simulatePossession } from "./simulatePossession";
 import { updateStats, updateTeamStats } from "./updateGameStats";
 import { MatchWithTeams } from "../types/Match";
 import { AppDispatch, store } from "../store";
-import { selectUniversitiesWithPlayers } from "../selectors/data.selectors";
+import { selectAllPlayers, selectAllUniversities, selectUniversitiesWithPlayers } from "../selectors/data.selectors";
 import { setMultipleMatchResults } from "../store/slices/scheduleSlice";
 import { PlayerGameStats } from "../types/PlayerGameStats";
 import { TeamGameStats } from "../types/TeamGameStats";
-import { updatePlayerStats, updateUniversityStats } from "../store/slices/dataSlice";
-import { playerGameStatsToDeltas, teamGameStatsToDeltas } from "../utils/gameStatsToMatchResults";
+import {
+  updatePlayersSkills,
+  updatePlayerStats,
+  updateUniversityStats,
+} from "../store/slices/dataSlice";
+import {
+  playerGameStatsToDeltas,
+  teamGameStatsToDeltas,
+} from "../utils/gameStatsToMatchResults";
+import { TIMEOUTS_QTY } from "../constants/game.constants";
+import { progressPlayers } from "./playerProgression";
+import { toRecord } from "../utils/toRecord";
 
 export function simulateMatchWithoutPlayer(
   schedule: MatchWithTeams[],
@@ -78,7 +88,16 @@ export function simulateMatchWithoutPlayer(
     allTeamStats[match.awayStats.id] = match.awayStats;
   }
 
+  const allPlayers = selectAllPlayers(store.getState());
+  const unis = toRecord(selectAllUniversities(store.getState()));
+  const playersWithProgress = progressPlayers(
+    allPlayers,
+    allPlayerStats,
+    unis,
+  );
+
   dispatch(updatePlayerStats(playerGameStatsToDeltas(2026, allPlayerStats)));
+  dispatch(updatePlayersSkills(playersWithProgress));
   dispatch(updateUniversityStats(teamGameStatsToDeltas(2026, allTeamStats)));
 }
 
@@ -102,14 +121,14 @@ function simulateFullMatch(
     ),
     homeLineup: selectCpuStarters(homeUniversity.players || []),
     awayLineup: selectCpuStarters(awayUniversity.players || []),
-    homeTimeouts: 8,
+    homeTimeouts: TIMEOUTS_QTY,
     homeTimeoutsOnQrt: 0,
-    awayTimeouts: 8,
+    awayTimeouts: TIMEOUTS_QTY,
     awayTimeoutsOnQrt: 0,
     logPlays: [],
   };
 
-  if(state.isGameOver && state.homeStats.points === state.homeStats.points) {
+  if (state.isGameOver && state.homeStats.points === state.homeStats.points) {
     state.isGameOver = false;
     state.timeLeft += 60;
   }

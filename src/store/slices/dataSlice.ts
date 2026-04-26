@@ -8,7 +8,6 @@ interface DataState {
   /** universities grouped by leagueId */
   universitiesByLeague: Record<string, University[]>;
   /** players grouped by universityId */
-  playersByUniversity: Record<string, Player[]>;
   playersById: Record<string, Player>;
   loading: boolean;
   error?: string;
@@ -16,7 +15,6 @@ interface DataState {
 
 const initialState: DataState = {
   universitiesByLeague: {},
-  playersByUniversity: {},
   playersById: {},
   loading: false,
 };
@@ -35,13 +33,6 @@ function groupByLeague(
 ): Record<string, University[]> {
   return universities.reduce<Record<string, University[]>>((acc, uni) => {
     (acc[uni.leagueId] ??= []).push(uni);
-    return acc;
-  }, {});
-}
-
-function groupByUniversity(players: Player[]): Record<string, Player[]> {
-  return players.reduce<Record<string, Player[]>>((acc, player) => {
-    (acc[player.currentUniversity] ??= []).push(player);
     return acc;
   }, {});
 }
@@ -70,7 +61,6 @@ const dataSlice = createSlice({
       const players = Array.isArray(action.payload)
         ? action.payload
         : Object.values(action.payload);
-      state.playersByUniversity = groupByUniversity(players);
       state.playersById = {};
       for (const p of players) {
         state.playersById[p.id] = p;
@@ -93,23 +83,37 @@ const dataSlice = createSlice({
         if (player) Object.assign(player, changes);
       }
     },
+    updatePlayerSkills(
+      state,
+      action: PayloadAction<{ id: string; changes: Partial<Skill> }>,
+    ) {
+      const { id, changes } = action.payload;
+      const player = state.playersById[id];
+      if (player?.skills) {
+        Object.assign(player.skills, changes);
+      }
+    },
+    updatePlayersSkills(
+      state,
+      action: PayloadAction<{ id: string; changes: Partial<Skill> }[]>,
+    ) {
+      for (const { id, changes } of action.payload) {
+        const player = state.playersById[id];
+        if (player?.skills) Object.assign(player.skills, changes);
+      }
+    },
     updatePlayerStats(
       state,
       action: PayloadAction<
         {
           id: string;
-          skillChanges?: Partial<Skill>;
-          statDeltas?: Partial<PlayerSeasonStats>;
+          statDeltas: Partial<PlayerSeasonStats>;
         }[]
       >,
     ) {
-      for (const { id, skillChanges, statDeltas } of action.payload) {
+      for (const { id, statDeltas } of action.payload) {
         const player = state.playersById[id];
         if (!player) continue;
-
-        if (skillChanges && player.skills) {
-          Object.assign(player.skills, skillChanges); // skills = substituição direta
-        }
 
         if (statDeltas && statDeltas.year && player.stats[statDeltas.year]) {
           for (const key of Object.keys(
@@ -174,6 +178,7 @@ export const {
   updatePlayer,
   updatePlayers,
   updatePlayerStats,
+  updatePlayersSkills,
   updateUniversityStats,
 } = dataSlice.actions;
 export default dataSlice.reducer;

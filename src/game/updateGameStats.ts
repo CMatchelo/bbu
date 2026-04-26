@@ -90,7 +90,6 @@ export function updateStats(
     homeLineup,
     awayLineup,
   );
-
   return updatedStats;
 }
 
@@ -100,8 +99,7 @@ function applyShotStats(
   homeLineup: Player[],
   awayLineup: Player[],
 ) {
-  if (!possession.success) return stats;
-
+  if (possession.stolenBy || possession.turnoverBy) return stats;
   const shooterId = possession.selectedPlayer.id;
   const shooter = stats[shooterId];
   if (!shooter) return stats;
@@ -115,10 +113,10 @@ function applyShotStats(
   updated[shooterId] = {
     ...shooter,
     fga: shooter.fga + 1,
-    fgm: shooter.fgm + 1,
+    fgm: shooter.fgm + (possession.success ? 1 : 0),
     tpa: shooter.tpa + (isThree ? 1 : 0),
-    tpm: shooter.tpm + (isThree ? 1 : 0),
-    points: shooter.points + possession.points,
+    tpm: shooter.tpm + (isThree && possession.success ? 1 : 0),
+    points: shooter.points + (possession.success ? possession.points : 0),
   };
 
   const homeIsScoring = homeLineup.some(
@@ -147,8 +145,6 @@ function applyShotStats(
       teamPointsAllowed: pStats.teamPointsAllowed + possession.points,
     };
   });
-
-  console.log(updated)
 
   return updated;
 }
@@ -236,7 +232,20 @@ function applyBlockStats(
   const blockId = possession.blockBy.id;
   const blocker = stats[blockId];
 
+  const shooterId = possession.selectedPlayer.id;
+  const shooter = stats[shooterId];
+
+  const isThree = possession.shotType === "THREE";
+
   const updated = { ...stats };
+
+  if (shooter) {
+    updated[shooterId] = {
+      ...shooter,
+      fga: shooter.fga + 1,
+      tpa: shooter.tpa + (isThree ? 1 : 0),
+    };
+  }
 
   if (blocker) {
     updated[blockId] = {

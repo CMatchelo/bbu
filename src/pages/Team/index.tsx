@@ -5,6 +5,7 @@ import { SkillsTable } from "./Components/SkillsTable";
 import { selectUniversitiesWithPlayers } from "../../selectors/data.selectors";
 import { useState } from "react";
 import { PlayerStats } from "../../Components/PlayerStats";
+import { PlayerStatsTwo } from "../../Components/PlayerStats copy";
 
 export default function Team() {
   const user = useAuthUser();
@@ -43,6 +44,7 @@ export default function Team() {
         </button>
       </div>
       {table === "skills" && <SkillsTable players={players} />}
+      {/* {table === "skills" && <PlayerStatsTwo players={players} />} */}
       {table === "stats" && <PlayerStats players={players} />}
     </ParentSecion>
   );

@@ -28,8 +28,7 @@ function skillColor(value: number) {
   return "text-text2";
 }
 
-export const SkillsTable = ({players}: SkillsTableProps) => {
-  
+export const SkillsTable = ({ players }: SkillsTableProps) => {
   const playersSorted = players
     ?.slice()
     .sort((a, b) => a.inCourtPosition.localeCompare(b.inCourtPosition));
@@ -38,10 +37,10 @@ export const SkillsTable = ({players}: SkillsTableProps) => {
       <table className="w-full min-w-[700px] border-collapse">
         <thead>
           <tr className="bg-cardbglight">
+            <TableHead className="w-12">Pos</TableHead>
             <TableHead align="left" className="w-40 pl-5">
               Jogador
             </TableHead>
-            <TableHead className="w-12">Pos</TableHead>
             {SKILLS.map(({ label }) => (
               <TableHead key={label}>{label}</TableHead>
             ))}
@@ -51,13 +50,13 @@ export const SkillsTable = ({players}: SkillsTableProps) => {
         <tbody>
           {playersSorted?.map((player, index) => (
             <TableRow key={player.id} index={index}>
+              <td className="text-center py-2.5 px-2">
+                <Pill variant="muted">{player.inCourtPosition}</Pill>
+              </td>
               <td className="pl-5 py-2.5">
                 <span className="text-[13px] font-medium text-text1">
                   {player.firstName} {player.lastName}
                 </span>
-              </td>
-              <td className="text-center py-2.5 px-2">
-                <Pill variant="yellow">{player.inCourtPosition}</Pill>
               </td>
               {SKILLS.map(({ key }) => {
                 const value = player.skills[key];
@@ -66,7 +65,7 @@ export const SkillsTable = ({players}: SkillsTableProps) => {
                     key={key}
                     className={`text-center py-2.5 px-2 text-[12px] ${skillColor(value)}`}
                   >
-                    {value}
+                    {Math.floor(value)}
                   </td>
                 );
               })}

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { University } from "../types/University";
 import { PlayLog } from "../types/PlayLog";
 import { PlayerGameStats } from "../types/PlayerGameStats";
@@ -13,6 +13,7 @@ import { TeamGameStats } from "../types/TeamGameStats";
 import { updateStats, updateTeamStats } from "./updateGameStats";
 import { createEmptyTeamStats } from "../utils/createEmptyStats";
 import { quarterDuration } from "../constants/quarterDuration";
+import { TIMEOUTS_QTY } from "../constants/game.constants";
 
 const QUARTER_DURATION = quarterDuration;
 
@@ -38,8 +39,8 @@ export function useGameSimulation({
   const [awayStats, setAwayStats] = useState<TeamGameStats>(
     createEmptyTeamStats(awayUniversity.id),
   );
-  const [userTimeouts, setUserTimeouts] = useState<number>(8);
-  const [cpuTimeouts, setCpuTimeouts] = useState<number>(8);
+  const [userTimeouts, setUserTimeouts] = useState<number>(TIMEOUTS_QTY);
+  const [cpuTimeouts, setCpuTimeouts] = useState<number>(TIMEOUTS_QTY);
   const [cpuTimeoutsOnQrt, setCpuTimeoutsOnQrt] = useState<number>(0);
   const [quarter, setQuarter] = useState(1);
   const [timeLeft, setTimeLeft] = useState(QUARTER_DURATION);
@@ -183,7 +184,7 @@ export function useGameSimulation({
     }
 
     const timeoutState: TimeoutState = {
-      used: 8 - cpuTimeouts,
+      used: TIMEOUTS_QTY - cpuTimeouts,
       usedThisQuarter: cpuTimeoutsOnQrt,
     };
     const diffPoints = isPlayerHome

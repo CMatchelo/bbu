@@ -49,7 +49,7 @@ export function MatchesTable({ schedule }: MatchesTableProps) {
                     <span className="text-[13px] font-medium text-text1">
                       {match.homeTeam.nickname}
                     </span>
-                    <Pill variant="green">
+                    <Pill variant="green" className="w-20">
                       {match.homeTeam.id.toUpperCase()}
                     </Pill>
                   </div>
@@ -75,7 +75,7 @@ export function MatchesTable({ schedule }: MatchesTableProps) {
                 </td>
                 <td className="pl-4 py-2.5">
                   <div className="flex items-center gap-2">
-                    <Pill variant="green">
+                    <Pill variant="green" className="w-20">
                       {match.awayTeam.id.toUpperCase()}
                     </Pill>
                     <span className="text-[13px] font-medium text-text1">

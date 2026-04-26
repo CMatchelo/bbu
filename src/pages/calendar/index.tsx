@@ -11,7 +11,6 @@ export default function Calendar() {
 
   const teamSelector = useMemo(() => selectTeamSchedule(user?.currentUniversity.id || ""), [user?.currentUniversity.id]);
   const teamSchedule = useSelector(teamSelector);
-  console.log(user?.currentUniversity.leagueId)
 
   return (
     <ParentSecion>

@@ -6,9 +6,14 @@ export function randomFloat(min: number, max: number) {
   return Math.random() * (max - min) + min;
 }
 
+export function rand(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 export function clamp(val: number, min: number, max: number) {
   return Math.max(min, Math.min(max, val));
 }
+
 
 export function weightedRandom<T>(items: T[], weights: number[]): T {
   const total = weights.reduce((a, b) => a + b, 0);
@@ -23,7 +28,7 @@ export function weightedRandom<T>(items: T[], weights: number[]): T {
 
 export function get2Best(
   players: Player[],
-  stat: keyof Player["skills"]
+  stat: keyof Player["skills"],
 ): number[] {
   const sorted = [...players].sort((a, b) => b.skills[stat] - a.skills[stat]);
   return [sorted[0].skills[stat] || 0, sorted[1].skills[stat] || 0];
@@ -37,7 +42,7 @@ export function getPoints(play: PlayType): number {
 
 export function calcOffAvg(
   players: Player[],
-  playerStats: Record<string, PlayerGameStats> | null
+  playerStats: Record<string, PlayerGameStats> | null,
 ): number {
   let total = 0;
 
@@ -53,7 +58,7 @@ export function calcOffAvg(
 
 export function calcDefAvg(
   players: Player[],
-  playerStats: Record<string, PlayerGameStats> | null
+  playerStats: Record<string, PlayerGameStats> | null,
 ): number {
   let total = 0;
 
@@ -79,21 +84,17 @@ export function checkIfBlocked(
   shooter: Player,
   blockBy: Player,
   playType: PlayType,
-  blockerStamina: number
+  blockerStamina: number,
 ) {
   const skill =
     playType === "THREE"
       ? shooter.skills.threept
       : playType === "TWO"
-      ? shooter.skills.twopt
-      : shooter.skills.layup;
+        ? shooter.skills.twopt
+        : shooter.skills.layup;
 
-  const staminaFactor = Math.max(
-    0.85,
-    0.9 + blockerStamina / 1000
-  );
-  const penalizedBlockSkill =
-    blockBy.skills.block * staminaFactor;
+  const staminaFactor = Math.max(0.85, 0.9 + blockerStamina / 1000);
+  const penalizedBlockSkill = blockBy.skills.block * staminaFactor;
   const diff = skill - penalizedBlockSkill;
   const chance = 0.04 + 0.08 / (1 + Math.exp(-diff / 8));
   return Math.min(Math.max(chance, 0.01), 0.12);
@@ -104,7 +105,7 @@ const randomFactor = (min = 0.95, max = 1.05) =>
 
 export const calculateStaminaSpent = (
   duration: number,
-  staminaSkill: number
+  staminaSkill: number,
 ) => {
   const baseCostPerSecond = 0.08;
   const fatigueFactor = (100 - staminaSkill) / 100;
@@ -121,3 +122,7 @@ export const calculateBenchRecovery = (duration: number) => {
 
   return base * randomFactor(0.9, 1.1);
 };
+
+export function sigmoid(x: number) {
+  return 1 / (1 + Math.exp(-8 * (x - 0.5)));
+}

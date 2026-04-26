@@ -7,6 +7,7 @@ import {
 import { setPlayers, setUniversities } from "../../../store/slices/dataSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { useNavigate } from "react-router-dom";
+import { Icons } from "../../../utils/icons";
 
 type LoadGameProps = {
   saveIds: string[];
@@ -32,9 +33,7 @@ export const LoadGame = ({ saveIds }: LoadGameProps) => {
       return;
     }
 
-    // Carregar universidades da pasta de save (com roster já populado)
     dispatch(setUniversities(Object.values(userLoaded.universities)));
-    
     dispatch(setSchedule(userLoaded.schedule.matches));
     dispatch(setCurrentWeek(userLoaded.schedule.currentWeek));
     dispatch(setPlayers(userLoaded.players));
@@ -44,28 +43,74 @@ export const LoadGame = ({ saveIds }: LoadGameProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-3 mt-4">
-      <h2 className="text-text1 text-lg">
-        Escolha um save
-      </h2>
+    <div className="flex flex-col gap-4 mt-2 w-full min-w-[280px]">
+      <div>
+        <h2 className="text-text1 text-base font-bold tracking-tight">
+          Escolha um save
+        </h2>
+        <p className="text-text2 text-xs mt-0.5">
+          {saveIds.length} {saveIds.length === 1 ? "arquivo encontrado" : "arquivos encontrados"}
+        </p>
+      </div>
 
-      {saveIds.map((save, i) => (
-        <button
-          key={save}
-          onClick={() => setChosenId(i)}
-          className={`text-left p-3 rounded-md transition
-        ${
-          chosenId === i
-            ? "bg-highlights2 text-black"
-            : "bg-cardbglight text-text1"
-        }
-      `}
-        >
-          {save.split("_")[0]}
-        </button>
-      ))}
+      {saveIds.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-8 gap-2 text-text2">
+          <span className="text-xs">Nenhum save encontrado</span>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-1.5">
+          {saveIds.map((save, i) => {
+            const isChosen = chosenId === i;
+            return (
+              <button
+                key={save}
+                onClick={() => setChosenId(i)}
+                className={`
+                  text-left px-4 py-3 rounded-xl border transition-all duration-150
+                  flex items-center gap-3
+                  ${isChosen
+                    ? "bg-highlights2/15 border-highlights2/50 shadow-sm"
+                    : "bg-cardbgdark border-cardbglight hover:border-cardbglight/80 hover:bg-cardbglight/30"
+                  }
+                `}
+              >
+                {/* Indicator dot */}
+                <span className={`
+                  w-2 h-2 rounded-full shrink-0 transition-colors duration-150
+                  ${isChosen ? "bg-highlights2" : "bg-cardbglight"}
+                `} />
 
-      <button onClick={loadGame} className="btn-primary">
+                <div className="flex flex-col min-w-0">
+                  <span className={`
+                    text-sm font-semibold truncate transition-colors duration-150
+                    ${isChosen ? "text-highlights2" : "text-text1"}
+                  `}>
+                    {save.split("_")[0]}
+                  </span>
+                  <span className="text-xs text-text2 truncate">
+                    {save.split("_").slice(1, -1).join(" ") || "Save file"}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      <button
+        onClick={loadGame}
+        disabled={chosenId === null}
+        className="
+          w-full py-3 px-6 rounded-xl font-bold text-sm uppercase tracking-widest
+          bg-highlights1 text-mainbgdark
+          hover:bg-highlights1light
+          active:bg-highlights1dark
+          disabled:opacity-30 disabled:cursor-not-allowed
+          transition-colors duration-150 shadow-lg shadow-highlights1/20
+          flex items-center justify-center gap-2
+        "
+      >
+        {Icons.IconLoad}
         Carregar
       </button>
     </div>
