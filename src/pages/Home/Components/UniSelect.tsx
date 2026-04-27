@@ -39,7 +39,7 @@ export const UniSelect = ({
         <span className={selected ? "text-text1" : "text-text2/40"}>
           {selected
             ? `${selected.name} — ${selected.nickname}`
-            : "— selecionar —"}
+            : `— ${t("systemGeneral.select")} —`}
         </span>
         {Icons.IconArrowDown}
       </button>

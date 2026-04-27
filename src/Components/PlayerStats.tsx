@@ -45,7 +45,7 @@ export const PlayerStats = ({ players }: PlayerStatsProps) => {
     isNaN(val) ? "—" : val.toFixed(decimals);
   return (
     <TableCard
-      title={t("generalLocale.standings")}
+      title={t("generalLocale.stats")}
       badge={`${t("generalLocale.season")} ${user?.currentSeason}`}
     >
       <div ref={parentRef} className="h-[600px] overflow-auto">
@@ -55,7 +55,7 @@ export const PlayerStats = ({ players }: PlayerStatsProps) => {
             style={{ gridTemplateColumns: columns }}
           >
             <TableHead className="text-right pr-1">#</TableHead>
-            <TableHead>Player</TableHead>
+            <TableHead>{t("generalLocale.player")}</TableHead>
             <TableHead className="text-center">UNI</TableHead>
 
             <TableHead

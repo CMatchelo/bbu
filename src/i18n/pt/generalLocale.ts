@@ -6,9 +6,16 @@ export const generalLocale = {
   roster: "Equipe",
   player: "Jogador",
   standings: "Classificação",
+  practice: "Treino",
+  focus: "Foco",
   season: "Temporada",
   matches: "Jogos",
   score: "Placar",
   team: "Time",
-  level: "Nível"
+  level: "Nível",
+  manager: "Técnico",
+  university: "Universidade",
+  stats: "Estatísticas",
+  skills: "Habilidades",
+  upcoming: "A jogar"
 };

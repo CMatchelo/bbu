@@ -6,9 +6,11 @@ import { selectUniversitiesWithPlayers } from "../../selectors/data.selectors";
 import { useState } from "react";
 import { PlayerStats } from "../../Components/PlayerStats";
 import { PlayerStatsTwo } from "../../Components/PlayerStats copy";
+import { useTranslation } from "react-i18next";
 
 export default function Team() {
   const user = useAuthUser();
+  const { t } = useTranslation();
   const universities = useSelector(selectUniversitiesWithPlayers);
   const players =
     universities.find((u) => u.id === user.currentUniversity.id)?.players || [];
@@ -23,24 +25,26 @@ export default function Team() {
           className={`
             px-4 py-2 text-[12px] font-medium whitespace-nowrap transition-all
             ${
-          table === "skills"
-            ? "bg-highlights1/12 text-highlights1"
-            : "text-text2 hover:bg-highlights1/6 hover:text-text1"}
+              table === "skills"
+                ? "bg-highlights1/12 text-highlights1"
+                : "text-text2 hover:bg-highlights1/6 hover:text-text1"
+            }
             `}
         >
-          Skills
+          {t("generalLocale.skills")}
         </button>
         <button
           onClick={() => setTable("stats")}
           className={`
             px-4 py-2 text-[12px] font-medium whitespace-nowrap transition-all
             ${
-          table === "stats"
-            ? "bg-highlights1/12 text-highlights1"
-            : "text-text2 hover:bg-highlights1/6 hover:text-text1"}
+              table === "stats"
+                ? "bg-highlights1/12 text-highlights1"
+                : "text-text2 hover:bg-highlights1/6 hover:text-text1"
+            }
             `}
         >
-          Stats
+          {t("generalLocale.stats")}
         </button>
       </div>
       {table === "skills" && <SkillsTable players={players} />}

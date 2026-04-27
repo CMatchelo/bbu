@@ -39,22 +39,22 @@ const DIFFICULTIES: {
 }[] = [
   {
     key: 1,
-    label: "Fácil",
-    description: "Adversários mais fracos e progressão mais rápida.",
+    label: "easy",
+    description: "easyDesc",
     activeClasses: "bg-highlights1/10 border-highlights1/40",
     dotColor: "bg-highlights1",
   },
   {
     key: 2,
-    label: "Médio",
-    description: "Experiência balanceada e desafios graduais.",
+    label: "medium",
+    description: "mediumDesc",
     activeClasses: "bg-highlights2/10 border-highlights2/40",
     dotColor: "bg-highlights2",
   },
   {
     key: 3,
-    label: "Difícil",
-    description: "Rivais implacáveis. Cada decisão importa.",
+    label: "hard",
+    description: "hardDesc",
     activeClasses: "bg-red-500/10 border-red-500/40",
     dotColor: "bg-red-400",
   },
@@ -87,7 +87,6 @@ function Section({
     </div>
   );
 }
-
 
 export default function NewGame() {
   const dispatch = useAppDispatch();
@@ -146,7 +145,11 @@ export default function NewGame() {
       dispatch(setSchedule(schedule));
       dispatch(setCurrentWeek(1));
 
-      const players = generateAllPlayers(universities, difficulty, selectedUni.id);
+      const players = generateAllPlayers(
+        universities,
+        difficulty,
+        selectedUni.id,
+      );
       const universitiesWithRoster = buildUniversitiesWithRoster(players);
       dispatch(setPlayers(players));
 
@@ -176,7 +179,7 @@ export default function NewGame() {
   return (
     <div className="flex flex-row gap-6 mt-2 min-w-[600px] items-start">
       <div className="flex flex-col gap-3 w-[600px] max-w-md">
-        <Section label="Manager">
+        <Section label={t("generalLocale.manager")}>
           <input
             className="
               w-full bg-mainbgdark border border-cardbglight rounded-lg
@@ -185,13 +188,13 @@ export default function NewGame() {
               hover:border-highlights1/40 focus:border-highlights1/60 focus:outline-none
               transition-colors duration-150
             "
-            placeholder="Seu nome"
+            placeholder={t("systemGeneral.name")}
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
         </Section>
 
-        <Section label="Universidade" loading={loading}>
+        <Section label={t("generalLocale.university")} loading={loading}>
           <UniSelect
             grouped={grouped}
             selectedUniId={selectedUniId}
@@ -201,7 +204,7 @@ export default function NewGame() {
           />
         </Section>
 
-        <Section label="Dificuldade">
+        <Section label={t("systemGeneral.difficulty")}>
           <div className="flex flex-col min-w-1/2 gap-2">
             {DIFFICULTIES.map((d) => {
               const isSelected = difficulty === d.key;
@@ -231,10 +234,10 @@ export default function NewGame() {
                     <span
                       className={`text-sm font-semibold transition-colors duration-150 ${isSelected ? "text-text1" : "text-text2"}`}
                     >
-                      {d.label}
+                      {t(`systemGeneral.${d.label}`)}
                     </span>
                     <p className="text-xs text-text2 leading-relaxed truncate">
-                      {d.description}
+                      {t(`systemGeneral.${d.description}`)}
                     </p>
                   </div>
 
@@ -260,7 +263,6 @@ export default function NewGame() {
           </div>
         </Section>
 
-        {/* Start button */}
         <button
           onClick={startGame}
           disabled={!canStart}
@@ -294,5 +296,3 @@ export default function NewGame() {
     </div>
   );
 }
-
-

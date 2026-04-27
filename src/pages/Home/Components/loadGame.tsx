@@ -8,6 +8,7 @@ import { setPlayers, setUniversities } from "../../../store/slices/dataSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { useNavigate } from "react-router-dom";
 import { Icons } from "../../../utils/icons";
+import { useTranslation } from "react-i18next";
 
 type LoadGameProps = {
   saveIds: string[];
@@ -18,10 +19,10 @@ export const LoadGame = ({ saveIds }: LoadGameProps) => {
   const navigate = useNavigate();
   const { loadUser } = useUser();
   const [chosenId, setChosenId] = useState<number | null>(null);
+  const { t } = useTranslation()
 
   const loadGame = async () => {
     if (chosenId == null || chosenId < 0) {
-      console.log("Escolha um jogo para carregar");
       return;
     }
 
@@ -44,14 +45,6 @@ export const LoadGame = ({ saveIds }: LoadGameProps) => {
 
   return (
     <div className="flex flex-col gap-4 mt-2 w-full min-w-[280px]">
-      <div>
-        <h2 className="text-text1 text-base font-bold tracking-tight">
-          Escolha um save
-        </h2>
-        <p className="text-text2 text-xs mt-0.5">
-          {saveIds.length} {saveIds.length === 1 ? "arquivo encontrado" : "arquivos encontrados"}
-        </p>
-      </div>
 
       {saveIds.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-8 gap-2 text-text2">
@@ -87,9 +80,6 @@ export const LoadGame = ({ saveIds }: LoadGameProps) => {
                   `}>
                     {save.split("_")[0]}
                   </span>
-                  <span className="text-xs text-text2 truncate">
-                    {save.split("_").slice(1, -1).join(" ") || "Save file"}
-                  </span>
                 </div>
               </button>
             );
@@ -111,7 +101,7 @@ export const LoadGame = ({ saveIds }: LoadGameProps) => {
         "
       >
         {Icons.IconLoad}
-        Carregar
+        {t('systemGeneral.loadGame')}
       </button>
     </div>
   );

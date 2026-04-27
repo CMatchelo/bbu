@@ -14,8 +14,7 @@ export default function Calendar() {
 
   return (
     <ParentSecion>
-      Season calendar
-      <StandingsTable leagueId={user!.currentUniversity.leagueId} />
+      {/* <StandingsTable leagueId={user!.currentUniversity.leagueId} /> */}
       <MatchesTable schedule={teamSchedule} />
     </ParentSecion>
   );

@@ -4,10 +4,12 @@ import { LoadGame } from "./Components/loadGame";
 import { useUser } from "../../Context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { Icons } from "../../utils/icons";
+import { useTranslation } from "react-i18next";
 
 export default function MainScreen() {
   const [savesIds, setSavesId] = useState<string[]>([]);
   const { user } = useUser();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -79,7 +81,7 @@ export default function MainScreen() {
                     transition-colors duration-150 shadow-lg shadow-highlights1/20
                   "
                 >
-                  Novo jogo
+                  {t("systemGeneral.newGame")}
                 </button>
                 <button
                   onClick={openLoadScreen}
@@ -91,7 +93,7 @@ export default function MainScreen() {
                     transition-colors duration-150
                   "
                 >
-                  Carregar jogo
+                  {t("systemGeneral.loadGame")}
                 </button>
               </>
             )}
@@ -105,7 +107,7 @@ export default function MainScreen() {
                 "
               >
                 {Icons.IconBack}
-                Voltar
+                {t("systemGeneral.goBack")}
               </button>
             )}
 

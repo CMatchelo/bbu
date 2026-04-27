@@ -4,6 +4,7 @@ import { Player } from "../../../types/Player";
 import { Pill } from "../../../Components/Pill";
 import { TableRow } from "../../../Components/TableRow";
 import { playerAverage } from "../../../game/skillsAverage";
+import { useTranslation } from "react-i18next";
 
 interface SkillsTableProps {
   players: Player[];
@@ -29,17 +30,18 @@ function skillColor(value: number) {
 }
 
 export const SkillsTable = ({ players }: SkillsTableProps) => {
+  const { t } = useTranslation()
   const playersSorted = players
     ?.slice()
     .sort((a, b) => a.inCourtPosition.localeCompare(b.inCourtPosition));
   return (
-    <TableCard title="Elenco & Estratégia">
+    <TableCard title={t("generalLocale.roster")}>
       <table className="w-full min-w-[700px] border-collapse">
         <thead>
           <tr className="bg-cardbglight">
             <TableHead className="w-12">Pos</TableHead>
             <TableHead align="left" className="w-40 pl-5">
-              Jogador
+              {t("generalLocale.player")}
             </TableHead>
             {SKILLS.map(({ label }) => (
               <TableHead key={label}>{label}</TableHead>

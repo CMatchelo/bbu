@@ -16,7 +16,7 @@ export function MatchesTable({ schedule }: MatchesTableProps) {
   const { user } = useUser()
 
   return (
-    <TableCard title="Jogos" badge={`${t("generalLocale.season")} ${user?.currentSeason}`}>
+    <TableCard title={t("generalLocale.matches")} badge={`${t("generalLocale.season")} ${user?.currentSeason}`}>
       <table className="w-full border-collapse">
         <thead>
           <tr className="bg-cardbglight">
@@ -70,7 +70,7 @@ export function MatchesTable({ schedule }: MatchesTableProps) {
                       </span>
                     </div>
                   ) : (
-                    <span className="text-[11px] text-text2">a definir</span>
+                    <span className="text-[11px] text-text2">{t("generalLocale.upcoming")}</span>
                   )}
                 </td>
                 <td className="pl-4 py-2.5">

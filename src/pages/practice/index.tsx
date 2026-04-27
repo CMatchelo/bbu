@@ -13,9 +13,11 @@ import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { updatePlayers } from "../../store/slices/dataSlice";
 import { PracticeSelect } from "./components/PracticeSelect";
 import { savePlayers } from "../../utils/saveGame";
+import { useTranslation } from "react-i18next";
 
 export default function Practice() {
   const user = useAuthUser();
+  const { t } = useTranslation();
   const universities = useSelector(selectUniversitiesWithPlayers);
   const dispatch = useAppDispatch();
 
@@ -51,7 +53,7 @@ export default function Practice() {
 
   return (
     <ParentSecion>
-      <TableCard title="Practicing">
+      <TableCard title={t("generalLocale.practice")}>
         <table className="w-full min-w-[700px] border-collapse">
           <thead>
             <tr className="bg-cardbglight">
@@ -61,9 +63,9 @@ export default function Practice() {
                 children={undefined}
               />
               <TableHead align="left" className="pl-3 w-40">
-                Jogador
+                {t("generalLocale.player")}
               </TableHead>
-              <TableHead className="pl-3 w-44">Treino</TableHead>
+              <TableHead className="pl-3 w-44">{t("generalLocale.focus")}</TableHead>
 
               <td className="w-px bg-detail3" />
 
@@ -73,9 +75,9 @@ export default function Practice() {
                 children={undefined}
               />
               <TableHead align="left" className="pl-3 w-40">
-                Jogador
+                {t("generalLocale.player")}
               </TableHead>
-              <TableHead className="pl-3 w-44">Treino</TableHead>
+              <TableHead className="pl-3 w-44">{t("generalLocale.focus")}</TableHead>
             </tr>
           </thead>
           <tbody>
@@ -127,7 +129,7 @@ export default function Practice() {
       </TableCard>
 
       <button onClick={savePractice} disabled={pendingUpdates.length === 0}>
-        Save practice
+        {t('systemGeneral.savePractice')}
       </button>
     </ParentSecion>
   );
