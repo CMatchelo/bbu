@@ -7,8 +7,8 @@ export function playerGameStatsToDeltas(
   playerGameStats: Record<string, PlayerGameStats>,
 ): { id: string; statDeltas: Partial<PlayerSeasonStats> }[] {
   return Object.values(playerGameStats).map(
-    ({ playerId, name, teamId, opponentId, ...stats }) => ({
-      id: playerId,
+    ({ id, name, teamId, opponentId, injured, ...stats }) => ({
+      id,
       statDeltas: { year: currentYear, matches: 1, ...stats },
     }),
   );

@@ -1,5 +1,4 @@
 import { Player } from "../types/Player";
-import { PlayerGameStats } from "../types/PlayerGameStats";
 import { Skill } from "../types/Skill";
 
 type Position = Player["inCourtPosition"];

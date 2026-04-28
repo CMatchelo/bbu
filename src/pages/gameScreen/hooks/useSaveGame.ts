@@ -11,6 +11,7 @@ import {
   setMatchResult,
 } from "../../../store/slices/scheduleSlice";
 import {
+  updatePlayers,
   updatePlayersSkills,
   updatePlayerStats,
   updateUniversityStats,
@@ -30,6 +31,7 @@ import { TeamGameStats } from "../../../types/TeamGameStats";
 import { setStarters } from "../../../store/slices/gameSettingsSlice";
 import { savePlayers, saveUniversities } from "../../../utils/saveGame";
 import { progressPlayers } from "../../../game/playerProgression";
+import { ApplyInjuries } from "../../../game/injuryGenerator";
 
 interface UseSaveGameParams {
   user: User;
@@ -91,10 +93,14 @@ export function useSaveGame({
       const folderName = `${user.name}_${user.id}`;
       // Update week
       dispatch(incrementWeek());
+
       // Update players stats
       dispatch(
-        updatePlayerStats(playerGameStatsToDeltas(user.currentSeason, playerGameStats)),
+        updatePlayerStats(
+          playerGameStatsToDeltas(user.currentSeason, playerGameStats),
+        ),
       );
+
       // Update players skills
       const allPlayers = selectAllPlayers(store.getState());
       const unis = toRecord(selectAllUniversities(store.getState()));
@@ -104,6 +110,12 @@ export function useSaveGame({
         unis,
       );
       dispatch(updatePlayersSkills(playersWithProgress));
+
+      // Update players injuries
+      const updates = ApplyInjuries(allPlayers);
+      dispatch(updatePlayers(updates));
+
+      // Save players
       await savePlayers(folderName);
 
       // Update universities

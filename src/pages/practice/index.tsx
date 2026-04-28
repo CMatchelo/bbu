@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { ParentSecion } from "../../Components/ParentSection";
 import { useAuthUser } from "../../hooks/useAuthUser";
-import { selectUniversitiesWithPlayers } from "../../selectors/data.selectors";
+import { selectPlayersFromUniversity } from "../../selectors/data.selectors";
 import { TableCard } from "../../Components/TableCard";
 import { TableHead } from "../../Components/TableHead";
 import { TableRow } from "../../Components/TableRow";
@@ -14,28 +14,30 @@ import { updatePlayers } from "../../store/slices/dataSlice";
 import { PracticeSelect } from "./components/PracticeSelect";
 import { savePlayers } from "../../utils/saveGame";
 import { useTranslation } from "react-i18next";
+import { Icons } from "../../utils/icons";
+import { RootState } from "../../store";
 
 export default function Practice() {
   const user = useAuthUser();
   const { t } = useTranslation();
-  const universities = useSelector(selectUniversitiesWithPlayers);
   const dispatch = useAppDispatch();
 
-  const players =
-    universities.find((u) => u.id === user.currentUniversity.id)?.players ?? [];
+  const players = useSelector((state: RootState) =>
+    selectPlayersFromUniversity(state, user.currentUniversity.id),
+  );
 
   const [pendingUpdates, setPendingUpdates] = useState<
     { id: string; changes: Partial<Player> }[]
   >([]);
 
-  const updatePractice = (key: keyof Skill, playerId: string) => {
+  const updatePractice = (key: keyof Skill, id: string) => {
     setPendingUpdates((prev) => {
-      const existing = prev.find((p) => p.id === playerId);
+      const existing = prev.find((p) => p.id === id);
       if (existing) {
         existing.changes.practicing = key;
         return [...prev];
       }
-      return [...prev, { id: playerId, changes: { practicing: key } }];
+      return [...prev, { id: id, changes: { practicing: key } }];
     });
   };
 
@@ -65,7 +67,9 @@ export default function Practice() {
               <TableHead align="left" className="pl-3 w-40">
                 {t("generalLocale.player")}
               </TableHead>
-              <TableHead className="pl-3 w-44">{t("generalLocale.focus")}</TableHead>
+              <TableHead className="pl-3 w-44">
+                {t("generalLocale.focus")}
+              </TableHead>
 
               <td className="w-px bg-detail3" />
 
@@ -77,7 +81,9 @@ export default function Practice() {
               <TableHead align="left" className="pl-3 w-40">
                 {t("generalLocale.player")}
               </TableHead>
-              <TableHead className="pl-3 w-44">{t("generalLocale.focus")}</TableHead>
+              <TableHead className="pl-3 w-44">
+                {t("generalLocale.focus")}
+              </TableHead>
             </tr>
           </thead>
           <tbody>
@@ -86,10 +92,11 @@ export default function Practice() {
                 <td className="pl-5 py-2.5">
                   <Pill variant="muted">{left.inCourtPosition}</Pill>
                 </td>
-                <td className="pl-3 py-2.5">
+                <td className="pl-3 py-2.5 flex flex-row gap-3">
                   <span className="text-[13px] font-medium text-text1">
                     {left.firstName} {left.lastName}
                   </span>
+                  {left.injured && Icons.MedicalSymbol}
                 </td>
                 <td className="pl-3 py-2.5">
                   <PracticeSelect
@@ -106,10 +113,11 @@ export default function Practice() {
                     <td className="pl-5 py-2.5">
                       <Pill variant="muted">{right.inCourtPosition}</Pill>
                     </td>
-                    <td className="pl-3 py-2.5">
+                    <td className="pl-3 py-2.5 flex flex-row gap-3">
                       <span className="text-[13px] font-medium text-text1">
                         {right.firstName} {right.lastName}
                       </span>
+                      {right.injured && Icons.MedicalSymbol}
                     </td>
                     <td className="pl-3 py-2.5">
                       <PracticeSelect
@@ -129,7 +137,7 @@ export default function Practice() {
       </TableCard>
 
       <button onClick={savePractice} disabled={pendingUpdates.length === 0}>
-        {t('systemGeneral.savePractice')}
+        {t("systemGeneral.savePractice")}
       </button>
     </ParentSecion>
   );

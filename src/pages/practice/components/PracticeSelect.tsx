@@ -17,7 +17,7 @@ const SKILLS = [
 interface PracticeSelectProps {
   player: Player;
   pendingUpdates: { id: string; changes: Partial<Player> }[];
-  onUpdate: (key: keyof Skill, playerId: string) => void;
+  onUpdate: (key: keyof Skill, id: string) => void;
 }
 
 export const PracticeSelect = ({

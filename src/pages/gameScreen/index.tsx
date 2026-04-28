@@ -13,10 +13,6 @@ import { TimeoutRow } from "./components/TimeoutRow";
 import { useLineupPopup } from "./hooks/useLineupPopup";
 import { useSaveGame } from "./hooks/useSaveGame";
 
-// ─── Guard wrapper ────────────────────────────────────────────────────────────
-// Keeps all hook calls unconditional inside GameScreenInner while allowing
-// an early redirect when there is no active game context.
-
 export default function GameScreen() {
   const { user } = useUser();
   const gameContext = useAppSelector((state) =>

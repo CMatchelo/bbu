@@ -308,4 +308,16 @@ export const Icons = {
       <path d="m19.5 8.25-7.5 7.5-7.5-7.5" />
     </svg>
   ),
+  MedicalSymbol: (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="red"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect x="9" y="3" width="6" height="18" rx="2" />
+      <rect x="3" y="9" width="18" height="6" rx="2" />
+    </svg>
+  ),
 };

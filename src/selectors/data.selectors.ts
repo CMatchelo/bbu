@@ -8,7 +8,7 @@ export const selectAllUniversities = createSelector(
   (byLeague): University[] => Object.values(byLeague).flat(),
 );
 
-export const selectPlayersByUniversity = createSelector(
+export const dividePlayersByUniversity = createSelector(
   (state: RootState) => state.data.playersById,
   (playersById) => {
     const result: Record<string, Player[]> = {};
@@ -19,10 +19,15 @@ export const selectPlayersByUniversity = createSelector(
   },
 );
 
-export const selectUniversitiesWithPlayers = createSelector(
+export const selectPlayersFromUniversity = createSelector(
+  [dividePlayersByUniversity, (_: RootState, uniId: string) => uniId],
+  (playersByUniversity, uniId) => playersByUniversity[uniId] ?? [],
+);
+
+/* export const selectUniversitiesWithPlayers = createSelector(
   [
     (state: RootState) => state.data.universitiesByLeague,
-    selectPlayersByUniversity,
+    dividePlayersByUniversity,
   ],
   (byLeague, byUniversity): University[] => {
     return Object.values(byLeague)
@@ -32,7 +37,7 @@ export const selectUniversitiesWithPlayers = createSelector(
         players: byUniversity[uni.id] ?? [],
       }));
   },
-);
+); */
 
 /** Universities grouped by leagueId (already the storage shape). */
 export const selectUniversitiesGrouped = createSelector(
@@ -54,4 +59,10 @@ export const selectUniversityById =
 export const selectAllPlayers = createSelector(
   [(state: RootState) => state.data.playersById],
   (playersById): Player[] => Object.values(playersById),
+);
+
+export const selectInjuredPlayers = createSelector(
+  [selectAllPlayers],
+  (playersById) =>
+    Object.values(playersById).filter(p => p.injury)
 );

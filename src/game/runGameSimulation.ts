@@ -6,7 +6,7 @@ import { simulatePossession } from "./simulatePossession";
 import { initializePlayerStats } from "./initializePlayersState";
 import { selectCpuStarters } from "./selectCpuStarters";
 import { useAppSelector } from "../hooks/useAppDispatch";
-import { RootState } from "../store";
+import { RootState, store } from "../store";
 import { shouldCallTimeout, substituteCPU, TimeoutState } from "./cpuSubs";
 import { Player } from "../types/Player";
 import { TeamGameStats } from "../types/TeamGameStats";
@@ -14,6 +14,8 @@ import { updateStats, updateTeamStats } from "./updateGameStats";
 import { createEmptyTeamStats } from "../utils/createEmptyStats";
 import { quarterDuration } from "../constants/quarterDuration";
 import { TIMEOUTS_QTY } from "../constants/game.constants";
+import { selectPlayersFromUniversity } from "../selectors/data.selectors";
+import { setStarters } from "../store/slices/gameSettingsSlice";
 
 const QUARTER_DURATION = quarterDuration;
 
@@ -50,14 +52,24 @@ export function useGameSimulation({
   );
   const [logPlays, setLogPlays] = useState<PlayLog[]>([]);
   const [cpuWantsTimeout, setCpuWantsTimeout] = useState(false);
+
+  const [injuredUserPlayerIds, setInjuredUserPlayerIds] = useState<string[]>([]);
+  const homePlayers = selectPlayersFromUniversity(
+    store.getState(),
+    homeUniversity.id,
+  );
+  const awayPlayers = selectPlayersFromUniversity(
+    store.getState(),
+    awayUniversity.id,
+  );
   const [playerStats, setPlayerStats] = useState<
     Record<string, PlayerGameStats>
   >(() =>
     initializePlayerStats(
       homeUniversity.id,
       awayUniversity.id,
-      homeUniversity.players ?? [],
-      awayUniversity.players ?? [],
+      homePlayers ?? [],
+      awayPlayers ?? [],
     ),
   );
 
@@ -67,7 +79,7 @@ export function useGameSimulation({
   const cpuTeam = isPlayerHome ? awayUniversity : homeUniversity;
 
   const [cpuOnCourt, setCpuOnCourt] = useState<Player[]>(() =>
-    selectCpuStarters(cpuTeam.players || []),
+    selectCpuStarters(isPlayerHome ? awayPlayers : homePlayers || []),
   );
 
   const playerStarters = useAppSelector(
@@ -79,14 +91,6 @@ export function useGameSimulation({
 
   const quarterAdvancedRef = useRef(false);
 
-  // ─────────────────────────────────────────────
-  // Initialization
-  // ─────────────────────────────────────────────
-
-
-  // ─────────────────────────────────────────────
-  // Helpers (private)
-  // ─────────────────────────────────────────────
   function getPossessionDuration() {
     return Math.floor(Math.random() * 10) + 15;
   }
@@ -154,20 +158,17 @@ export function useGameSimulation({
     });
 
     // Update player stats
-    setPlayerStats((prev) =>
-      prev
-        ? updateStats(
-            prev,
-            possessionResult,
-            duration,
-            interval,
-            homeUniversity,
-            awayUniversity,
-            homeLineup,
-            awayLineup,
-          )
-        : prev,
+    const { updatedStats: newPlayerStats, newlyInjuredIds } = updateStats(
+      playerStats,
+      possessionResult,
+      duration,
+      interval,
+      homeUniversity,
+      awayUniversity,
+      homeLineup,
+      awayLineup,
     );
+    setPlayerStats(newPlayerStats);
 
     const result = updateTeamStats(homeStats, awayStats, possessionResult);
 
@@ -182,6 +183,47 @@ export function useGameSimulation({
     ) {
       setCurrentPoss((prev) => (prev ? getNextPossession(prev) : prev));
     }
+
+    if (newlyInjuredIds.length > 0) {
+      const userLineup = isPlayerHome ? homeLineup : awayLineup;
+      const cpuLineup = isPlayerHome ? awayLineup : homeLineup;
+
+      const injuredUserIds = newlyInjuredIds.filter((id) =>
+        userLineup.some((p) => p.id === id),
+      );
+      const injuredCpuIds = newlyInjuredIds.filter((id) =>
+        cpuLineup.some((p) => p.id === id),
+      );
+
+
+      if (injuredUserIds.length > 0) {
+        const currentStarters = store.getState().gameSettings.starters;
+        const healthyStarters = currentStarters.filter(
+          (p) => !injuredUserIds.includes(p.id),
+        );
+        store.dispatch(setStarters(healthyStarters));
+        setInjuredUserPlayerIds(injuredUserIds);
+        setCpuWantsTimeout(true); // pause game flow
+      }
+
+      
+      if (injuredCpuIds.length > 0) {
+        const cpuPlayers = isPlayerHome ? awayPlayers : homePlayers || [];
+        const diffPoints = isPlayerHome
+          ? awayStats.points - homeStats.points
+          : homeStats.points - awayStats.points;
+        const updatedCpuLineup = substituteCPU(
+          cpuPlayers,
+          cpuLineup,
+          newPlayerStats,
+          diffPoints,
+        )
+          .slice()
+          .sort((a, b) => a.inCourtPosition.localeCompare(b.inCourtPosition));
+        setCpuOnCourt(updatedCpuLineup);
+      }
+    }
+
 
     const timeoutState: TimeoutState = {
       used: TIMEOUTS_QTY - cpuTimeouts,
@@ -210,7 +252,12 @@ export function useGameSimulation({
       ? awayStats.points - homeStats.points
       : homeStats.points - awayStats.points;
     const updateCpuOnCourt =
-      substituteCPU(cpuTeam.players || [], cpuOnCourt, playerStats, diffPoints)
+      substituteCPU(
+        isPlayerHome ? awayPlayers : homePlayers || [],
+        cpuOnCourt,
+        playerStats,
+        diffPoints,
+      )
         .slice()
         .sort((a, b) => a.inCourtPosition.localeCompare(b.inCourtPosition)) ||
       [];
@@ -245,6 +292,9 @@ export function useGameSimulation({
 
     cpuWantsTimeout,
     setCpuWantsTimeout,
+
+    injuredUserPlayerIds,
+    setInjuredUserPlayerIds,
 
     checkCPUSub,
 

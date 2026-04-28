@@ -2,15 +2,14 @@ import { Player } from "../types/Player";
 import { PlayerGameStats } from "../types/PlayerGameStats";
 import { PlayType } from "../types/PlayType";
 import { PossessionResult } from "../types/PossessionResult";
+import { clamp, randomFloat } from "../utils/mathFunc";
 import {
   calcDefAvg,
   calcOffAvg,
   calculateTurnoverChance,
   checkIfBlocked,
-  clamp,
   get2Best,
   getPoints,
-  randomFloat,
   sigmoid,
   weightedRandom,
 } from "./matchAuxFunctions";

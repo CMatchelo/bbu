@@ -1,6 +1,5 @@
 import { Player } from "../types/Player";
 import { PlayerGameStats } from "../types/PlayerGameStats";
-import { University } from "../types/University";
 
 export function initializePlayerStats(
   homeUniversityId: string,
@@ -18,12 +17,13 @@ export function initializePlayerStats(
       player.id,
       {
         name: player.firstName + " " + player.lastName,
-        playerId: player.id,
+        id: player.id,
         teamId: player.currentUniversity,
         opponentId:
           player.currentUniversity === homeUniversityId
             ? awayUniversityId
             : homeUniversityId,
+        injured: player.injured,
         teamPoints: 0,
         teamPointsAllowed: 0,
         points: 0,

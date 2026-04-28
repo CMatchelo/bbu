@@ -9,7 +9,6 @@ export type University = {
   nickname: string;
   //championships: CompletedTournament[]
   roster: string[];
-  players?: Player[];
   playersOnCourt?: Player[];
   courtLevel: 1 | 2 | 3 | 4 | 5;
   gymLevel: 1 | 2 | 3 | 4 | 5;

@@ -1,11 +1,11 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { selectUniversitiesWithPlayers } from "./data.selectors";
+import { selectAllUniversities } from "./data.selectors";
 import { selectcurrentWeekMatchByUniversity } from "./data.scheduleSelector";
 
 export const selectGameContext = createSelector(
   [
-    selectUniversitiesWithPlayers,
+    selectAllUniversities,
     (state: RootState, userUniversityId?: string) =>
       userUniversityId
         ? selectcurrentWeekMatchByUniversity(state, userUniversityId)

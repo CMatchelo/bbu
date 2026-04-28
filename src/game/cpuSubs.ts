@@ -24,10 +24,10 @@ const POSITION_COMPATIBILITY: Record<string, string[]> = {
 };
 
 function getStaminaRatio(
-  playerId: string,
+  id: string,
   stats: Record<string, PlayerGameStats>
 ) {
-  return stats[playerId]?.stamina ?? 100;
+  return stats[id]?.stamina ?? 100;
 }
 
 function shouldSubstitute(stamina: number): boolean {
@@ -56,14 +56,15 @@ export function substituteCPU(
       (p) =>
         !newOnCourt.some((c) => c.id === p.id) &&
         compatiblePositions.includes(p.inCourtPosition) &&
-        getStaminaRatio(p.id, stats) >= 80
+        getStaminaRatio(p.id, stats) >= 80 &&
+        p.injured === false
     );
 
     if (benchPlayers.length === 0) continue;
 
     // If winning big → allow weaker / younger players
     let candidates = benchPlayers;
-    if (scoreDiff >= 15) {
+    if (scoreDiff >= 17) {
       candidates = benchPlayers.sort(
         (a, b) => playerAverage(a) - playerAverage(b)
       );

@@ -2,18 +2,19 @@ import { useSelector } from "react-redux";
 import { ParentSecion } from "../../Components/ParentSection";
 import { useAuthUser } from "../../hooks/useAuthUser";
 import { SkillsTable } from "./Components/SkillsTable";
-import { selectUniversitiesWithPlayers } from "../../selectors/data.selectors";
+import { selectPlayersFromUniversity } from "../../selectors/data.selectors";
 import { useState } from "react";
 import { PlayerStats } from "../../Components/PlayerStats";
-import { PlayerStatsTwo } from "../../Components/PlayerStats copy";
 import { useTranslation } from "react-i18next";
+import { RootState } from "../../store";
 
 export default function Team() {
   const user = useAuthUser();
   const { t } = useTranslation();
-  const universities = useSelector(selectUniversitiesWithPlayers);
-  const players =
-    universities.find((u) => u.id === user.currentUniversity.id)?.players || [];
+
+  const players = useSelector((state: RootState) =>
+      selectPlayersFromUniversity(state, user.currentUniversity.id),
+    );
 
   const [table, setTable] = useState<string>("skills");
 

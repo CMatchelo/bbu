@@ -42,7 +42,7 @@ const SectionLabel = ({ children }: { children: React.ReactNode }) => (
 const Divider = () => <div className="h-px bg-highlights1/12 my-1.5" />;
 
 export const SideMenu = () => {
-  const { loadUser } = useUser();
+  const { loadUser, user } = useUser();
   const { t, i18n } = useTranslation();
 
   return (
@@ -57,13 +57,13 @@ export const SideMenu = () => {
             BBU
           </p>
           <p className="text-[10px] text-highlights1 tracking-wider">
-            Temporada 2026
+            {t("generalLocale.season")} {user?.currentSeason}
           </p>
         </div>
       </div>
 
-      {/* Nav */}
       <nav className="flex-1 overflow-y-auto py-2 scrollbar-thin scrollbar-thumb-highlights1/20">
+        {/* Team */}
         <SectionLabel>{t("mainMenu.sections.team", "Time")}</SectionLabel>
         <NavItem goTo="/team" text={t("mainMenu.team")} icon={Icons.roster} />
         <NavItem
@@ -76,9 +76,14 @@ export const SideMenu = () => {
           text={t("mainMenu.medicalDept")}
           icon={Icons.medical}
         />
-        <NavItem goTo="/stats" text={t("mainMenu.stats")} icon={Icons.stats} />
+        <NavItem
+          goTo="/calendar"
+          text={t("mainMenu.calendar")}
+          icon={Icons.calendar}
+        />
 
         <Divider />
+        {/* Draft */}
         <SectionLabel>
           {t("mainMenu.sections.recruiting", "Recrutamento")}
         </SectionLabel>
@@ -95,12 +100,9 @@ export const SideMenu = () => {
         />
 
         <Divider />
+        {/* League */}
         <SectionLabel>{t("mainMenu.sections.league", "Liga")}</SectionLabel>
-        <NavItem
-          goTo="/calendar"
-          text={t("mainMenu.calendar")}
-          icon={Icons.calendar}
-        />
+        <NavItem goTo="/stats" text={t("mainMenu.stats")} icon={Icons.stats} />
         <NavItem
           goTo="/leagues"
           text={t("mainMenu.leagues")}
@@ -114,6 +116,7 @@ export const SideMenu = () => {
         <NavItem goTo="/team" text={t("mainMenu.news")} icon={Icons.news} />
 
         <Divider />
+        {/* University */}
         <SectionLabel>{t("mainMenu.sections.club", "Clube")}</SectionLabel>
         <NavItem
           goTo="/team"

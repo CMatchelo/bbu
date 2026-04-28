@@ -25,8 +25,8 @@ const PlayerLine = ({
 };
 
 export const PlayerTable = ({ players, playerStats }: PlayerTableProps) => {
-  const getStats = (playerId: string) =>
-    playerStats ? playerStats[playerId] : null;
+  const getStats = (id: string) =>
+    playerStats ? playerStats[id] : null;
 
   return (
     <div className="shadow-2xl">

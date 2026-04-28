@@ -1,19 +1,7 @@
 import { Player } from "../types/Player";
 import { PlayerGameStats } from "../types/PlayerGameStats";
 import { PlayType } from "../types/PlayType";
-
-export function randomFloat(min: number, max: number) {
-  return Math.random() * (max - min) + min;
-}
-
-export function rand(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-export function clamp(val: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, val));
-}
-
+import { clamp } from "../utils/mathFunc";
 
 export function weightedRandom<T>(items: T[], weights: number[]): T {
   const total = weights.reduce((a, b) => a + b, 0);
@@ -106,23 +94,32 @@ const randomFactor = (min = 0.95, max = 1.05) =>
 export const calculateStaminaSpent = (
   duration: number,
   staminaSkill: number,
+  physioLevel: number,
 ) => {
   const baseCostPerSecond = 0.08;
   const fatigueFactor = (100 - staminaSkill) / 100;
 
   const base = duration * baseCostPerSecond * (1 + fatigueFactor);
 
-  return base * randomFactor(0.95, 1.05);
+  const physioModifier = 1 + (3 - physioLevel) * 0.1;
+
+  return base * physioModifier * randomFactor(0.95, 1.05);
 };
 
-export const calculateBenchRecovery = (duration: number) => {
+export const calculateBenchRecovery = (
+  duration: number,
+  physioLevel: number,
+) => {
   const recoveryPerSecond = 0.12;
 
   const base = duration * recoveryPerSecond;
 
-  return base * randomFactor(0.9, 1.1);
+  const physioModifier = 1 + (3 - physioLevel) * 0.1;
+
+  return base * physioModifier * randomFactor(0.9, 1.1);
 };
 
 export function sigmoid(x: number) {
   return 1 / (1 + Math.exp(-8 * (x - 0.5)));
 }
+

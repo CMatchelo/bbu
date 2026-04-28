@@ -1,22 +1,23 @@
+import { useSelector } from "react-redux";
 import { playerAverage } from "../../../game/skillsAverage";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useAppDispatch";
 import { useAuthUser } from "../../../hooks/useAuthUser";
-import { selectUniversitiesWithPlayers } from "../../../selectors/data.selectors";
+import { selectPlayersFromUniversity } from "../../../selectors/data.selectors";
 import { RootState } from "../../../store";
 import { setStarters } from "../../../store/slices/gameSettingsSlice";
 import { Player } from "../../../types/Player";
+import { Icons } from "../../../utils/icons";
 
 export const PlayerSelection = () => {
   const user = useAuthUser();
   const dispatch = useAppDispatch();
-  const universities = useAppSelector(selectUniversitiesWithPlayers);
-  const starters = useAppSelector((state: RootState) => state.gameSettings.starters);
+  const starters = useAppSelector(
+    (state: RootState) => state.gameSettings.starters,
+  );
 
-  const university = universities.find((u) => u.id === user.currentUniversity.id);
-  const players =
-    university?.players
-      ?.slice()
-      .sort((a, b) => a.inCourtPosition.localeCompare(b.inCourtPosition)) || [];
+  const players = useSelector((state: RootState) =>
+    selectPlayersFromUniversity(state, user.currentUniversity.id).sort((a, b) => a.inCourtPosition.localeCompare(b.inCourtPosition)),
+  );
 
   const toggleStarter = (player: Player) => {
     let updated = [...starters];
@@ -39,7 +40,6 @@ export const PlayerSelection = () => {
           Selecionar Titulares
         </span>
         <div className="ml-auto flex items-center gap-2">
-          {/* Pips de contagem */}
           <div className="flex gap-1">
             {Array.from({ length: 5 }, (_, i) => (
               <div
@@ -54,7 +54,6 @@ export const PlayerSelection = () => {
         </div>
       </div>
 
-      {/* Grid de jogadores */}
       <div className="p-4 grid grid-cols-2 gap-2">
         {players.map((p: Player) => {
           const isStarter = !!starters.find((s) => s.id === p.id);
@@ -62,12 +61,17 @@ export const PlayerSelection = () => {
           return (
             <button
               key={p.id}
+              disabled={p.injured}
               onClick={() => toggleStarter(p)}
-              className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg border text-left transition-all ${
-                isStarter
-                  ? "bg-highlights1/12 border-highlights1/40 text-highlights1"
-                  : "bg-white/2 border-white/[0.07] text-text2 hover:bg-white/5 hover:text-text1 hover:border-white/15"
-              }`}
+              className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg border text-left transition-all
+                ${
+                  p.injured
+                    ? "cursor-not-allowed! bg-red-500/20"
+                    : isStarter
+                      ? "bg-highlights1/20 border-highlights1/40 text-highlights1"
+                      : "bg-white/2 border-white/[0.07] text-text2 hover:bg-white/5 hover:text-text1 hover:border-white/15"
+                } 
+              `}
             >
               <span
                 className={`text-[10px] font-medium border rounded px-1.5 py-0.5 tracking-wider shrink-0 ${
@@ -82,6 +86,7 @@ export const PlayerSelection = () => {
               <span className="text-[16px] flex-1 truncate">
                 {p.firstName} {p.lastName}
               </span>
+              {p.injured && Icons.MedicalSymbol}
 
               <span
                 className={`text-[14px] shrink-0 ${

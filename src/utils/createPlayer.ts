@@ -1,9 +1,9 @@
 import { firtNames, lastNames } from "../constants/names.constants";
-import { clamp, rand } from "../game/matchAuxFunctions";
 import { CourseId } from "../types/Courses";
 import { Player, Position } from "../types/Player";
 import { University } from "../types/University";
 import { createEmptyPlayerSeasonStats } from "./createEmptySeasonStats";
+import { clamp, rand } from "./mathFunc";
 
 const SKILL_CAP = 80;
 let idCounter = 1;
@@ -130,9 +130,12 @@ export function createPlayer(
     scholarship: Math.random() > 0.4,
     potential: rand(max, 99),
     stamina: rand(60, 90),
-    injuryProne: rand(1, 25),
+
+    injuryProne: rand(0, 50),
     active: true,
     injured: false,
+    injury: null,
+
     practicing: null,
     stats: {
       [2026]: createEmptyPlayerSeasonStats(2026),

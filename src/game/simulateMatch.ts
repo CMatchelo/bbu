@@ -8,7 +8,11 @@ import { simulatePossession } from "./simulatePossession";
 import { updateStats, updateTeamStats } from "./updateGameStats";
 import { MatchWithTeams } from "../types/Match";
 import { AppDispatch, store } from "../store";
-import { selectAllPlayers, selectAllUniversities, selectUniversitiesWithPlayers } from "../selectors/data.selectors";
+import {
+  selectAllPlayers,
+  selectAllUniversities,
+  selectPlayersFromUniversity,
+} from "../selectors/data.selectors";
 import { setMultipleMatchResults } from "../store/slices/scheduleSlice";
 import { PlayerGameStats } from "../types/PlayerGameStats";
 import { TeamGameStats } from "../types/TeamGameStats";
@@ -23,6 +27,7 @@ import {
 } from "../utils/gameStatsToMatchResults";
 import { TIMEOUTS_QTY } from "../constants/game.constants";
 import { progressPlayers } from "./playerProgression";
+import { substituteCPU } from "./cpuSubs";
 import { toRecord } from "../utils/toRecord";
 
 export function simulateMatchWithoutPlayer(
@@ -39,7 +44,7 @@ export function simulateMatchWithoutPlayer(
       match.week <= currentWeek,
   );
   const state = store.getState();
-  const universities = selectUniversitiesWithPlayers(state);
+  const universities = selectAllUniversities(state);
   const uniById = Object.fromEntries(universities.map((u) => [u.id, u]));
   const results = matches
     .map((match) => {
@@ -79,8 +84,8 @@ export function simulateMatchWithoutPlayer(
   const allTeamStats: Record<string, TeamGameStats> = {};
 
   for (const match of matchesSimulated) {
-    for (const [playerId, stats] of Object.entries(match.playerStats)) {
-      allPlayerStats[playerId] = stats;
+    for (const [id, stats] of Object.entries(match.playerStats)) {
+      allPlayerStats[id] = stats;
     }
 
     // TeamStats
@@ -89,12 +94,8 @@ export function simulateMatchWithoutPlayer(
   }
 
   const allPlayers = selectAllPlayers(store.getState());
-  const unis = toRecord(selectAllUniversities(store.getState()));
-  const playersWithProgress = progressPlayers(
-    allPlayers,
-    allPlayerStats,
-    unis,
-  );
+  const unis = toRecord(universities);
+  const playersWithProgress = progressPlayers(allPlayers, allPlayerStats, unis);
 
   dispatch(updatePlayerStats(playerGameStatsToDeltas(2026, allPlayerStats)));
   dispatch(updatePlayersSkills(playersWithProgress));
@@ -105,7 +106,8 @@ function simulateFullMatch(
   homeUniversity: University,
   awayUniversity: University,
 ) {
-  if (!homeUniversity.players || !awayUniversity.players) return;
+  const homePlayers = selectPlayersFromUniversity(store.getState(), homeUniversity.id);
+  const awayPlayers = selectPlayersFromUniversity(store.getState(), awayUniversity.id);
   const state = {
     quarter: 1,
     timeLeft: quarterDuration,
@@ -116,11 +118,11 @@ function simulateFullMatch(
     playerStats: initializePlayerStats(
       homeUniversity.id,
       awayUniversity.id,
-      homeUniversity.players,
-      awayUniversity.players,
+      homePlayers,
+      awayPlayers,
     ),
-    homeLineup: selectCpuStarters(homeUniversity.players || []),
-    awayLineup: selectCpuStarters(awayUniversity.players || []),
+    homeLineup: selectCpuStarters(homePlayers || []),
+    awayLineup: selectCpuStarters(awayPlayers || []),
     homeTimeouts: TIMEOUTS_QTY,
     homeTimeoutsOnQrt: 0,
     awayTimeouts: TIMEOUTS_QTY,
@@ -189,7 +191,7 @@ function runNextPossessionPure(
   }
 
   // player stats
-  state.playerStats = updateStats(
+  const { updatedStats, newlyInjuredIds } = updateStats(
     state.playerStats,
     result,
     duration,
@@ -199,6 +201,29 @@ function runNextPossessionPure(
     state.homeLineup,
     state.awayLineup,
   );
+  state.playerStats = updatedStats;
+
+  // Substitute injured CPU players immediately
+  if (newlyInjuredIds.length > 0) {
+    const homePlayers = selectPlayersFromUniversity(store.getState(), homeUniversity.id) || [];
+    const awayPlayers = selectPlayersFromUniversity(store.getState(), awayUniversity.id) || [];
+
+    const injuredInHome = newlyInjuredIds.some((id) =>
+      state.homeLineup.some((p) => p.id === id),
+    );
+    const injuredInAway = newlyInjuredIds.some((id) =>
+      state.awayLineup.some((p) => p.id === id),
+    );
+
+    const scoreDiff = state.homeStats.points - state.awayStats.points;
+
+    if (injuredInHome) {
+      state.homeLineup = substituteCPU(homePlayers, state.homeLineup, state.playerStats, scoreDiff);
+    }
+    if (injuredInAway) {
+      state.awayLineup = substituteCPU(awayPlayers, state.awayLineup, state.playerStats, -scoreDiff);
+    }
+  }
 
   // team stats
   const updated = updateTeamStats(state.homeStats, state.awayStats, result);

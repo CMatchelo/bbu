@@ -2,7 +2,7 @@ import { Skill } from "../types/Skill";
 import { Player } from "../types/Player";
 import { PlayerGameStats } from "../types/PlayerGameStats";
 import { University } from "../types/University";
-import { clamp } from "./matchAuxFunctions";
+import { clamp } from "../utils/mathFunc";
 
 const PROGRESSION = {
   basePerGame: 0.04,
@@ -20,14 +20,11 @@ export function progressPlayers(
   for (const player of players) {
     const stats = statsById[player.id];
     if (!stats || stats.minutes === 0) continue;
-    console.log(stats);
     const university = universities[player.currentUniversity];
     if (!university) continue;
-    console.log(university);
+    if (player.injured) continue;
     const changes = progressPlayer(player, stats, university);
-    console.log(
-      `Jogador ${player.firstName} ${player.lastName} progrediu ${changes}`,
-    );
+
     if (Object.keys(changes).length > 0) {
       updates.push({ id: player.id, changes });
     }
@@ -52,8 +49,7 @@ function progressPlayer(
     const isTraining = player.practicing === skill;
     const trainingBonus = isTraining ? PROGRESSION.trainingBonus * uniMult : 0;
 
-    // Problema academico: grades < 3 perde o trainingBonus
-    const academicPenalty = player.grades < 3;
+    const academicPenalty = player.grades < 70;
     const effectiveBonus = academicPenalty ? 0 : trainingBonus;
 
     const gain =
@@ -139,10 +135,6 @@ function getUniversityMultiplier(
     "defense",
     "block",
   ];
-
-  console.log(
-    `University ${university.id} has a Court Level ${university.courtLevel} and a Gym Level ${university.gymLevel}`,
-  );
 
   if (courtSkills.includes(skill)) return 0.8 + university.courtLevel * 0.08;
   if (gymSkills.includes(skill)) return 0.8 + university.gymLevel * 0.08;

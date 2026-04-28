@@ -1,3 +1,4 @@
+import { PlayerInjury } from "./Injury";
 import { PlayerSeasonStats } from "./SeasonStats";
 import type { Skill } from "./Skill";
 
@@ -22,9 +23,12 @@ export type Player = {
   scholarship: boolean;
   potential: number;
   stamina: number;
+
   injuryProne: number;
   active: boolean;
   injured: boolean;
+  injury: PlayerInjury | null;
+
   practicing: keyof Skill | null;
   stats: Record<number, PlayerSeasonStats>;
 };

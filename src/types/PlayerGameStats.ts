@@ -1,8 +1,9 @@
 export type PlayerGameStats = {
-  playerId: string,
-  name: string
-  teamId: string,
-  opponentId: string,
+  id: string;
+  name: string;
+  teamId: string;
+  opponentId: string;
+  injured: boolean;
   teamPoints: number;
   teamPointsAllowed: number;
   points: number;
