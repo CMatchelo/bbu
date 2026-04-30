@@ -62,7 +62,7 @@ function calculateIntelligenceGain(intelligence: number, tutoring: boolean) {
 
   const intelFactor = intelligence / 100;
   const curve = 1 - intelFactor;
-  const gain = 0.1 + curve * 0.25;
+  const gain = 0.2 + curve * 0.25;
 
   return gain;
 }
