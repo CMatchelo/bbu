@@ -54,7 +54,7 @@ export default function Practice() {
   }
 
   return (
-    <ParentSecion>
+    <ParentSecion className="px-4">
       <TableCard title={t("generalLocale.practice")}>
         <table className="w-full min-w-[700px] border-collapse">
           <thead>

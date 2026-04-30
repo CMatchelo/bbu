@@ -72,7 +72,7 @@ export const SideMenu = () => {
           icon={Icons.practice}
         />
         <NavItem
-          goTo="/team"
+          goTo="/medicalDept"
           text={t("mainMenu.medicalDept")}
           icon={Icons.medical}
         />
@@ -113,7 +113,7 @@ export const SideMenu = () => {
           text={t("mainMenu.champions")}
           icon={Icons.champions}
         />
-        <NavItem goTo="/team" text={t("mainMenu.news")} icon={Icons.news} />
+        <NavItem goTo="/leaguesInjuries" text={t("mainMenu.leaguesInjuries")} icon={Icons.news} />
 
         <Divider />
         {/* University */}

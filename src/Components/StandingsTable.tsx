@@ -36,88 +36,85 @@ export function StandingsTable({ leagueId }: StandingsTableProps) {
     isNaN(val) ? "—" : val.toFixed(decimals);
 
   return (
-    <TableCard
-      title={t("generalLocale.standings")}
-      badge={`${t("generalLocale.season")} ${user?.currentSeason}`}
-    >
+    <TableCard className="h-full" title={t("generalLocale.standings")}>
       <table className="w-full min-w-[820px] border-collapse">
         <thead>
           <tr className="bg-cardbglight">
             <TableHead className="w-6" children={undefined} />
-            <TableHead align="left" className="w-44 pl-5">
+            <TableHead align="left" className="pl-5">
               {t("generalLocale.team")}
             </TableHead>
-            <TableHead>G</TableHead>
+            <TableHead className="w-17">G</TableHead>
             <TableHead
-              className="cursor-pointer"
+              className="cursor-pointer w-17"
               accent
               onClick={() => setOrderKey("wins")}
             >
               W%
             </TableHead>
             <TableHead
-              className="cursor-pointer"
+              className="cursor-pointer w-17"
               accent
               onClick={() => setOrderKey("points")}
             >
               PPG
             </TableHead>
             <TableHead
-              className="cursor-pointer"
+              className="cursor-pointer w-17"
               onClick={() => setOrderKey("pointsAllowed")}
             >
               PAPG
             </TableHead>
             <TableHead
-              className="cursor-pointer"
+              className="cursor-pointer w-17"
               onClick={() => setOrderKey("fgm")}
             >
               FGM
             </TableHead>
             <TableHead
-              className="cursor-pointer"
+              className="cursor-pointer w-17"
               onClick={() => setOrderKey("fga")}
             >
               FGA
             </TableHead>
             <TableHead
-              className="cursor-pointer"
+              className="cursor-pointer w-17"
               onClick={() => setOrderKey("tpm")}
             >
               3PM
             </TableHead>
             <TableHead
-              className="cursor-pointer"
+              className="cursor-pointer w-17"
               onClick={() => setOrderKey("tpa")}
             >
               3PA
             </TableHead>
             <TableHead
-              className="cursor-pointer"
+              className="cursor-pointer w-17"
               onClick={() => setOrderKey("assists")}
             >
               AST
             </TableHead>
             <TableHead
-              className="cursor-pointer"
+              className="cursor-pointer w-17"
               onClick={() => setOrderKey("blocks")}
             >
               BLK
             </TableHead>
             <TableHead
-              className="cursor-pointer"
+              className="cursor-pointer w-17"
               onClick={() => setOrderKey("rebounds")}
             >
               REB
             </TableHead>
             <TableHead
-              className="cursor-pointer"
+              className="cursor-pointer w-17"
               onClick={() => setOrderKey("steals")}
             >
               STL
             </TableHead>
             <TableHead
-              className="cursor-pointer"
+              className="cursor-pointer w-17"
               onClick={() => setOrderKey("turnovers")}
             >
               TO
@@ -135,7 +132,9 @@ export function StandingsTable({ leagueId }: StandingsTableProps) {
                 </td>
                 <td className="pl-5 py-2.5">
                   <div className="flex items-center gap-2.5">
-                    <Pill variant="green" className="w-20">{uni.id.toUpperCase()}</Pill>
+                    <Pill variant="green" className="w-20">
+                      {uni.id.toUpperCase()}
+                    </Pill>
                     <span className="text-[13px] font-medium text-text1">
                       {uni.nickname}
                     </span>

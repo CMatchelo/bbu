@@ -7,8 +7,10 @@ export default function Stats() {
   const players = useSelector(selectAllPlayers);
 
   return (
-    <ParentSecion>
-      <PlayerStats players={players} />
+    <ParentSecion className="px-4">
+      <div className="h-full">
+        <PlayerStats players={players} />
+      </div>
     </ParentSecion>
   );
 }

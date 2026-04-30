@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { University } from "../../../types/University";
-import { LevelPips } from "../../../Components/levelPips";
+import { LevelPips } from "../../../Components/LevelPips";
 import { Icons } from "../../../utils/icons";
 
 interface UniCardProps {

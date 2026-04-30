@@ -4,7 +4,6 @@ import { MatchWithTeams } from "../types/Match";
 import { TableCard } from "./TableCard";
 import { TableHead } from "./TableHead";
 import { Pill } from "./Pill";
-import { useUser } from "../Context/UserContext";
 import { TableRow } from "./TableRow";
 
 interface MatchesTableProps {
@@ -13,10 +12,12 @@ interface MatchesTableProps {
 
 export function MatchesTable({ schedule }: MatchesTableProps) {
   const { t } = useTranslation();
-  const { user } = useUser()
 
   return (
-    <TableCard title={t("generalLocale.matches")} badge={`${t("generalLocale.season")} ${user?.currentSeason}`}>
+    <TableCard
+      className="h-full"
+      title={t("generalLocale.matches")}
+    >
       <table className="w-full border-collapse">
         <thead>
           <tr className="bg-cardbglight">
@@ -70,7 +71,9 @@ export function MatchesTable({ schedule }: MatchesTableProps) {
                       </span>
                     </div>
                   ) : (
-                    <span className="text-[11px] text-text2">{t("generalLocale.upcoming")}</span>
+                    <span className="text-[11px] text-text2">
+                      {t("generalLocale.upcoming")}
+                    </span>
                   )}
                 </td>
                 <td className="pl-4 py-2.5">

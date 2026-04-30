@@ -35,27 +35,24 @@ export const SkillsTable = ({ players }: SkillsTableProps) => {
     ?.slice()
     .sort((a, b) => a.inCourtPosition.localeCompare(b.inCourtPosition));
   return (
-    <TableCard title={t("generalLocale.roster")}>
+    <TableCard className="h-full" title={t("generalLocale.roster")}>
       <table className="w-full min-w-[700px] border-collapse">
         <thead>
           <tr className="bg-cardbglight">
-            <TableHead className="w-12">Pos</TableHead>
-            <TableHead align="left" className="w-40 pl-5">
+            <TableHead className="w-80 pl-5">
               {t("generalLocale.player")}
             </TableHead>
             {SKILLS.map(({ label }) => (
               <TableHead key={label}>{label}</TableHead>
             ))}
-            <TableHead accent>AVG</TableHead>
+            <TableHead accent>OVER</TableHead>
           </tr>
         </thead>
         <tbody>
           {playersSorted?.map((player, index) => (
             <TableRow key={player.id} index={index}>
-              <td className="text-center py-2.5 px-2">
+              <td className="pl-5 py-2.5 flex gap-2">
                 <Pill variant="muted">{player.inCourtPosition}</Pill>
-              </td>
-              <td className="pl-5 py-2.5">
                 <span className="text-[13px] font-medium text-text1">
                   {player.firstName} {player.lastName}
                 </span>

@@ -17,12 +17,14 @@ export type Player = {
   yearsToGraduate: number;
   course: string;
   currentUniversity: string;
+  tutoring: boolean;
 
   skills: Skill;
   inCourtPosition: Position;
   scholarship: boolean;
   potential: number;
   stamina: number;
+  intelligence: number;
 
   injuryProne: number;
   active: boolean;

@@ -1,8 +1,8 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { SideMenu } from "./SideMenu";
-import { HeaderBar } from "./headerBar";
 import { useUser } from "../Context/UserContext";
 import { useEffect } from "react";
+import { HeaderBar } from "./HeaderBar";
 
 export default function Layout() {
   const { user } = useUser();
@@ -25,7 +25,7 @@ export default function Layout() {
       </div>
       <div className="flex flex-col flex-1 overflow-hidden">
         <HeaderBar />
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-hidden">
           <Outlet />
         </div>
       </div>

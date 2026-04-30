@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import { PlayerSelection } from "../../TeamSelection/components/PlayersSelection";
-import { PlayTypeSelection } from "../../TeamSelection/components/PlayTypeSelection";
+import { PlayerSelection } from "../../team-selection/components/PlayersSelection";
+import { PlayTypeSelection } from "../../team-selection/components/PlayTypeSelection";
 import { MIN_STARTERS } from "../../../constants/game.constants";
 
 interface LineupPopupProps {

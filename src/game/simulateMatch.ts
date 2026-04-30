@@ -1,7 +1,6 @@
 import { GameState } from "../types/GameState";
 import { University } from "../types/University";
 import { createEmptyTeamStats } from "../utils/createEmptyStats";
-import { quarterDuration } from "../constants/quarterDuration";
 import { initializePlayerStats } from "./initializePlayersState";
 import { selectCpuStarters } from "./selectCpuStarters";
 import { simulatePossession } from "./simulatePossession";
@@ -25,7 +24,7 @@ import {
   playerGameStatsToDeltas,
   teamGameStatsToDeltas,
 } from "../utils/gameStatsToMatchResults";
-import { TIMEOUTS_QTY } from "../constants/game.constants";
+import { QUARTER_DURATION, TIMEOUTS_QTY } from "../constants/game.constants";
 import { progressPlayers } from "./playerProgression";
 import { substituteCPU } from "./cpuSubs";
 import { toRecord } from "../utils/toRecord";
@@ -110,7 +109,7 @@ function simulateFullMatch(
   const awayPlayers = selectPlayersFromUniversity(store.getState(), awayUniversity.id);
   const state = {
     quarter: 1,
-    timeLeft: quarterDuration,
+    timeLeft: QUARTER_DURATION,
     isGameOver: false,
     currentPoss: "home",
     homeStats: createEmptyTeamStats(homeUniversity.id),
@@ -187,7 +186,7 @@ function runNextPossessionPure(
     }
 
     state.quarter += 1;
-    state.timeLeft = quarterDuration;
+    state.timeLeft = QUARTER_DURATION;
   }
 
   // player stats

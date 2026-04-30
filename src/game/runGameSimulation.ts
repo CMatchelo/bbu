@@ -12,12 +12,10 @@ import { Player } from "../types/Player";
 import { TeamGameStats } from "../types/TeamGameStats";
 import { updateStats, updateTeamStats } from "./updateGameStats";
 import { createEmptyTeamStats } from "../utils/createEmptyStats";
-import { quarterDuration } from "../constants/quarterDuration";
-import { TIMEOUTS_QTY } from "../constants/game.constants";
+import { QUARTER_DURATION, TIMEOUTS_QTY } from "../constants/game.constants";
 import { selectPlayersFromUniversity } from "../selectors/data.selectors";
 import { setStarters } from "../store/slices/gameSettingsSlice";
 
-const QUARTER_DURATION = quarterDuration;
 
 interface UseGameSimulationParams {
   homeUniversity: University;

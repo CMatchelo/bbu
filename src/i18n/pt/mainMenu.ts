@@ -9,7 +9,7 @@ export const mainMenu = {
   calendar: "Calendário",
   leagues: "Ligas",
   champions: "Campeões",
-  news: "Notícias",
+  leaguesInjuries: "Lesões das ligas",
   facilities: "Instalações",
   university: "Universidade"
 }

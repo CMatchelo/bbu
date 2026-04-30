@@ -4,7 +4,6 @@ import { useUser } from "../../Context/UserContext";
 import { MatchesTable } from "../../Components/MatchesTable";
 import { ParentSecion } from "../../Components/ParentSection";
 import { useMemo } from "react";
-import { StandingsTable } from "../../Components/StandingsTable";
 
 export default function Calendar() {
   const { user } = useUser();
@@ -13,7 +12,7 @@ export default function Calendar() {
   const teamSchedule = useSelector(teamSelector);
 
   return (
-    <ParentSecion>
+    <ParentSecion className="px-4 pb-4">
       {/* <StandingsTable leagueId={user!.currentUniversity.leagueId} /> */}
       <MatchesTable schedule={teamSchedule} />
     </ParentSecion>

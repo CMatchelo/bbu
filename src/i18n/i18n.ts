@@ -8,6 +8,8 @@ import { championshipLocale as championshipLocaleEN } from "./en/championship";
 import { generalLocale as generalLocaleEN } from "./en/generalLocale";
 import { courseLocale as courseLocaleEN } from "./en/coursesLocale";
 import { systemGeneral as systemGeneralEN } from "./en/systemGeneral";
+import { bodyParts as bodyPartsEN } from "./en/bodyParts";
+import { injuries as injuriesEN } from "./en/injuries";
 
 import { inGame as inGamePT } from "./pt/inGame";
 import { mainMenu as mainMenuPT } from "./pt/mainMenu";
@@ -16,7 +18,8 @@ import { championshipLocale as championshipLocalePT } from "./pt/championship";
 import { generalLocale as generalLocalePT } from "./pt/generalLocale";
 import { courseLocale as courseLocalePT } from "./pt/coursesLocale";
 import { systemGeneral as systemGeneralPT } from "./pt/systemGeneral";
-
+import { bodyParts as bodyPartsPT } from "./pt/bodyParts";
+import { injuries as injuriesPT } from "./pt/injuries";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -29,6 +32,8 @@ i18n.use(initReactI18next).init({
         generalLocale: generalLocaleEN,
         courseLocale: courseLocaleEN,
         systemGeneral: systemGeneralEN,
+        bodyParts: bodyPartsEN,
+        injuries: injuriesEN,
       },
     },
     pt: {
@@ -40,6 +45,8 @@ i18n.use(initReactI18next).init({
         generalLocale: generalLocalePT,
         courseLocale: courseLocalePT,
         systemGeneral: systemGeneralPT,
+        bodyParts: bodyPartsPT,
+        injuries: injuriesPT,
       },
     },
   },

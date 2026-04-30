@@ -44,10 +44,7 @@ export const PlayerStats = ({ players }: PlayerStatsProps) => {
   const f = (val: number, decimals = 1) =>
     isNaN(val) ? "—" : val.toFixed(decimals);
   return (
-    <TableCard
-      title={t("generalLocale.stats")}
-      badge={`${t("generalLocale.season")} ${user?.currentSeason}`}
-    >
+    <TableCard title={t("generalLocale.stats")}>
       <div ref={parentRef} className="h-[600px] overflow-auto">
         <div className="min-w-[860px]">
           <div
@@ -132,7 +129,7 @@ export const PlayerStats = ({ players }: PlayerStatsProps) => {
               const stat = player.stats[user?.currentSeason || 0];
               const matches = stat.matches || 1;
               const index = virtualRow.index;
-              const classname = "text-center text-[12px] px-4"
+              const classname = "text-center text-[12px] px-4";
 
               return (
                 <TableRow
@@ -163,7 +160,7 @@ export const PlayerStats = ({ players }: PlayerStatsProps) => {
                   </div>
 
                   <div className={`font-medium text-highlights1 ${classname}`}>
-                    <Pill variant="green" >
+                    <Pill variant="green">
                       {player.currentUniversity.toUpperCase()}
                     </Pill>
                   </div>

@@ -3,7 +3,7 @@ import { useUser } from "../../Context/UserContext";
 import { University } from "../../types/University";
 import { useAppSelector } from "../../hooks/useAppDispatch";
 import { selectUniversityById } from "../../selectors/data.selectors";
-import { FacilityCard } from "./components/facilityCard";
+import { FacilityCard } from "./components/FacilityCard";
 import { useTranslation } from "react-i18next";
 import { ParentSecion } from "../../Components/ParentSection";
 
@@ -19,7 +19,7 @@ export default function UniversityPage() {
   const askImprovement = (depto: string) => console.log("improve:", depto);
 
   return (
-    <ParentSecion>
+    <ParentSecion className="px-4">
       {/* Header */}
       <div className="pb-4 mb-2 border-b border-highlights1/15">
         <h2 className="text-lg font-semibold tracking-widest uppercase text-text1">

@@ -80,6 +80,6 @@ function InjuryTime(injury: InjuryType, player: Player): number {
 }
 
 function BodyPartSelect(bodyParts: BodyPartId[]): BodyPartId {
-  const bodyPart = rand(0, bodyParts.length);
+  const bodyPart = rand(0, bodyParts.length - 1);
   return bodyParts[bodyPart];
 }

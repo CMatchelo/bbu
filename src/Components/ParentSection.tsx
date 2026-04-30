@@ -1,6 +1,6 @@
-export const ParentSecion = ({children}: { children: React.ReactNode }) => {
+export const ParentSecion = ({children, className}: { children: React.ReactNode, className?: string }) => {
   return (
-    <section className="flex flex-col gap-4 px-4 h-full overflow-auto">
+    <section className={`flex flex-col gap-4 h-full overflow-hidden ${className ? className : ''}`}>
       {children}
     </section>
   )

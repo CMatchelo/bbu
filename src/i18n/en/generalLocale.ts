@@ -17,5 +17,14 @@ export const generalLocale = {
   university: "University",
   stats: "Stats",
   skills: "Skills",
-  upcoming: "Upcoming"
+  upcoming: "Upcoming",
+  education: "Education",
+  grades: "Grades",
+  currentYear: "Years in college",
+  yearToGraduate: "Years to graduate",
+  tutoring: "Tutoring",
+  intelligence: "Intelligence",
+  injury: "Injury",
+  bodyPart: "Body part",
+  gamesOut: "Games out"
 };

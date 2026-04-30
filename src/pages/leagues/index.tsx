@@ -48,8 +48,10 @@ export const Leagues = () => {
           </button>
         ))}
       </div>
-      <StandingsTable leagueId={leagueId} />
-      <MatchesTable schedule={schedule} />
+      <div className="flex flex-col gap-4 p-4 overflow-auto">
+        <StandingsTable leagueId={leagueId} />
+        <MatchesTable schedule={schedule} />
+      </div>
     </ParentSecion>
   );
 };

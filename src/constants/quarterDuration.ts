@@ -1,1 +1,0 @@
-export const quarterDuration = 10 * 60

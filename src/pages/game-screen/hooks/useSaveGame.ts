@@ -32,6 +32,7 @@ import { setStarters } from "../../../store/slices/gameSettingsSlice";
 import { savePlayers, saveUniversities } from "../../../utils/saveGame";
 import { progressPlayers } from "../../../game/playerProgression";
 import { ApplyInjuries } from "../../../game/injuryGenerator";
+import { updatePlayersAttributes } from "../../../game/updatePlayers";
 
 interface UseSaveGameParams {
   user: User;
@@ -112,7 +113,7 @@ export function useSaveGame({
       dispatch(updatePlayersSkills(playersWithProgress));
 
       // Update players injuries
-      const updates = ApplyInjuries(allPlayers);
+      const updates = updatePlayersAttributes(allPlayers);
       dispatch(updatePlayers(updates));
 
       // Save players

@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { LevelPips } from "../../../Components/levelPips";
+import { LevelPips } from "../../../Components/LevelPips";
 
 type FacilityCardProps = {
   title: string;

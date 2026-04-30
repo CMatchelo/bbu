@@ -119,17 +119,19 @@ export function createPlayer(
     lastName,
     age: rand(18, 23),
 
-    grades: rand(60, 100),
+    grades: rand(70, 100),
     yearsInCollege,
     yearsToGraduate,
     course: courses[rand(0, courses.length - 1)],
     currentUniversity: university.id,
+    tutoring: false,
 
     skills: skillByPosition(pos, rating),
     inCourtPosition: pos,
     scholarship: Math.random() > 0.4,
     potential: rand(max, 99),
     stamina: rand(60, 90),
+    intelligence: rand(0, 100),
 
     injuryProne: rand(0, 50),
     active: true,

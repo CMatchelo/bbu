@@ -9,14 +9,14 @@ import { TableRow } from "./TableRow";
 import { Pill } from "./Pill";
 
 interface PlayerStatsProps {
-  players: Player[]
+  players: Player[];
 }
 
-export const PlayerStatsTwo = ({players}: PlayerStatsProps) => {
+export const PlayerStatsTwo = ({ players }: PlayerStatsProps) => {
   const { user } = useUser();
   const { t } = useTranslation();
 
-  const[orderKey, setOrderKey] = useState<keyof PlayerSeasonStats>("points");
+  const [orderKey, setOrderKey] = useState<keyof PlayerSeasonStats>("points");
 
   const sortedPlayers = useMemo(() => {
     if (!user) return [];
@@ -32,10 +32,7 @@ export const PlayerStatsTwo = ({players}: PlayerStatsProps) => {
   const f = (val: number, decimals = 1) =>
     isNaN(val) ? "—" : val.toFixed(decimals);
   return (
-    <TableCard
-      title={t("generalLocale.standings")}
-      badge={`${t("generalLocale.season")} ${user?.currentSeason}`}
-    >
+    <TableCard title={t("generalLocale.standings")}>
       <table className="w-full min-w-[820px] border-collapse">
         <thead>
           <tr className="bg-cardbglight">
