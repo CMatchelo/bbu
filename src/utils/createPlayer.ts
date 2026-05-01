@@ -1,3 +1,4 @@
+import { number } from "react-i18next/icu.macro";
 import { courses } from "../constants/courses.constants";
 import { firtNames, lastNames } from "../constants/names.constants";
 import { teamOverall } from "../game/skillsAverage";
@@ -68,6 +69,12 @@ function skillByPosition(pos: Position, rating: 1 | 2 | 3 | 4 | 5) {
   return base;
 }
 
+function calculatMaxMinGrade(realGrade: number) {
+  const maxPotential = rand(realGrade, realGrade + 15);
+  const minPotential = rand(realGrade - 15, realGrade);
+  return { minPotential, maxPotential };
+}
+
 export function createPlayer(
   university: University,
   pos: Position,
@@ -75,6 +82,7 @@ export function createPlayer(
   playerUni: string,
   isEmergency: boolean,
   isDraft: boolean,
+  isNewGame: boolean,
 ): Player {
   const firstName = firtNames[rand(0, firtNames.length - 1)];
   const lastName = lastNames[rand(0, lastNames.length - 1)];
@@ -86,13 +94,21 @@ export function createPlayer(
       ? (rand(1, 3) as 1 | 2 | 3)
       : getRatingByDifficulty(isPlayerUni, difficulty);
 
-  const yearsInCollege = isDraft ? 1 : rand(1, 4);
+  // Calculate how long already in the college
+  const minStart = isNewGame ? 2 : 1;
+  const yearsInCollege = isDraft ? 1 : rand(minStart, 4);
   const yearsToGraduate = isDraft
     ? rand(4, 5)
     : clamp(4 - yearsInCollege + rand(0, 1), 1, 4);
-  const [min, max] = getSkillRangeByRating(rating);
+
+  // Calculate min and max range for the skills
+  const [minRange, maxRange] = getSkillRangeByRating(rating);
+
+  // Calculate player potential, as well as max and min potential that will be displayed to user
+  const potential = isEmergency ? rand(minRange, maxRange) : rand(maxRange, 99);
+  const { minPotential, maxPotential } = calculatMaxMinGrade(potential);
   return {
-    id: `p${String(idCounter++).padStart(5, "0")}`,
+    id: crypto.randomUUID(),
     firstName,
     lastName,
     age: rand(18, 23),
@@ -107,7 +123,9 @@ export function createPlayer(
     skills: skillByPosition(pos, rating),
     inCourtPosition: pos,
     scholarship: Math.random() > 0.4,
-    potential: isEmergency ? rand(min, max) : rand(max, 99),
+    potential,
+    minPotential,
+    maxPotential,
     stamina: rand(60, 90),
     intelligence: rand(0, 100),
 
@@ -157,7 +175,9 @@ export function generateAllPlayers(
     ];
 
     dist.forEach((pos) => {
-      players.push(createPlayer(uni, pos, difficulty, playerUni, false, false));
+      players.push(
+        createPlayer(uni, pos, difficulty, playerUni, false, false, true),
+      );
     });
   });
 
@@ -187,18 +207,26 @@ export function generateDraftPlayers(
     ];
 
     dist.forEach((pos) => {
-      const newPlayer = createPlayer(uni, pos, 2, playerUni, false, true);
+      const newPlayer = createPlayer(
+        uni,
+        pos,
+        2,
+        playerUni,
+        false,
+        true,
+        false,
+      );
       if (uni.id === playerUni) {
         playerOptions.push(newPlayer);
       } else {
         uniPlayers.push(newPlayer);
       }
     });
-
-    const selected = cpuSelectPlayer(uniPlayers, uni.id);
-    cpuPlayers.push(...selected);
+    if (uni.id !== playerUni) {
+      const selected = cpuSelectPlayer(uniPlayers, uni.id);
+      cpuPlayers.push(...selected);
+    }
   });
-
   return { playerOptions, cpuPlayers };
 }
 

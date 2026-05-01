@@ -66,6 +66,11 @@ const dataSlice = createSlice({
         state.playersById[p.id] = p;
       }
     },
+    addPlayers(state, action: PayloadAction<Player[]>) {
+      for (const p of action.payload) {
+        state.playersById[p.id] = p;
+      }
+    },
     updatePlayer(
       state,
       action: PayloadAction<{ id: string; changes: Partial<Player> }>,
@@ -175,6 +180,7 @@ const dataSlice = createSlice({
 export const {
   setUniversities,
   setPlayers,
+  addPlayers,
   updatePlayer,
   updatePlayers,
   updatePlayerStats,

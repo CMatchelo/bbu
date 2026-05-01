@@ -8,6 +8,9 @@ import { useTranslation } from "react-i18next";
 
 interface SkillsTableProps {
   players: Player[];
+  selectedIds?: Set<string>;
+  onToggle?: (player: Player) => void;
+  disableUnselected?: boolean;
 }
 
 const SKILLS = [
@@ -29,16 +32,20 @@ function skillColor(value: number) {
   return "text-text2";
 }
 
-export const SkillsTable = ({ players }: SkillsTableProps) => {
+export const SkillsTable = ({ players, selectedIds, onToggle, disableUnselected }: SkillsTableProps) => {
   const { t } = useTranslation()
   const playersSorted = players
     ?.slice()
     .sort((a, b) => a.inCourtPosition.localeCompare(b.inCourtPosition));
+
+  const selectionMode = !!onToggle;
+
   return (
     <TableCard className="h-full" title={t("generalLocale.roster")}>
       <table className="w-full min-w-[700px] border-collapse">
         <thead>
           <tr className="bg-cardbglight">
+            {selectionMode && <TableHead className="w-10 pl-5" />}
             <TableHead className="w-80 pl-5">
               {t("generalLocale.player")}
             </TableHead>
@@ -49,30 +56,49 @@ export const SkillsTable = ({ players }: SkillsTableProps) => {
           </tr>
         </thead>
         <tbody>
-          {playersSorted?.map((player, index) => (
-            <TableRow key={player.id} index={index}>
-              <td className="pl-5 py-2.5 flex gap-2">
-                <Pill variant="muted">{player.inCourtPosition}</Pill>
-                <span className="text-[13px] font-medium text-text1">
-                  {player.firstName} {player.lastName}
-                </span>
-              </td>
-              {SKILLS.map(({ key }) => {
-                const value = player.skills[key];
-                return (
-                  <td
-                    key={key}
-                    className={`text-center py-2.5 px-2 text-[12px] ${skillColor(value)}`}
-                  >
-                    {Math.floor(value)}
+          {playersSorted?.map((player, index) => {
+            const isSelected = selectedIds?.has(player.id) ?? false;
+            const isDisabled = selectionMode && disableUnselected && !isSelected;
+            return (
+              <TableRow
+                key={player.id}
+                index={index}
+                className={isDisabled ? "opacity-40" : ""}
+              >
+                {selectionMode && (
+                  <td className="pl-5 py-2.5">
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      disabled={isDisabled}
+                      onChange={() => onToggle?.(player)}
+                      className="accent-highlights1 w-4 h-4 cursor-pointer disabled:cursor-not-allowed"
+                    />
                   </td>
-                );
-              })}
-              <td className="text-center py-2.5 px-2 text-[13px] font-medium text-highlights1">
-                {playerAverage(player).toString()}
-              </td>
-            </TableRow>
-          ))}
+                )}
+                <td className="pl-5 py-2.5 flex gap-2">
+                  <Pill variant="muted">{player.inCourtPosition}</Pill>
+                  <span className="text-[13px] font-medium text-text1">
+                    {player.firstName} {player.lastName}
+                  </span>
+                </td>
+                {SKILLS.map(({ key }) => {
+                  const value = player.skills[key];
+                  return (
+                    <td
+                      key={key}
+                      className={`text-center py-2.5 px-2 text-[12px] ${skillColor(value)}`}
+                    >
+                      {Math.floor(value)}
+                    </td>
+                  );
+                })}
+                <td className="text-center py-2.5 px-2 text-[13px] font-medium text-highlights1">
+                  {playerAverage(player).toString()}
+                </td>
+              </TableRow>
+            );
+          })}
         </tbody>
       </table>
     </TableCard>

@@ -3,11 +3,13 @@ import { ParentSecion } from "../../Components/ParentSection";
 import { useAuthUser } from "../../hooks/useAuthUser";
 import { SkillsTable } from "./Components/SkillsTable";
 import { selectPlayersFromUniversity } from "../../selectors/data.selectors";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PlayerStats } from "../../Components/PlayerStats";
 import { RootState } from "../../store";
 import { TopMenuBtn } from "../../Components/TopMenuBtn";
 import { EduTable } from "./Components/EduTable";
+import { DraftPopup } from "./Components/DraftPopup";
+import { DRAFT_WEEKS } from "../../constants/game.constants";
 
 export default function Team() {
   const user = useAuthUser();
@@ -16,10 +18,23 @@ export default function Team() {
     selectPlayersFromUniversity(state, user.currentUniversity.id),
   );
 
+  const currentWeek = useSelector((state: RootState) => state.schedule.currentWeek);
+
   const [table, setTable] = useState<string>("skills");
+  const [showDraft, setShowDraft] = useState(false);
+
+  useEffect(() => {
+    if (!DRAFT_WEEKS.includes(currentWeek)) return;
+    const key = `draft_shown_${user.id}_week${currentWeek}`;
+    if (!localStorage.getItem(key)) {
+      localStorage.setItem(key, "1");
+      setShowDraft(true);
+    }
+  }, [currentWeek, user.id]);
 
   return (
     <ParentSecion className="px-4 pb-10">
+      {showDraft && <DraftPopup onClose={() => setShowDraft(false)} />}
       <div className="flex self-center bg-cardbg border border-highlights1/20 rounded-lg w-fit">
         <TopMenuBtn
           onClick={() => setTable("skills")}

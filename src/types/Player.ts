@@ -23,6 +23,8 @@ export type Player = {
   inCourtPosition: Position;
   scholarship: boolean;
   potential: number;
+  minPotential: number;
+  maxPotential: number;
   stamina: number;
   intelligence: number;
 
