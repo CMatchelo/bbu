@@ -19,7 +19,7 @@ export default function TeamSelection() {
   const ready = starters.length === 5;
 
   return (
-    <ParentSecion>
+    <ParentSecion className="px-4">
       <div className="flex flex-col gap-4">
         <PlayTypeSelection />
         <PlayerSelection />

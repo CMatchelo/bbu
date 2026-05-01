@@ -357,7 +357,7 @@ function updateStamina(
 
 function verifyIfInjured(player: Player, stamina: number): boolean {
   if (stamina > 90) return false;
-  if (player.id === "p00121") return true;
+  if (player.id === "p00130") return true;
 
   const BASE_CHANCE = 0.00005;
 

@@ -61,11 +61,11 @@ export const PlayerSelection = () => {
           return (
             <button
               key={p.id}
-              disabled={p.injured}
+              disabled={p.injured || !p.available}
               onClick={() => toggleStarter(p)}
               className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg border text-left transition-all
                 ${
-                  p.injured
+                  p.injured || !p.available
                     ? "cursor-not-allowed! bg-red-500/20"
                     : isStarter
                       ? "bg-highlights1/20 border-highlights1/40 text-highlights1"
@@ -87,6 +87,7 @@ export const PlayerSelection = () => {
                 {p.firstName} {p.lastName}
               </span>
               {p.injured && Icons.MedicalSymbol}
+              {!p.available && Icons.AcademicWarning}
 
               <span
                 className={`text-[14px] shrink-0 ${

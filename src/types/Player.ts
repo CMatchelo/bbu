@@ -27,9 +27,11 @@ export type Player = {
   intelligence: number;
 
   injuryProne: number;
-  active: boolean;
   injured: boolean;
   injury: PlayerInjury | null;
+  
+  active: boolean;
+  available: boolean;
 
   practicing: keyof Skill | null;
   stats: Record<number, PlayerSeasonStats>;

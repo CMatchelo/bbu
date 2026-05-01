@@ -1,5 +1,8 @@
+import { courses } from "../constants/courses.constants";
 import { firtNames, lastNames } from "../constants/names.constants";
-import { CourseId } from "../types/Courses";
+import { teamOverall } from "../game/skillsAverage";
+import { selectPlayersFromUniversity } from "../selectors/data.selectors";
+import { store } from "../store";
 import { Player, Position } from "../types/Player";
 import { University } from "../types/University";
 import { createEmptyPlayerSeasonStats } from "./createEmptySeasonStats";
@@ -7,39 +10,6 @@ import { clamp, rand } from "./mathFunc";
 
 const SKILL_CAP = 80;
 let idCounter = 1;
-
-const courses: CourseId[] = [
-  "computer_science",
-  "software_engineering",
-  "information_systems",
-  "data_science",
-  "artificial_intelligence",
-  "cyber_security",
-  "game_development",
-  "computer_engineering",
-  "electrical_engineering",
-  "mechanical_engineering",
-  "civil_engineering",
-  "architecture",
-  "business_administration",
-  "economics",
-  "accounting",
-  "marketing",
-  "law",
-  "medicine",
-  "nursing",
-  "pharmacy",
-  "psychology",
-  "biology",
-  "physics",
-  "chemistry",
-  "mathematics",
-  "statistics",
-  "journalism",
-  "graphic_design",
-  "education",
-  "international_relations",
-];
 
 function getSkillRangeByRating(rating: 1 | 2 | 3 | 4 | 5): [number, number] {
   const ranges: Record<number, [number, number]> = {
@@ -103,15 +73,23 @@ export function createPlayer(
   pos: Position,
   difficulty: number,
   playerUni: string,
+  isEmergency: boolean,
+  isDraft: boolean,
 ): Player {
   const firstName = firtNames[rand(0, firtNames.length - 1)];
   const lastName = lastNames[rand(0, lastNames.length - 1)];
 
-  const isPlayerUni = university.id === playerUni
-  const rating = getRatingByDifficulty(isPlayerUni, difficulty)
+  const isPlayerUni = university.id === playerUni;
+  const rating = isEmergency
+    ? 1
+    : isDraft
+      ? (rand(1, 3) as 1 | 2 | 3)
+      : getRatingByDifficulty(isPlayerUni, difficulty);
 
-  const yearsInCollege = rand(1, 4);
-  const yearsToGraduate = clamp(4 - yearsInCollege + rand(0, 1), 1, 4);
+  const yearsInCollege = isDraft ? 1 : rand(1, 4);
+  const yearsToGraduate = isDraft
+    ? rand(4, 5)
+    : clamp(4 - yearsInCollege + rand(0, 1), 1, 4);
   const [min, max] = getSkillRangeByRating(rating);
   return {
     id: `p${String(idCounter++).padStart(5, "0")}`,
@@ -129,14 +107,16 @@ export function createPlayer(
     skills: skillByPosition(pos, rating),
     inCourtPosition: pos,
     scholarship: Math.random() > 0.4,
-    potential: rand(max, 99),
+    potential: isEmergency ? rand(min, max) : rand(max, 99),
     stamina: rand(60, 90),
     intelligence: rand(0, 100),
 
     injuryProne: rand(0, 50),
-    active: true,
     injured: false,
     injury: null,
+
+    active: true,
+    available: true,
 
     practicing: null,
     stats: {
@@ -177,9 +157,93 @@ export function generateAllPlayers(
     ];
 
     dist.forEach((pos) => {
-      players.push(createPlayer(uni, pos, difficulty, playerUni));
+      players.push(createPlayer(uni, pos, difficulty, playerUni, false, false));
     });
   });
 
   return players;
+}
+
+export function generateDraftPlayers(
+  universities: University[],
+  playerUni: string,
+) {
+  const playerOptions: Player[] = [];
+  const cpuPlayers: Player[] = [];
+
+  universities.forEach((uni) => {
+    const uniPlayers: Player[] = [];
+    const dist: Position[] = [
+      "PG",
+      "PG",
+      "SG",
+      "SG",
+      "SF",
+      "SF",
+      "PF",
+      "PF",
+      "C",
+      "C",
+    ];
+
+    dist.forEach((pos) => {
+      const newPlayer = createPlayer(uni, pos, 2, playerUni, false, true);
+      if (uni.id === playerUni) {
+        playerOptions.push(newPlayer);
+      } else {
+        uniPlayers.push(newPlayer);
+      }
+    });
+
+    const selected = cpuSelectPlayer(uniPlayers, uni.id);
+    cpuPlayers.push(...selected);
+  });
+
+  return { playerOptions, cpuPlayers };
+}
+
+function cpuSelectPlayer(players: Player[], uniId: string): Player[] {
+  const currentSquad = selectPlayersFromUniversity(store.getState(), uniId);
+  const selected: Player[] = [];
+  const positions: Position[] = ["PG", "SG", "SF", "PF", "C"];
+
+  for (const pos of positions) {
+    const currentCount = currentSquad.filter(
+      (p) => p.inCourtPosition === pos,
+    ).length;
+    const candidates = players.filter((p) => p.inCourtPosition === pos);
+
+    if (currentCount >= 3) continue;
+
+    if (currentCount <= 1) {
+      selected.push(...candidates);
+    } else {
+      const best = candidates.reduce((a, b) =>
+        a.potential >= b.potential ? a : b,
+      );
+      selected.push(best);
+    }
+  }
+
+  return selected;
+}
+
+export function addDraftedPlayers(
+  draftedPlayers: Player[],
+  universities: University[],
+): { players: Player[]; universities: University[] } {
+  const playersByUni: Record<string, string[]> = {};
+
+  for (const p of draftedPlayers) {
+    if (!playersByUni[p.currentUniversity])
+      playersByUni[p.currentUniversity] = [];
+    playersByUni[p.currentUniversity].push(p.id);
+  }
+
+  const updatedUniversities = universities.map((uni) => ({
+    ...uni,
+    roster: [...uni.roster, ...(playersByUni[uni.id] || [])],
+  }));
+
+  return { players: draftedPlayers, universities: updatedUniversities };
 }

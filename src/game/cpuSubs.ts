@@ -1,7 +1,7 @@
 import { TIMEOUTS_QTY } from "../constants/game.constants";
 import { Player } from "../types/Player";
 import { PlayerGameStats } from "../types/PlayerGameStats";
-import { playerAverage, teamAverage } from "./skillsAverage";
+import { playerAverage, teamOverall } from "./skillsAverage";
 
 export type TimeoutState = {
   used: number;
@@ -56,7 +56,7 @@ export function substituteCPU(
       !shouldSubstitute(
         stamina,
         playerAverage(newOnCourt[i]),
-        teamAverage(newOnCourt),
+        teamOverall(newOnCourt),
       )
     ) {
       continue;

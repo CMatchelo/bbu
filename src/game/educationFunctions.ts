@@ -8,18 +8,20 @@ export function CalculateGrades(players: Player[]) {
   const updates = [];
   const universities = selectAllUniversities(store.getState());
   for (const p of players) {
-    const uni = universities.find((u) => u.id === p.currentUniversity)
+    const uni = universities.find((u) => u.id === p.currentUniversity);
     const delta = calculateGradeDelta(p, uni);
     const intGain = calculateIntelligenceGain(p.intelligence, p.tutoring);
 
     const newGrades = clamp(p.grades + delta, 0, 100);
     const newIntelligence = clamp(p.intelligence + intGain, 0, 100);
+    const newAvailable = newGrades >= 60;
 
     updates.push({
       id: p.id,
       changes: {
         intelligence: newIntelligence,
         grades: newGrades,
+        available: newAvailable,
       },
     });
   }
@@ -52,6 +54,10 @@ function calculateGradeDelta(p: Player, uni?: University) {
   // tutoring reduz queda (mas não zera)
   if (p.tutoring && delta < 0) {
     delta *= 0.2; // só 20% da queda original
+  }
+
+  if (p.id === "p00127") {
+    console.log("Delta das notas: ", delta);
   }
 
   return delta;

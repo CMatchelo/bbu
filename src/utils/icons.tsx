@@ -320,4 +320,27 @@ export const Icons = {
       <rect x="3" y="9" width="18" height="6" rx="2" />
     </svg>
   ),
+  AcademicWarning: (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* Livro simples */}
+      <rect x="4" y="5" width="10" height="14" rx="2" fill="#555" />
+      <line x1="9" y1="5" x2="9" y2="19" stroke="white" strokeWidth="1" />
+
+      {/* Símbolo de proibido */}
+      <circle cx="17" cy="8" r="4" fill="none" stroke="red" strokeWidth="2" />
+      <line
+        x1="14.5"
+        y1="10.5"
+        x2="19.5"
+        y2="5.5"
+        stroke="red"
+        strokeWidth="2"
+      />
+    </svg>
+  ),
 };
