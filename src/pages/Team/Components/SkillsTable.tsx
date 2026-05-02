@@ -11,6 +11,7 @@ interface SkillsTableProps {
   selectedIds?: Set<string>;
   onToggle?: (player: Player) => void;
   disableUnselected?: boolean;
+  className?: string;
 }
 
 const SKILLS = [
@@ -32,7 +33,7 @@ function skillColor(value: number) {
   return "text-text2";
 }
 
-export const SkillsTable = ({ players, selectedIds, onToggle, disableUnselected }: SkillsTableProps) => {
+export const SkillsTable = ({ players, selectedIds, onToggle, disableUnselected, className }: SkillsTableProps) => {
   const { t } = useTranslation()
   const playersSorted = players
     ?.slice()
@@ -41,11 +42,11 @@ export const SkillsTable = ({ players, selectedIds, onToggle, disableUnselected 
   const selectionMode = !!onToggle;
 
   return (
-    <TableCard className="h-full" title={t("generalLocale.roster")}>
+    <TableCard className={`h-full ${className}`} title={t("generalLocale.roster")}>
       <table className="w-full min-w-[700px] border-collapse">
         <thead>
           <tr className="bg-cardbglight">
-            {selectionMode && <TableHead className="w-10 pl-5" />}
+            {selectionMode && <TableHead className="w-10 pl-5" children={undefined} />}
             <TableHead className="w-80 pl-5">
               {t("generalLocale.player")}
             </TableHead>
@@ -53,6 +54,7 @@ export const SkillsTable = ({ players, selectedIds, onToggle, disableUnselected 
               <TableHead key={label}>{label}</TableHead>
             ))}
             <TableHead accent>OVER</TableHead>
+            <TableHead accent>POT</TableHead>
           </tr>
         </thead>
         <tbody>
@@ -63,7 +65,7 @@ export const SkillsTable = ({ players, selectedIds, onToggle, disableUnselected 
               <TableRow
                 key={player.id}
                 index={index}
-                className={isDisabled ? "opacity-40" : ""}
+                className={`${isDisabled ? "opacity-40" : ""}`}
               >
                 {selectionMode && (
                   <td className="pl-5 py-2.5">
@@ -95,6 +97,9 @@ export const SkillsTable = ({ players, selectedIds, onToggle, disableUnselected 
                 })}
                 <td className="text-center py-2.5 px-2 text-[13px] font-medium text-highlights1">
                   {playerAverage(player).toString()}
+                </td>
+                <td className="text-center py-2.5 px-2 text-[13px] font-medium text-highlights2">
+                  {player.minPotential} - {player.maxPotential}
                 </td>
               </TableRow>
             );

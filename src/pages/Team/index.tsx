@@ -8,7 +8,7 @@ import { PlayerStats } from "../../Components/PlayerStats";
 import { RootState } from "../../store";
 import { TopMenuBtn } from "../../Components/TopMenuBtn";
 import { EduTable } from "./Components/EduTable";
-import { DraftPopup } from "./Components/DraftPopup";
+import { DraftTable } from "./Components/DraftTable";
 import { DRAFT_WEEKS } from "../../constants/game.constants";
 
 export default function Team() {
@@ -32,9 +32,16 @@ export default function Team() {
     }
   }, [currentWeek, user.id]);
 
+  if (showDraft) {
+    return (
+      <ParentSecion className="px-4 pb-10">
+        <DraftTable onDone={() => setShowDraft(false)} />
+      </ParentSecion>
+    );
+  }
+
   return (
     <ParentSecion className="px-4 pb-10">
-      {showDraft && <DraftPopup onClose={() => setShowDraft(false)} />}
       <div className="flex self-center bg-cardbg border border-highlights1/20 rounded-lg w-fit">
         <TopMenuBtn
           onClick={() => setTable("skills")}

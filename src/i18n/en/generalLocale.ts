@@ -26,5 +26,6 @@ export const generalLocale = {
   intelligence: "Intelligence",
   injury: "Injury",
   bodyPart: "Body part",
-  gamesOut: "Games out"
+  gamesOut: "Games out",
+  prospects: "Prospects"
 };

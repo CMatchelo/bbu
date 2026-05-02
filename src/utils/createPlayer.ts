@@ -1,7 +1,5 @@
-import { number } from "react-i18next/icu.macro";
 import { courses } from "../constants/courses.constants";
 import { firtNames, lastNames } from "../constants/names.constants";
-import { teamOverall } from "../game/skillsAverage";
 import { selectPlayersFromUniversity } from "../selectors/data.selectors";
 import { store } from "../store";
 import { Player, Position } from "../types/Player";
@@ -10,7 +8,6 @@ import { createEmptyPlayerSeasonStats } from "./createEmptySeasonStats";
 import { clamp, rand } from "./mathFunc";
 
 const SKILL_CAP = 80;
-let idCounter = 1;
 
 function getSkillRangeByRating(rating: 1 | 2 | 3 | 4 | 5): [number, number] {
   const ranges: Record<number, [number, number]> = {
@@ -69,9 +66,9 @@ function skillByPosition(pos: Position, rating: 1 | 2 | 3 | 4 | 5) {
   return base;
 }
 
-function calculatMaxMinGrade(realGrade: number) {
-  const maxPotential = rand(realGrade, realGrade + 15);
-  const minPotential = rand(realGrade - 15, realGrade);
+export function calculatMaxMinGrade(realGrade: number) {
+  const maxPotential = clamp(rand(realGrade, realGrade + 15), 48, 99);
+  const minPotential = clamp(rand(realGrade - 15, realGrade), 48, 99);
   return { minPotential, maxPotential };
 }
 

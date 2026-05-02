@@ -10,6 +10,7 @@ import { courseLocale as courseLocaleEN } from "./en/coursesLocale";
 import { systemGeneral as systemGeneralEN } from "./en/systemGeneral";
 import { bodyParts as bodyPartsEN } from "./en/bodyParts";
 import { injuries as injuriesEN } from "./en/injuries";
+import { faqLocale as faqLocaleEN } from "./en/faqLocale";
 
 import { inGame as inGamePT } from "./pt/inGame";
 import { mainMenu as mainMenuPT } from "./pt/mainMenu";
@@ -20,6 +21,7 @@ import { courseLocale as courseLocalePT } from "./pt/coursesLocale";
 import { systemGeneral as systemGeneralPT } from "./pt/systemGeneral";
 import { bodyParts as bodyPartsPT } from "./pt/bodyParts";
 import { injuries as injuriesPT } from "./pt/injuries";
+import { faqLocale as faqLocalePT } from "./pt/faqLocale";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -34,6 +36,7 @@ i18n.use(initReactI18next).init({
         systemGeneral: systemGeneralEN,
         bodyParts: bodyPartsEN,
         injuries: injuriesEN,
+        faqLocale: faqLocaleEN,
       },
     },
     pt: {
@@ -47,6 +50,7 @@ i18n.use(initReactI18next).init({
         systemGeneral: systemGeneralPT,
         bodyParts: bodyPartsPT,
         injuries: injuriesPT,
+        faqLocale: faqLocalePT,
       },
     },
   },
