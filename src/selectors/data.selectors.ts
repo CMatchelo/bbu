@@ -2,6 +2,7 @@ import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { University } from "../types/University";
 import { Player } from "../types/Player";
+import { HighSchoolPlayer } from "../types/HighSchoolPlayer";
 
 export const selectAllUniversities = createSelector(
   [(state: RootState) => state.data.universitiesByLeague],
@@ -65,4 +66,9 @@ export const selectInjuredPlayers = createSelector(
   [selectAllPlayers],
   (playersById) =>
     Object.values(playersById).filter(p => p.injury)
+);
+
+export const selectAllHighSchoolPlayers = createSelector(
+  [(state: RootState) => state.data.highSchoolPlayersById],
+  (byId): HighSchoolPlayer[] => Object.values(byId),
 );

@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Player } from "../../types/Player";
 import { University } from "../../types/University";
 import { Skill } from "../../types/Skill";
+import { HighSchoolPlayer } from "../../types/HighSchoolPlayer";
 import { PlayerSeasonStats, TeamSeasonStats } from "../../types/SeasonStats";
 
 interface DataState {
@@ -9,6 +10,7 @@ interface DataState {
   universitiesByLeague: Record<string, University[]>;
   /** players grouped by universityId */
   playersById: Record<string, Player>;
+  highSchoolPlayersById: Record<string, HighSchoolPlayer>;
   loading: boolean;
   error?: string;
 }
@@ -16,6 +18,7 @@ interface DataState {
 const initialState: DataState = {
   universitiesByLeague: {},
   playersById: {},
+  highSchoolPlayersById: {},
   loading: false,
 };
 
@@ -159,6 +162,27 @@ const dataSlice = createSlice({
         }
       }
     },
+    setHighSchoolPlayers(
+      state,
+      action: PayloadAction<HighSchoolPlayer[] | Record<string, HighSchoolPlayer>>,
+    ) {
+      const players = Array.isArray(action.payload)
+        ? action.payload
+        : Object.values(action.payload);
+      state.highSchoolPlayersById = {};
+      for (const p of players) {
+        state.highSchoolPlayersById[p.id] = p;
+      }
+    },
+    updateHighSchoolPlayers(
+      state,
+      action: PayloadAction<{ id: string; changes: Partial<HighSchoolPlayer> }[]>,
+    ) {
+      for (const { id, changes } of action.payload) {
+        const player = state.highSchoolPlayersById[id];
+        if (player) Object.assign(player, changes);
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -186,5 +210,7 @@ export const {
   updatePlayerStats,
   updatePlayersSkills,
   updateUniversityStats,
+  setHighSchoolPlayers,
+  updateHighSchoolPlayers,
 } = dataSlice.actions;
 export default dataSlice.reducer;

@@ -15,6 +15,7 @@ import {
   updatePlayersSkills,
   updatePlayerStats,
   updateUniversityStats,
+  updateHighSchoolPlayers,
 } from "../../../store/slices/dataSlice";
 import { User } from "../../../types/User";
 import { PlayerGameStats } from "../../../types/PlayerGameStats";
@@ -25,12 +26,16 @@ import {
 import {
   selectAllPlayers,
   selectAllUniversities,
+  selectAllHighSchoolPlayers,
 } from "../../../selectors/data.selectors";
 import { toRecord } from "../../../utils/toRecord";
 import { TeamGameStats } from "../../../types/TeamGameStats";
 import { setStarters } from "../../../store/slices/gameSettingsSlice";
-import { savePlayers, saveUniversities } from "../../../utils/saveGame";
+import { savePlayers, saveUniversities, saveHighSchoolPlayers } from "../../../utils/saveGame";
+import { calcAllSkillRanges } from "../../../utils/createPlayer";
 import { progressPlayers } from "../../../game/playerProgression";
+import { CalculateHSGrades } from "../../../game/educationFunctions";
+import { Skill } from "../../../types/Skill";
 import { ApplyInjuries } from "../../../game/injuryGenerator";
 import { updatePlayersAttributes } from "../../../game/updatePlayers";
 
@@ -115,6 +120,64 @@ export function useSaveGame({
       // Update players injuries
       const updates = updatePlayersAttributes(allPlayers);
       dispatch(updatePlayers(updates));
+
+      // Update scouted high school players
+      const hsPlayers = selectAllHighSchoolPlayers(store.getState());
+      const scoutedUpdates = hsPlayers
+        .filter((p) => p.scouted)
+        .map((p) => {
+          const oldKnowledge = p.playerKnowledge;
+          const newKnowledge = Math.min(oldKnowledge + 10, 100);
+
+          // Determine how many 10-point thresholds were crossed
+          const thresholdsCrossed =
+            Math.floor(newKnowledge / 10) - Math.floor(oldKnowledge / 10);
+
+          // Reveal one random unrevealed skill per threshold crossed
+          const skillsRevealed = { ...p.skillsRevealed };
+          if (newKnowledge >= 100) {
+            (Object.keys(skillsRevealed) as (keyof Skill)[]).forEach((k) => {
+              skillsRevealed[k] = true;
+            });
+          } else {
+            const unrevealed = (Object.keys(skillsRevealed) as (keyof Skill)[]).filter(
+              (k) => !skillsRevealed[k],
+            );
+            for (let i = 0; i < thresholdsCrossed && unrevealed.length > 0; i++) {
+              const idx = Math.floor(Math.random() * unrevealed.length);
+              skillsRevealed[unrevealed.splice(idx, 1)[0]] = true;
+            }
+          }
+
+          // Recalculate min/max skill ranges, clamped to previous values
+          const { minSkills, maxSkills } = calcAllSkillRanges(
+            p.skills,
+            newKnowledge,
+            p.minSkills,
+            p.maxSkills,
+          );
+
+          return {
+            id: p.id,
+            changes: {
+              playerKnowledge: newKnowledge,
+              minSkills,
+              maxSkills,
+              skillsRevealed,
+            },
+          };
+        });
+      if (scoutedUpdates.length > 0) {
+        dispatch(updateHighSchoolPlayers(scoutedUpdates));
+      }
+
+      // Update HS player grades (all players, tutoring affects delta)
+      const hsPlayersAfterScout = selectAllHighSchoolPlayers(store.getState());
+      if (hsPlayersAfterScout.length > 0) {
+        const gradeUpdates = CalculateHSGrades(hsPlayersAfterScout);
+        dispatch(updateHighSchoolPlayers(gradeUpdates));
+        await saveHighSchoolPlayers(folderName);
+      }
 
       // Save players
       await savePlayers(folderName);

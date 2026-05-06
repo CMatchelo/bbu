@@ -20,6 +20,7 @@ export type University = {
   fanbase: number;
   leagueId: string;
   stats: Record<number, TeamSeasonStats>;
+  signedPlayers?: string[];
 };
 
 export type TeamSimInfo = {

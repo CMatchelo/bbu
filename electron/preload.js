@@ -8,4 +8,5 @@ contextBridge.exposeInMainWorld("api", {
   saveSchedule: (user, schedule) => ipcRenderer.invoke("save-schedule", user, schedule),
   savePlayers: (user, players) => ipcRenderer.invoke("save-players", user, players),
   saveUniversities: (user, universities) => ipcRenderer.invoke("save-universities", user, universities),
+  saveHighSchoolPlayers: (userId, data) => ipcRenderer.invoke("save-high-school-players", userId, data),
 });

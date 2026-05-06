@@ -7,7 +7,6 @@ export type User = {
   //championships: CompletedTournament[]
   reputation: number;
   currentSeason: number;
-  isStartSeason: boolean;
 }
 
 export type UserContextType = {

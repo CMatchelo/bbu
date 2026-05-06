@@ -1,3 +1,4 @@
+import { HighSchoolPlayer } from "../types/HighSchoolPlayer";
 import { Player } from "../types/Player";
 
 export const teamOverall = (players: Player[], pos?: string): number => {
@@ -14,6 +15,22 @@ export const teamOverall = (players: Player[], pos?: string): number => {
 
 export const playerAverage = (player: Player): number => {
   const average = Object.values(player.skills).reduce(
+    (total, n) => total + n,
+    0,
+  );
+  return Math.round(average / 10);
+};
+
+export const playerMaxAverage = (player: HighSchoolPlayer): number => {
+  const average = Object.values(player.maxSkills).reduce(
+    (total, n) => total + n,
+    0,
+  );
+  return Math.round(average / 10);
+};
+
+export const playerMinAverage = (player: HighSchoolPlayer): number => {
+  const average = Object.values(player.minSkills).reduce(
     (total, n) => total + n,
     0,
   );

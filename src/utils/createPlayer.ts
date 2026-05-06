@@ -3,19 +3,21 @@ import { firtNames, lastNames } from "../constants/names.constants";
 import { selectPlayersFromUniversity } from "../selectors/data.selectors";
 import { store } from "../store";
 import { Player, Position } from "../types/Player";
+import { HighSchoolPlayer } from "../types/HighSchoolPlayer";
 import { University } from "../types/University";
+import { Skill } from "../types/Skill";
 import { createEmptyPlayerSeasonStats } from "./createEmptySeasonStats";
-import { clamp, rand } from "./mathFunc";
+import { clamp, rand, randomFloat } from "./mathFunc";
 
 const SKILL_CAP = 80;
 
 function getSkillRangeByRating(rating: 1 | 2 | 3 | 4 | 5): [number, number] {
   const ranges: Record<number, [number, number]> = {
-    1: [48, 58],
-    2: [52, 62],
-    3: [56, 66],
-    4: [60, 70],
-    5: [64, 74],
+    1: [44, 55],
+    2: [49, 60],
+    3: [53, 64],
+    4: [58, 69],
+    5: [64, 75],
   };
   return ranges[rating];
 }
@@ -225,6 +227,95 @@ export function generateDraftPlayers(
     }
   });
   return { playerOptions, cpuPlayers };
+}
+
+export function calcSkillRange(
+  realValue: number,
+  playerKnowledge: number,
+  prev?: { min: number; max: number },
+): { min: number; max: number } {
+  const knowledgeFactor = playerKnowledge / 100;
+  const maxRange = rand(17, 23);
+  const baseRange = maxRange * (1 - knowledgeFactor);
+  const rangeVariance = baseRange * randomFloat(0.8, 1.2);
+  const centerOffset = randomFloat(-rangeVariance * 0.3, rangeVariance * 0.3);
+  const estimatedCenter = realValue + centerOffset;
+  let min = Math.floor(estimatedCenter - rangeVariance / 2);
+  let max = Math.ceil(estimatedCenter + rangeVariance / 2);
+  min = clamp(min, 0, 99);
+  max = clamp(max, 0, 99);
+  if (min > max) [min, max] = [max, min];
+  if (prev) {
+    min = Math.max(min, prev.min);
+    max = Math.min(max, prev.max);
+    if (min > max) min = max;
+  }
+  return { min, max };
+}
+
+export function calcAllSkillRanges(
+  skills: Skill,
+  knowledge: number,
+  prevMin?: Skill,
+  prevMax?: Skill,
+): { minSkills: Skill; maxSkills: Skill } {
+  const keys = Object.keys(skills) as (keyof Skill)[];
+  const minSkills = {} as Skill;
+  const maxSkills = {} as Skill;
+  for (const key of keys) {
+    const prev = prevMin && prevMax ? { min: prevMin[key], max: prevMax[key] } : undefined;
+    const { min, max } = calcSkillRange(skills[key], knowledge, prev);
+    minSkills[key] = min;
+    maxSkills[key] = max;
+  }
+  return { minSkills, maxSkills };
+}
+
+export function generateHighSchoolPlayers(): HighSchoolPlayer[] {
+  const positions: Position[] = ["PG", "SG", "SF", "PF", "C"];
+  const players: HighSchoolPlayer[] = [];
+
+  for (const pos of positions) {
+    for (let i = 0; i < 50; i++) {
+      const firstName = firtNames[rand(0, firtNames.length - 1)];
+      const lastName = lastNames[rand(0, lastNames.length - 1)];
+      const rating = rand(1, 3) as 1 | 2 | 3;
+      const skills = skillByPosition(pos, rating);
+      const potential = rand(getSkillRangeByRating(rating)[1], 99);
+      const { minPotential, maxPotential } = calculatMaxMinGrade(potential);
+      const { minSkills, maxSkills } = calcAllSkillRanges(skills, 1);
+      const skillKeys = Object.keys(skills) as (keyof Skill)[];
+      const skillsRevealed = Object.fromEntries(
+        skillKeys.map((k) => [k, false]),
+      ) as Record<keyof Skill, boolean>;
+
+      players.push({
+        id: crypto.randomUUID(),
+        firstName,
+        lastName,
+        age: rand(17, 18),
+        grades: rand(70, 100),
+        tutoring: false,
+        skills,
+        inCourtPosition: pos,
+        scholarshipOffers: [],
+        potential,
+        minPotential,
+        maxPotential,
+        intelligence: rand(0, 100),
+        injuryProne: rand(0, 50),
+        active: true,
+        scouted: false,
+        playerKnowledge: 1,
+        minSkills,
+        maxSkills,
+        skillsRevealed,
+        committedWith: null,
+      });
+    }
+  }
+
+  return players;
 }
 
 function cpuSelectPlayer(players: Player[], uniId: string): Player[] {
