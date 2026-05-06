@@ -28,5 +28,6 @@ export const generalLocale = {
   bodyPart: "Parte do corpo",
   gamesOut: "Tempo fora",
   prospects: "Candidatos",
-  range: "Faixa"
+  range: "Faixa",
+  board: "Painel",
 };

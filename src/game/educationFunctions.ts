@@ -1,6 +1,7 @@
 import { selectAllUniversities } from "../selectors/data.selectors";
 import { store } from "../store";
 import { Player } from "../types/Player";
+import { HighSchoolPlayer } from "../types/HighSchoolPlayer";
 import { University } from "../types/University";
 import { clamp } from "../utils/mathFunc";
 
@@ -60,6 +61,36 @@ function calculateGradeDelta(p: Player, uni?: University) {
     console.log("Delta das notas: ", delta);
   }
 
+  return delta;
+}
+
+export function CalculateHSGrades(players: HighSchoolPlayer[]) {
+  const updates: { id: string; changes: { grades: number; intelligence: number } }[] = [];
+  for (const p of players) {
+    const delta = calculateHSGradeDelta(p);
+    const intGain = calculateIntelligenceGain(p.intelligence, p.tutoring);
+    updates.push({
+      id: p.id,
+      changes: {
+        grades: clamp(p.grades + delta, 0, 100),
+        intelligence: clamp(p.intelligence + intGain, 0, 100),
+      },
+    });
+  }
+  return updates;
+}
+
+function calculateHSGradeDelta(p: HighSchoolPlayer): number {
+  const BASE_RANGE = 3;
+  const intelFactor = p.intelligence / 100;
+  const rand = ((Math.random() + Math.random()) / 2) * 2 - 1;
+  const negativeWeight = 1 - intelFactor;
+  const positiveWeight = 0.6 + intelFactor * 0.4;
+  let delta =
+    rand >= 0
+      ? rand * BASE_RANGE * positiveWeight
+      : rand * BASE_RANGE * negativeWeight;
+  if (p.tutoring && delta < 0) delta *= 0.2;
   return delta;
 }
 

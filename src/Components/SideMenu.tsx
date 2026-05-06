@@ -87,14 +87,14 @@ export const SideMenu = () => {
         <SectionLabel>
           {t("mainMenu.sections.recruiting", "Recrutamento")}
         </SectionLabel>
-        <NavItem goTo="/team" text={t("mainMenu.scouts")} icon={Icons.scouts} />
+        <NavItem goTo="/scouting" text={t("mainMenu.scouts")} icon={Icons.scouts} />
         <NavItem
-          goTo="/team"
+          goTo="/recruitingBoard"
           text={t("mainMenu.recruitingBoard")}
           icon={Icons.board}
         />
         <NavItem
-          goTo="/team"
+          goTo="/commitments"
           text={t("mainMenu.commitments")}
           icon={Icons.commitments}
         />

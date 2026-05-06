@@ -4,7 +4,7 @@ import {
   setCurrentWeek,
   setSchedule,
 } from "../../../store/slices/scheduleSlice";
-import { setPlayers, setUniversities } from "../../../store/slices/dataSlice";
+import { setPlayers, setUniversities, setHighSchoolPlayers } from "../../../store/slices/dataSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { useNavigate } from "react-router-dom";
 import { Icons } from "../../../utils/icons";
@@ -38,6 +38,9 @@ export const LoadGame = ({ saveIds }: LoadGameProps) => {
     dispatch(setSchedule(userLoaded.schedule.matches));
     dispatch(setCurrentWeek(userLoaded.schedule.currentWeek));
     dispatch(setPlayers(userLoaded.players));
+    if (userLoaded.highSchoolPlayers) {
+      dispatch(setHighSchoolPlayers(userLoaded.highSchoolPlayers));
+    }
 
     loadUser(userLoaded.user);
     navigate("/team");

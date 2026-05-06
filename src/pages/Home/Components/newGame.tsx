@@ -10,10 +10,11 @@ import {
 } from "../../../selectors/data.selectors";
 import { generateLeagueSchedules } from "../../../utils/managerSchedule";
 import { useTranslation } from "react-i18next";
-import { generateAllPlayers } from "../../../utils/createPlayer";
+import { generateAllPlayers, generateHighSchoolPlayers } from "../../../utils/createPlayer";
 import {
   setPlayers,
   setUniversities,
+  setHighSchoolPlayers,
   loadUniversitiesFromFiles,
 } from "../../../store/slices/dataSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
@@ -133,7 +134,6 @@ export default function NewGame() {
     currentUniversity: uni,
     reputation: 50,
     currentSeason: 2026,
-    isStartSeason: false,
   });
 
   const startGame = async () => {
@@ -151,7 +151,9 @@ export default function NewGame() {
         selectedUni.id,
       );
       const universitiesWithRoster = buildUniversitiesWithRoster(players);
+      const hsPlayers = generateHighSchoolPlayers();
       dispatch(setPlayers(players));
+      dispatch(setHighSchoolPlayers(hsPlayers));
 
       await window.api.saveGame(user);
       await window.api.saveSchedule(folderName, {
@@ -163,6 +165,7 @@ export default function NewGame() {
         folderName,
         toRecord(universitiesWithRoster),
       );
+      await window.api.saveHighSchoolPlayers(folderName, toRecord(hsPlayers));
 
       dispatch(setUniversities(universitiesWithRoster));
       dispatch(setPlayers(toRecord(players)));
