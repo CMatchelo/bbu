@@ -42,7 +42,7 @@ export const SkillsTable = ({ players, selectedIds, onToggle, disableUnselected,
   const selectionMode = !!onToggle;
 
   return (
-    <TableCard className={`h-full ${className}`} title={t("generalLocale.roster")}>
+    <TableCard className={`overflow-auto h-full ${className}`} title={t("generalLocale.roster")}>
       <table className="w-full min-w-[700px] border-collapse">
         <thead>
           <tr className="bg-cardbglight">

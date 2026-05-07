@@ -17,6 +17,7 @@ import LeaguesInjuries from "./pages/leagues-injuries";
 import ScoutingPage from "./pages/scouting";
 import RecruitingBoardPage from "./pages/recruiting-board";
 import CommitmentsPage from "./pages/commitments";
+import PlayoffsPage from "./pages/playoffs";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
 
             <Route path="/stats" element={<Stats />} />
             <Route path="/leagues" element={<Leagues />} />
+            <Route path="/playoffs" element={<PlayoffsPage />} />
             <Route path="/leaguesInjuries" element={<LeaguesInjuries />} />
             
             <Route path="/university" element={<UniversityPage />} />

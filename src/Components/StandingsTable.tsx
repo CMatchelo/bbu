@@ -36,7 +36,7 @@ export function StandingsTable({ leagueId }: StandingsTableProps) {
     isNaN(val) ? "—" : val.toFixed(decimals);
 
   return (
-    <TableCard className="h-full" title={t("generalLocale.standings")}>
+    <TableCard className="h-full overflow-auto" title={t("generalLocale.standings")}>
       <table className="w-full min-w-[820px] border-collapse">
         <thead>
           <tr className="bg-cardbglight">

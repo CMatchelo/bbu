@@ -1,5 +1,6 @@
 import { Player } from "./Player";
 import { TeamSeasonStats } from "./SeasonStats";
+import { SeasonRecord } from "./LeagueStandings";
 
 export type University = {
   id: string;
@@ -7,7 +8,6 @@ export type University = {
   state: string;
   name: string;
   nickname: string;
-  //championships: CompletedTournament[]
   roster: string[];
   playersOnCourt?: Player[];
   courtLevel: 1 | 2 | 3 | 4 | 5;
@@ -20,6 +20,7 @@ export type University = {
   fanbase: number;
   leagueId: string;
   stats: Record<number, TeamSeasonStats>;
+  seasonRecords?: SeasonRecord[];
   signedPlayers?: string[];
   watchlist?: string[];
 };

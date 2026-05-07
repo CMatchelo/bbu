@@ -45,7 +45,7 @@ export const PlayerStats = ({ players }: PlayerStatsProps) => {
     isNaN(val) ? "—" : val.toFixed(decimals);
   return (
     <TableCard title={t("generalLocale.stats")}>
-      <div ref={parentRef} className="h-[600px] overflow-auto">
+      <div ref={parentRef} className="h-[600px]">
         <div className="min-w-[860px]">
           <div
             className="grid bg-cardbglight sticky top-0 z-10"

@@ -12,7 +12,7 @@ export const TableCard = ({ title, children, className }: TableCardProps) => {
   const { t } = useTranslation();
   return (
     <div
-      className={`rounded-xl max-h-full overflow-auto border border-highlights1/20 bg-mainbg ${className}`}
+      className={`rounded-xl max-h-full border border-highlights1/20 bg-mainbg ${className}`}
     >
       <div className="flex items-center gap-2.5 px-5 py-3.5 bg-cardbg border-b border-highlights1/25 rounded-t-lg">
         <div className="w-1.5 h-1.5 rounded-full bg-highlights1 shrink-0" />

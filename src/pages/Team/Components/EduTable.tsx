@@ -54,8 +54,8 @@ export const EduTable = ({ players }: EduTableProps) => {
 
   return (
     <>
-      <TableCard title={t("generalLocale.roster")}>
-        <table className="w-full min-w-[700px] border-collapse">
+      <TableCard className="overflow-auto" title={t("generalLocale.roster")}>
+        <table className="w-full h-full min-w-[700px] border-collapse">
           <thead>
             <tr className="bg-cardbglight">
               <TableHead className="w-80 pl-5">
@@ -128,9 +128,6 @@ export const EduTable = ({ players }: EduTableProps) => {
           </tbody>
         </table>
       </TableCard>
-      <button onClick={saveTutoring} disabled={changedPlayers.length === 0}>
-        {t("systemGeneral.savePractice")}
-      </button>
     </>
   );
 };

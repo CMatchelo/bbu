@@ -4,7 +4,6 @@ export type User = {
   id: string
   name: string
   currentUniversity: University
-  //championships: CompletedTournament[]
   reputation: number;
   currentSeason: number;
 }

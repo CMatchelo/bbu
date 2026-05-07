@@ -1,6 +1,7 @@
 import { selectAllPlayers, selectAllUniversities, selectAllHighSchoolPlayers } from "../selectors/data.selectors";
 import { store } from "../store";
 import { toRecord } from "./toRecord";
+import { LeagueStandings } from "../types/LeagueStandings";
 
 export async function savePlayers(folderName: string) {
   const players = selectAllPlayers(store.getState());
@@ -15,4 +16,8 @@ export async function saveUniversities(folderName: string) {
 export async function saveHighSchoolPlayers(folderName: string) {
   const hsPlayers = selectAllHighSchoolPlayers(store.getState());
   await window.api.saveHighSchoolPlayers(folderName, toRecord(hsPlayers));
+}
+
+export async function saveLeagueStandings(folderName: string, standings: LeagueStandings[]) {
+  await window.api.saveLeagueStandings(folderName, standings);
 }

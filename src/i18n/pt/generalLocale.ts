@@ -30,4 +30,6 @@ export const generalLocale = {
   prospects: "Candidatos",
   range: "Faixa",
   board: "Painel",
+  regularSeasonOngoing: "Temporada regular em andamento",
+  noInjuries: "Sem lesões",
 };

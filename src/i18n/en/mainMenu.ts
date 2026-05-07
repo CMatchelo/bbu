@@ -11,5 +11,6 @@ export const mainMenu = {
   champions: "Champions",
   leaguesInjuries: "Leagues Injuries",
   facilities: "Facilities",
-  university: "University"
+  university: "University",
+  playoffs: "Playoffs",
 }

@@ -15,7 +15,7 @@ export function MatchesTable({ schedule }: MatchesTableProps) {
 
   return (
     <TableCard
-      className="h-full"
+      className="h-full overflow-auto "
       title={t("generalLocale.matches")}
     >
       <table className="w-full border-collapse">

@@ -11,6 +11,9 @@ export type Match = {
     homeScore: number;
     awayScore: number;
   };
+  playoffRound?: 1 | 2 | 3 | 4 | 5;
+  playoffMatchupId?: string;
+  seriesGame?: number;
 };
 
 export type MatchWithTeams = Match & {

@@ -12,6 +12,14 @@ interface MedicalDeptoProps {
 export default function MedicalDeptoTable({ players }: MedicalDeptoProps) {
   const { t } = useTranslation();
 
+  if (players.length === 0) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <span className="text-[13px] text-text2">{t("generalLocale.noInjuries")}</span>
+      </div>
+    );
+  }
+
   return (
     <TableCard title="Depto Medico">
       <table className="w-full min-w-[700px] border-collapse">

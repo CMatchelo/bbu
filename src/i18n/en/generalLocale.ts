@@ -29,4 +29,6 @@ export const generalLocale = {
   gamesOut: "Games out",
   prospects: "Prospects",
   board: "Board",
+  regularSeasonOngoing: "Regular season ongoing",
+  noInjuries: "No injuries",
 };
