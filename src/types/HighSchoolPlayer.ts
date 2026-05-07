@@ -12,7 +12,7 @@ export type HighSchoolPlayer = {
 
   skills: Skill;
   inCourtPosition: Position;
-  scholarshipOffers: string[];
+  universityInterest: string[];
   potential: number;
   minPotential: number;
   maxPotential: number;
@@ -26,5 +26,5 @@ export type HighSchoolPlayer = {
   minSkills: Skill;
   maxSkills: Skill;
   skillsRevealed: Record<keyof Skill, boolean>;
-  committedWith: string | null;
+  signedWith: string | null;
 };

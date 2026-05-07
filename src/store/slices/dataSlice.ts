@@ -183,6 +183,15 @@ const dataSlice = createSlice({
         if (player) Object.assign(player, changes);
       }
     },
+    updateUniversities(
+      state,
+      action: PayloadAction<{ id: string; changes: Partial<University> }[]>,
+    ) {
+      for (const { id, changes } of action.payload) {
+        const university = findUniversity(state.universitiesByLeague, id);
+        if (university) Object.assign(university, changes);
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -212,5 +221,6 @@ export const {
   updateUniversityStats,
   setHighSchoolPlayers,
   updateHighSchoolPlayers,
+  updateUniversities,
 } = dataSlice.actions;
 export default dataSlice.reducer;
