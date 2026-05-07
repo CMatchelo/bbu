@@ -11,20 +11,20 @@ import { useTranslation } from "react-i18next";
 
 interface ScoutingBoardTableProps {
   players: HighSchoolPlayer[];
-  pendingScout: Record<string, boolean>;
-  pendingTutoring: Record<string, boolean>;
-  onScoutChange: (id: string, value: boolean) => void;
-  onTutoringChange: (id: string, value: boolean) => void;
+  pendingScout?: Record<string, boolean>;
+  pendingTutoring?: Record<string, boolean>;
+  onScoutChange?: (id: string, value: boolean) => void;
+  onTutoringChange?: (id: string, value: boolean) => void;
 }
 
-const COLUMNS = "50px minmax(200px,3fr) 70px 90px 70px 70px minmax(140px,1fr)";
+const COLUMNS = "50px minmax(200px,3fr) minmax(140px,2fr) 90px 70px 70px minmax(140px,1fr)";
 
 export const ScoutingBoardTable = ({
   players,
-  pendingScout,
-  pendingTutoring,
-  onScoutChange,
-  onTutoringChange,
+  pendingScout = {},
+  pendingTutoring = {},
+  onScoutChange = () => {},
+  onTutoringChange = () => {},
 }: ScoutingBoardTableProps) => {
   const { t } = useTranslation();
   const { user } = useUser();
@@ -63,7 +63,7 @@ export const ScoutingBoardTable = ({
         <div className="grid bg-cardbglight sticky top-0 z-10" style={{ gridTemplateColumns: COLUMNS }}>
           <TableHead className="text-center">{t("scouting.scout")}</TableHead>
           <TableHead align="left" className="pl-5">{t("generalLocale.player")}</TableHead>
-          <TableHead>{t("scouting.offers")}</TableHead>
+          <TableHead align="left" className="pl-2">{t("scouting.interest")}</TableHead>
           <TableHead>{t("scouting.knowledge")}</TableHead>
           <TableHead>{t("scouting.grades")}</TableHead>
           <TableHead>{t("scouting.tutoring")}</TableHead>
@@ -110,8 +110,10 @@ export const ScoutingBoardTable = ({
                     </span>
                   </div>
 
-                  <div className="text-center text-[12px] text-text2">
-                    {player.scholarshipOffers.length}
+                  <div className="flex flex-wrap gap-1 pl-2 py-1">
+                    {player.universityInterest.map((uniId) => (
+                      <Pill key={uniId} variant="muted">{uniId}</Pill>
+                    ))}
                   </div>
                   <div className="text-center text-[12px] text-text2">
                     {player.playerKnowledge}
@@ -130,18 +132,24 @@ export const ScoutingBoardTable = ({
                   </div>
 
                   <div className="flex justify-center">
-                    <button
-                      disabled={letterDisabled}
-                      onClick={() => console.log("Function called")}
-                      className="
-                        px-3 py-1 rounded-md text-[11px] font-semibold uppercase tracking-wider
-                        bg-highlights1/10 border border-highlights1/30 text-highlights1
-                        hover:bg-highlights1/20 transition-colors
-                        disabled:opacity-30 disabled:cursor-not-allowed
-                      "
-                    >
-                      {t("scouting.letterBtn")}
-                    </button>
+                    {player.signedWith ? (
+                      <span className="text-[11px] font-semibold text-green-400/80 uppercase tracking-wider">
+                        Signed · {player.signedWith}
+                      </span>
+                    ) : (
+                      <button
+                        disabled={letterDisabled}
+                        onClick={() => console.log("Function called")}
+                        className="
+                          px-3 py-1 rounded-md text-[11px] font-semibold uppercase tracking-wider
+                          bg-highlights1/10 border border-highlights1/30 text-highlights1
+                          hover:bg-highlights1/20 transition-colors
+                          disabled:opacity-30 disabled:cursor-not-allowed
+                        "
+                      >
+                        {t("scouting.letterBtn")}
+                      </button>
+                    )}
                   </div>
                 </div>
               );

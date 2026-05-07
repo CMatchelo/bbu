@@ -21,6 +21,7 @@ export type University = {
   leagueId: string;
   stats: Record<number, TeamSeasonStats>;
   signedPlayers?: string[];
+  watchlist?: string[];
 };
 
 export type TeamSimInfo = {

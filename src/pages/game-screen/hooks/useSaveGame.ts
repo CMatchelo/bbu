@@ -16,6 +16,7 @@ import {
   updatePlayerStats,
   updateUniversityStats,
   updateHighSchoolPlayers,
+  updateUniversities,
 } from "../../../store/slices/dataSlice";
 import { User } from "../../../types/User";
 import { PlayerGameStats } from "../../../types/PlayerGameStats";
@@ -36,8 +37,8 @@ import { calcAllSkillRanges } from "../../../utils/createPlayer";
 import { progressPlayers } from "../../../game/playerProgression";
 import { CalculateHSGrades } from "../../../game/educationFunctions";
 import { Skill } from "../../../types/Skill";
-import { ApplyInjuries } from "../../../game/injuryGenerator";
 import { updatePlayersAttributes } from "../../../game/updatePlayers";
+import { runCpuScouting, runCpuSigning } from "../../../game/cpuScouting";
 
 interface UseSaveGameParams {
   user: User;
@@ -117,7 +118,7 @@ export function useSaveGame({
       );
       dispatch(updatePlayersSkills(playersWithProgress));
 
-      // Update players injuries
+      // Update players injuries and grades
       const updates = updatePlayersAttributes(allPlayers);
       dispatch(updatePlayers(updates));
 
@@ -129,11 +130,9 @@ export function useSaveGame({
           const oldKnowledge = p.playerKnowledge;
           const newKnowledge = Math.min(oldKnowledge + 10, 100);
 
-          // Determine how many 10-point thresholds were crossed
           const thresholdsCrossed =
             Math.floor(newKnowledge / 10) - Math.floor(oldKnowledge / 10);
 
-          // Reveal one random unrevealed skill per threshold crossed
           const skillsRevealed = { ...p.skillsRevealed };
           if (newKnowledge >= 100) {
             (Object.keys(skillsRevealed) as (keyof Skill)[]).forEach((k) => {
@@ -149,13 +148,21 @@ export function useSaveGame({
             }
           }
 
-          // Recalculate min/max skill ranges, clamped to previous values
           const { minSkills, maxSkills } = calcAllSkillRanges(
             p.skills,
             newKnowledge,
             p.minSkills,
             p.maxSkills,
           );
+
+          // Add user university to universityInterest when knowledge first crosses 30
+          const crossedThreshold =
+            oldKnowledge < 30 &&
+            newKnowledge >= 30 &&
+            !p.universityInterest.includes(user.currentUniversity.id);
+          const universityInterest = crossedThreshold
+            ? [...p.universityInterest, user.currentUniversity.id]
+            : undefined;
 
           return {
             id: p.id,
@@ -164,6 +171,7 @@ export function useSaveGame({
               minSkills,
               maxSkills,
               skillsRevealed,
+              ...(universityInterest !== undefined ? { universityInterest } : {}),
             },
           };
         });
@@ -176,8 +184,35 @@ export function useSaveGame({
       if (hsPlayersAfterScout.length > 0) {
         const gradeUpdates = CalculateHSGrades(hsPlayersAfterScout);
         dispatch(updateHighSchoolPlayers(gradeUpdates));
-        await saveHighSchoolPlayers(folderName);
       }
+
+      // CPU scouting: every 4 games
+      const newWeek = week + 1;
+      if (newWeek % 4 === 0) {
+        const freshHs = selectAllHighSchoolPlayers(store.getState());
+        const freshUnis = selectAllUniversities(store.getState());
+        const freshPlayers = selectAllPlayers(store.getState());
+        const { playerUpdates: sp, uniUpdates: su } = runCpuScouting(
+          freshUnis, freshHs, freshPlayers, user.currentUniversity.id,
+        );
+        if (sp.length > 0) dispatch(updateHighSchoolPlayers(sp));
+        if (su.length > 0) dispatch(updateUniversities(su));
+      }
+
+      // CPU signing: every 10 games
+      if (newWeek % 10 === 0) {
+        const freshHs = selectAllHighSchoolPlayers(store.getState());
+        const freshUnis = selectAllUniversities(store.getState());
+        const freshPlayers = selectAllPlayers(store.getState());
+        const { playerUpdates: sp, uniUpdates: su } = runCpuSigning(
+          freshUnis, freshHs, freshPlayers, user.currentUniversity.id,
+        );
+        if (sp.length > 0) dispatch(updateHighSchoolPlayers(sp));
+        if (su.length > 0) dispatch(updateUniversities(su));
+      }
+
+      // Save HS players (covers scouting + grades + CPU changes)
+      await saveHighSchoolPlayers(folderName);
 
       // Save players
       await savePlayers(folderName);

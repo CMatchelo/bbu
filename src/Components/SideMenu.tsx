@@ -3,6 +3,7 @@ import { useUser } from "../Context/UserContext";
 import { useTranslation } from "react-i18next";
 import { changeLanguage } from "i18next";
 import { Icons } from "../utils/icons";
+import { useHsTick } from "../game/useHsTick";
 
 interface NavItemProps {
   goTo: string;
@@ -11,7 +12,6 @@ interface NavItemProps {
 }
 
 const NavItem = ({ goTo, text, icon }: NavItemProps) => {
-  const { t } = useTranslation();
   const isActive = location.pathname === goTo;
 
   return (
@@ -19,8 +19,8 @@ const NavItem = ({ goTo, text, icon }: NavItemProps) => {
       to={goTo}
       className={`flex items-center gap-2.5 px-[18px] py-2 text-[13px] border-l-2 transition-all duration-150 ${
         isActive
-          ? "bg-highlights1/10 text-highlights1 border-highlights1 font-medium"
-          : "text-text2 border-transparent hover:bg-highlights1/6 hover:text-text1 hover:border-highlights1/30"
+          ? "bg-highlights2/10 text-highlights1 border-highlights2 font-medium"
+          : "text-text2 border-transparent hover:bg-highlights2/6 hover:text-text1 hover:border-highlights2/30"
       }`}
     >
       <span
@@ -44,6 +44,7 @@ const Divider = () => <div className="h-px bg-highlights1/12 my-1.5" />;
 export const SideMenu = () => {
   const { loadUser, user } = useUser();
   const { t, i18n } = useTranslation();
+  const runHsTick = useHsTick();
 
   return (
     <div className="flex flex-col bg-mainbg border-r border-highlights1/15 h-full w-[220px] shrink-0">
@@ -114,6 +115,16 @@ export const SideMenu = () => {
           icon={Icons.champions}
         />
         <NavItem goTo="/leaguesInjuries" text={t("mainMenu.leaguesInjuries")} icon={Icons.news} />
+
+        <Divider />
+        {/* DEV */}
+        <SectionLabel>DEV</SectionLabel>
+        <button
+          onClick={runHsTick}
+          className="flex items-center gap-2.5 px-[18px] py-2 text-[13px] w-full text-left text-yellow-400/80 border-l-2 border-transparent hover:bg-yellow-400/6 hover:border-yellow-400/30 transition-all duration-150"
+        >
+          ⚡ HS Tick
+        </button>
 
         <Divider />
         {/* University */}

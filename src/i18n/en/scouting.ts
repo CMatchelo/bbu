@@ -1,7 +1,7 @@
 export const scouting = {
   board: "Scouting Board",
   scout: "Scout",
-  offers: "Offers",
+  interest: "Interest",
   knowledge: "Knowledge",
   grades: "Grades",
   tutoring: "Tutoring",

@@ -55,7 +55,7 @@ export const PlayLineRow = ({ play, team }: PlayLineRowProps) => {
         h-12 w-full flex items-center mt-1
         ${isHome ? "flex-row-reverse" : "flex-row"}
         ${isTeam ? "border-b" : ""}
-        ${isSuccess ? "border-green-400" : "border-red-400"}
+        ${isSuccess ? "border-highlights2light" : "border-red-400"}
       `}
     >
       {isTeam && (
@@ -83,7 +83,7 @@ export const PlayLineRow = ({ play, team }: PlayLineRowProps) => {
 
           <div
             className={`h-full flex justify-center w-10 p-2 text-gray-800 ${
-              isSuccess ? "bg-green-400" : "bg-red-400"
+              isSuccess ? "bg-highlights2light" : "bg-red-400"
             }`}
           >
             {boxLabel}

@@ -298,7 +298,7 @@ export function generateHighSchoolPlayers(): HighSchoolPlayer[] {
         tutoring: false,
         skills,
         inCourtPosition: pos,
-        scholarshipOffers: [],
+        universityInterest: [],
         potential,
         minPotential,
         maxPotential,
@@ -310,7 +310,7 @@ export function generateHighSchoolPlayers(): HighSchoolPlayer[] {
         minSkills,
         maxSkills,
         skillsRevealed,
-        committedWith: null,
+        signedWith: null,
       });
     }
   }

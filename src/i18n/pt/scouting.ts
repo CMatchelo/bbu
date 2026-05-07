@@ -1,7 +1,7 @@
 export const scouting = {
   board: "Painel de Scouting",
   scout: "Observar",
-  offers: "Ofertas",
+  interest: "Interesse",
   knowledge: "Conhecimento",
   grades: "Notas",
   tutoring: "Tutoria",

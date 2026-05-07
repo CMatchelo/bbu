@@ -17,3 +17,8 @@ When reaching the end of the season, the game should reset some configs for defa
 4. Remove ALL players that has yearsToGraduate <= 1 from university rosters 
 5. Create a new stats.{currentseason} for every university
 6. Create a new stats.{currentseason} for every player
+
+Melhorar botao do Ir para o jogo
+
+Menu do topo - Amarelo
+Solido no resumo das stats de cada time

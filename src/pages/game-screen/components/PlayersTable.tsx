@@ -30,7 +30,7 @@ export const PlayerTable = ({ players, playerStats }: PlayerTableProps) => {
 
   return (
     <div className="shadow-2xl">
-      <div className="grid grid-cols-14 gap-2 bg-highlights2 text-gray-700">
+      <div className="grid grid-cols-14 gap-2 bg-highlights1 text-gray-700">
         <PlayerLine classname="col-span-3">Player</PlayerLine>
         <PlayerLine>PTS</PlayerLine>
         <PlayerLine>REB</PlayerLine>

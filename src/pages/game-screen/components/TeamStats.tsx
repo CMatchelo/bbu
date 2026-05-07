@@ -18,7 +18,7 @@ export const TeamStats = ({ stats, isAway }: TeamStateProps) => {
     { label: t("inGame.turnovers"), value: stats.turnovers },
   ];
   return (
-    <div className="flex flex-col text-sm">
+    <div className="flex flex-col text-sm bg-cardbgdark h-fit p-2 shadow-2xl">
       {items.map(({ label, value }) => (
         <div
           key={label}
@@ -27,11 +27,11 @@ export const TeamStats = ({ stats, isAway }: TeamStateProps) => {
           {isAway ? (
             <>
               <span className="font-semibold text-left">{value}</span>
-              <span className="text-gray-500">{label}</span>
+              <span className="text-gray-500 text-right">{label}</span>
             </>
           ) : (
             <>
-              <span className="text-gray-500">{label}</span>
+              <span className="text-gray-500 text-left">{label}</span>
               <span className="font-semibold text-right">{value}</span>
             </>
           )}

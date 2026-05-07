@@ -2,15 +2,15 @@ import { useSelector } from "react-redux";
 import { selectAllHighSchoolPlayers } from "../../selectors/data.selectors";
 import { useTranslation } from "react-i18next";
 import { ParentSecion } from "../../Components/ParentSection";
-import { ScoutingBoardTable } from "../scouting/components/ScoutingBoardTable";
 import { ScoutingSkillsTable } from "../scouting/components/ScoutingSkillsTable";
 import { TopMenuBtn } from "../../Components/TopMenuBtn";
 import { useState } from "react";
+import { ScoutingBoardTable } from "../scouting/components/ScoutingBoardTable";
 
 export default function CommitmentsPage() {
   const { t } = useTranslation();
   const allPlayers = useSelector(selectAllHighSchoolPlayers);
-  const players = allPlayers.filter((p) => p.committedWith != null);
+  const players = allPlayers.filter((p) => p.signedWith != null);
   const [table, setTable] = useState<"board" | "skills">("board");
 
   return (
