@@ -36,7 +36,7 @@ export const Leagues = () => {
         <span className="text-[11px] font-bold uppercase tracking-widest text-text2 text-center">
           {t("mainMenu.leagues")}
         </span>
-          <div className="flex self-center bg-cardbg border border-highlights1/20 rounded-lg w-fit">
+          <div className="flex self-center bg-cardbg/75 border border-highlights1/20 rounded-lg w-fit">
             {LEAGUES.map((league) => (
               <button
                 key={league.value}

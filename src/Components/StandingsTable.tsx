@@ -39,7 +39,7 @@ export function StandingsTable({ leagueId }: StandingsTableProps) {
     <TableCard className="h-full overflow-auto" title={t("generalLocale.standings")}>
       <table className="w-full min-w-[820px] border-collapse">
         <thead>
-          <tr className="bg-cardbglight">
+          <tr className="bg-cardbglight/75">
             <TableHead className="w-6" children={undefined} />
             <TableHead align="left" className="pl-5">
               {t("generalLocale.team")}

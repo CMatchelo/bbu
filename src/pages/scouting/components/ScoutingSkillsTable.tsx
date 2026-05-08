@@ -45,7 +45,7 @@ export const ScoutingSkillsTable = ({ players }: ScoutingSkillsTableProps) => {
   return (
     <TableCard title={t("generalLocale.roster")} className="h-full">
       <div className="min-w-[860px]">
-        <div className="grid bg-cardbglight sticky top-0 z-10" style={{ gridTemplateColumns: COLUMNS }}>
+        <div className="grid bg-cardbglight/75 sticky top-0 z-10" style={{ gridTemplateColumns: COLUMNS }}>
           <TableHead align="left" className="pl-5">{t("generalLocale.player")}</TableHead>
           {SKILLS.map(({ label }) => (
             <TableHead key={label}>{label}</TableHead>
@@ -58,7 +58,6 @@ export const ScoutingSkillsTable = ({ players }: ScoutingSkillsTableProps) => {
           <div className="relative" style={{ height: `${virtualizer.getTotalSize()}px` }}>
             {virtualizer.getVirtualItems().map((virtualRow) => {
               const player = sorted[virtualRow.index];
-              const anyRevealed = Object.values(player.skillsRevealed).some(Boolean);
 
               return (
                 <div
@@ -90,7 +89,7 @@ export const ScoutingSkillsTable = ({ players }: ScoutingSkillsTableProps) => {
                   ))}
 
                   <div className="text-center text-[13px] font-medium text-highlights2">
-                    {anyRevealed
+                    {player.playerKnowledge > 100
                       ? `${playerMinAverage(player)}–${playerMaxAverage(player)}`
                       : "?"}
                   </div>

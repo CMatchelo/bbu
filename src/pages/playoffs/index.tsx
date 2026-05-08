@@ -40,7 +40,7 @@ function MatchupCard({ series, uniById, currentSeason, games }: MatchupCardProps
   const sortedGames = [...games].sort((a, b) => (a.seriesGame ?? 0) - (b.seriesGame ?? 0));
 
   return (
-    <div className="bg-cardbg border border-highlights1/15 rounded-xl p-4 flex flex-col gap-3">
+    <div className="bg-cardbg/75 backdrop-blur-sm border border-highlights1/15 rounded-xl p-4 flex flex-col gap-3">
       {/* Teams */}
       <div className="flex flex-col gap-1.5">
         <div className={`flex items-center justify-between ${isHomeWinner ? "text-highlights2" : "text-text1"}`}>
@@ -157,7 +157,7 @@ export default function PlayoffsPage() {
           </div>
         ) : (
           <>
-            <div className="flex self-center bg-cardbg border border-highlights1/20 rounded-lg w-fit">
+            <div className="flex self-center bg-cardbg/75 border border-highlights1/20 rounded-lg w-fit">
               {availableRounds.map((round) => (
                 <button
                   key={round}

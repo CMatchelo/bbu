@@ -54,7 +54,7 @@ export default function Practice() {
   }
 
   return (
-    <ParentSecion>
+    <ParentSecion backgroundImg='/practiceBg.png'>
         <div className="flex items-center">
           <button
             onClick={savePractice}
@@ -67,7 +67,7 @@ export default function Practice() {
         <TableCard title={t("generalLocale.practice")}>
           <table className="w-full min-w-[700px] border-collapse">
             <thead>
-              <tr className="bg-cardbglight">
+              <tr className="bg-cardbglight/75">
                 <TableHead
                   align="left"
                   className="pl-5 w-10"

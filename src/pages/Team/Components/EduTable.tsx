@@ -55,7 +55,10 @@ export const EduTable = ({ players }: EduTableProps) => {
   return (
     <>
       <TableCard className="overflow-auto" title={t("generalLocale.roster")}>
-        <table className="w-full h-full min-w-[700px] border-collapse">
+        <button onClick={saveTutoring} disabled={changedPlayers.length === 0}>
+          {t("systemGeneral.savePractice")}
+        </button>
+        <table className="w-full min-w-[700px] border-collapse">
           <thead>
             <tr className="bg-cardbglight">
               <TableHead className="w-80 pl-5">
@@ -73,6 +76,9 @@ export const EduTable = ({ players }: EduTableProps) => {
               </TableHead>
               <TableHead className="w-36">
                 {t("generalLocale.yearToGraduate")}
+              </TableHead>
+              <TableHead className="w-40">
+                {t("generalLocale.course")}
               </TableHead>
               <TableHead className="w-20">
                 {t("generalLocale.tutoring")}
@@ -111,6 +117,9 @@ export const EduTable = ({ players }: EduTableProps) => {
                   </td>
                   <td className="text-center py-2.5 px-2 text-[13px] font-medium">
                     {player.yearsToGraduate}
+                  </td>
+                  <td className="text-center py-2.5 px-2 text-[13px] text-text2">
+                    {t(`courseLocale.${player.course}`)}
                   </td>
                   <td className="text-center py-2.5 px-2 text-[13px] font-medium">
                     <input

@@ -42,13 +42,14 @@ import { CalculateHSGrades } from "../../../game/educationFunctions";
 import { Skill } from "../../../types/Skill";
 import { updatePlayersAttributes } from "../../../game/updatePlayers";
 import { runCpuScouting, runCpuSigning } from "../../../game/cpuScouting";
-import { REGULAR_SEASON_WEEKS } from "../../../constants/game.constants";
+import { REGULAR_SEASON_WEEKS, PLAYOFFS_CHAMPIONSHIP } from "../../../constants/game.constants";
 import {
   getPlayoffQualifiers,
   buildR1Matches,
   advancePlayoffs,
   buildLeagueStandings,
   sortTeams,
+  computeSeriesStates,
 } from "../../../utils/playoffsUtils";
 
 interface UseSaveGameParams {
@@ -193,6 +194,114 @@ export function useSaveGame({
           dispatch(addLeagueStandings(standings));
           const history = store.getState().schedule.leagueStandingsHistory;
           await saveLeagueStandings(folderName, history);
+        }
+
+        // If user just won their series but other series in the same round are still pending,
+        // simulate those series to completion so the next round can be created
+        const justPlayedMatch = store.getState().schedule.matchesById[matchId];
+        if (justPlayedMatch?.playoffMatchupId) {
+          const allSeriesNow = computeSeriesStates(store.getState().schedule.matchesById);
+          const userSeries = allSeriesNow.find((s) => s.matchupId === justPlayedMatch.playoffMatchupId);
+
+          if (userSeries?.decided && userSeries.winnerId === playerTeamId) {
+            const sameRoundPending = allSeriesNow.filter(
+              (s) => s.round === userSeries.round && !s.decided,
+            );
+
+            if (sameRoundPending.length > 0) {
+              skipIncrementWeek = true;
+              dispatch(incrementWeek());
+
+              let roundComplete = false;
+              while (!roundComplete) {
+                const stateNow = store.getState();
+                const matchesNow = stateNow.schedule.matchesById;
+
+                const pendingMatchupIds = new Set(
+                  computeSeriesStates(matchesNow)
+                    .filter((s) => s.round === userSeries.round && !s.decided)
+                    .map((s) => s.matchupId),
+                );
+
+                if (pendingMatchupIds.size === 0) { roundComplete = true; break; }
+
+                const pendingMatches = Object.values(matchesNow).filter(
+                  (m) =>
+                    m.championship === PLAYOFFS_CHAMPIONSHIP &&
+                    !m.played &&
+                    m.playoffMatchupId != null &&
+                    pendingMatchupIds.has(m.playoffMatchupId),
+                );
+
+                if (pendingMatches.length === 0) { roundComplete = true; break; }
+
+                const nextWeekNum = Math.min(...pendingMatches.map((m) => m.week));
+                const uniById = Object.fromEntries(
+                  selectAllUniversities(stateNow).map((u) => [u.id, u]),
+                );
+                const toSimulate = pendingMatches
+                  .filter((m) => m.week === nextWeekNum)
+                  .map((m) => ({ ...m, homeTeam: uniById[m.home], awayTeam: uniById[m.away] }))
+                  .filter((m) => m.homeTeam && m.awayTeam);
+
+                if (toSimulate.length === 0) { roundComplete = true; break; }
+
+                simulateMatchWithoutPlayer(toSimulate, nextWeekNum, playerTeamId, dispatch);
+                dispatch(incrementWeek());
+
+                const afterState = store.getState();
+                const { newMatches: nm, eliminated: el, champion: champ } = advancePlayoffs(afterState.schedule.matchesById);
+
+                if (nm.length > 0) dispatch(addMatches(nm));
+
+                if (el.length > 0) {
+                  const freshUs = selectAllUniversities(afterState);
+                  const elUpdates = el.map(({ id, result }) => {
+                    const u = freshUs.find((u) => u.id === id);
+                    const ex = u?.seasonRecords ?? [];
+                    return {
+                      id,
+                      changes: {
+                        seasonRecords: ex.map((r) =>
+                          r.season === user.currentSeason ? { ...r, playoffResult: result } : r,
+                        ),
+                      },
+                    };
+                  });
+                  dispatch(updateUniversities(elUpdates));
+                }
+
+                if (champ) {
+                  const latestUs = selectAllUniversities(store.getState());
+                  const cu = latestUs.find((u) => u.id === champ);
+                  if (cu) {
+                    const ex = cu.seasonRecords ?? [];
+                    dispatch(updateUniversities([{
+                      id: champ,
+                      changes: {
+                        seasonRecords: ex.map((r) =>
+                          r.season === user.currentSeason ? { ...r, playoffResult: 'champion' } : r,
+                        ),
+                      },
+                    }]));
+                  }
+                  const tieRandsF = new Map<string, number>();
+                  selectAllUniversities(store.getState()).forEach((u) => tieRandsF.set(u.id, Math.random()));
+                  const st = buildLeagueStandings(selectUniversitiesGrouped(store.getState()), user.currentSeason, champ, tieRandsF);
+                  dispatch(addLeagueStandings(st));
+                  const hist = store.getState().schedule.leagueStandingsHistory;
+                  await saveLeagueStandings(folderName, hist);
+                  roundComplete = true;
+                }
+
+                // Round complete when no more pending series in user's round
+                const updatedSeries = computeSeriesStates(store.getState().schedule.matchesById);
+                if (updatedSeries.filter((s) => s.round === userSeries.round).every((s) => s.decided)) {
+                  roundComplete = true;
+                }
+              }
+            }
+          }
         }
 
         // If user's team is eliminated, simulate all remaining playoff weeks automatically

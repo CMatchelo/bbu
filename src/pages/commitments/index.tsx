@@ -17,7 +17,7 @@ export default function CommitmentsPage() {
     <ParentSecion>
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-4">
-          <div className="flex self-center bg-cardbg border border-highlights1/20 rounded-lg w-fit">
+          <div className="flex self-center bg-cardbg/75 border border-highlights1/20 rounded-lg w-fit">
             <TopMenuBtn
               onClick={() => setTable("board")}
               tableId="board"

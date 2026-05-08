@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { changeLanguage } from "i18next";
 import { Icons } from "../utils/icons";
 import { useHsTick } from "../game/useHsTick";
+import { useSimulateToWeek35 } from "../game/useSimulateToWeek35";
 
 interface NavItemProps {
   goTo: string;
@@ -45,6 +46,7 @@ export const SideMenu = () => {
   const { loadUser, user } = useUser();
   const { t, i18n } = useTranslation();
   const runHsTick = useHsTick();
+  const simulateToWeek35 = useSimulateToWeek35();
 
   return (
     <div className="flex flex-col bg-mainbg border-r border-highlights1/15 h-full w-[220px] shrink-0">
@@ -129,6 +131,12 @@ export const SideMenu = () => {
           className="flex items-center gap-2.5 px-[18px] py-2 text-[13px] w-full text-left text-yellow-400/80 border-l-2 border-transparent hover:bg-yellow-400/6 hover:border-yellow-400/30 transition-all duration-150"
         >
           ⚡ HS Tick
+        </button>
+        <button
+          onClick={simulateToWeek35}
+          className="flex items-center gap-2.5 px-[18px] py-2 text-[13px] w-full text-left text-yellow-400/80 border-l-2 border-transparent hover:bg-yellow-400/6 hover:border-yellow-400/30 transition-all duration-150"
+        >
+          ⚡ Sim to W35
         </button>
 
         <Divider />

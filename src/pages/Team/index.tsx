@@ -43,15 +43,15 @@ export default function Team() {
   }
 
   return (
-    <ParentSecion className="pb-10">
+    <ParentSecion backgroundImg='/teamBg.png'>
       <div className="flex flex-col gap-2 mb-4">
-        <div className="flex self-center bg-cardbg border border-highlights1/20 rounded-lg w-fit">
+        <div className="flex self-center bg-cardbg/75 border border-highlights1/20 rounded-lg w-fit">
           <TopMenuBtn onClick={() => setTable("skills")} tableId="skills" currentTable={table} className="w-40" />
           <TopMenuBtn onClick={() => setTable("stats")} tableId="stats" currentTable={table} className="w-40" />
           <TopMenuBtn onClick={() => setTable("education")} tableId="education" currentTable={table} className="w-40" />
         </div>
       </div>
-      <div className="h-full pb-10">
+      <div className="flex-1 min-h-0 overflow-auto">
         {table === "skills" && <SkillsTable players={players} />}
         {/* {table === "skills" && <PlayerStatsTwo players={players} />} */}
         {table === "stats" && <PlayerStats players={players} />}

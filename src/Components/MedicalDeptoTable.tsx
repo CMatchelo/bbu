@@ -21,10 +21,10 @@ export default function MedicalDeptoTable({ players }: MedicalDeptoProps) {
   }
 
   return (
-    <TableCard title="Depto Medico">
+    <TableCard title="Depto Medico" className="overflow-auto ">
       <table className="w-full min-w-[700px] border-collapse">
         <thead>
-          <tr className="bg-cardbglight">
+          <tr className="bg-cardbglight/75">
             <TableHead className="w-6">Pos</TableHead>
             <TableHead>{t("generalLocale.player")}</TableHead>
             <TableHead>Uni</TableHead>

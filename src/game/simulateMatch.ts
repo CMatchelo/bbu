@@ -34,11 +34,11 @@ export function simulateMatchWithoutPlayer(
   currentWeek: number,
   userUni: string,
   dispatch: AppDispatch,
+  includeUserMatches = false,
 ) {
   const matches = schedule.filter(
     (match) =>
-      match.away !== userUni &&
-      match.home !== userUni &&
+      (includeUserMatches || (match.away !== userUni && match.home !== userUni)) &&
       !match.played &&
       match.week <= currentWeek,
   );

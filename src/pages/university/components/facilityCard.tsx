@@ -12,9 +12,9 @@ export function FacilityCard({ title, level, description, onImprove }: FacilityC
   const { t } = useTranslation();
 
   return (
-    <div className="rounded-xl overflow-hidden border border-highlights1/15 bg-mainbg hover:border-highlights1/30 transition-colors">
+    <div className="rounded-xl overflow-hidden border border-highlights1/15 bg-mainbg/75 backdrop-blur-sm hover:border-highlights1/30 transition-colors">
       {/* Header */}
-      <div className="flex items-center justify-between px-3.5 py-2.5 bg-cardbg border-b border-highlights1/10">
+      <div className="flex items-center justify-between px-3.5 py-2.5 bg-cardbg/75 border-b border-highlights1/10">
         <div className="flex items-center gap-2">
           <span className="text-[11px] font-medium tracking-widest uppercase text-text1">
             {title}

@@ -22,6 +22,7 @@ export const generalLocale = {
   grades: "Notas",
   currentYear: "Anos na faculdade",
   yearToGraduate: "Anos para graduação",
+  course: "Curso",
   tutoring: "Tutoria",
   intelligence: "Inteligência",
   injury: "Lesão",
