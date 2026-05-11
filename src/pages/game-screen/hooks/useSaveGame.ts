@@ -56,6 +56,7 @@ interface UseSaveGameParams {
   user: User;
   matchId: string;
   week: number;
+  currentSeason: number;
   playerTeamId: string;
   homePoints: number;
   awayPoints: number;
@@ -74,6 +75,7 @@ export function useSaveGame({
   user,
   matchId,
   week,
+  currentSeason,
   playerTeamId,
   homePoints,
   awayPoints,
@@ -106,6 +108,7 @@ export function useSaveGame({
       simulateMatchWithoutPlayer(
         matchesToSimulate,
         week,
+        currentSeason,
         playerTeamId,
         dispatch,
       );
@@ -246,7 +249,7 @@ export function useSaveGame({
 
                 if (toSimulate.length === 0) { roundComplete = true; break; }
 
-                simulateMatchWithoutPlayer(toSimulate, nextWeekNum, playerTeamId, dispatch);
+                simulateMatchWithoutPlayer(toSimulate, nextWeekNum, currentSeason, playerTeamId, dispatch);
                 dispatch(incrementWeek());
 
                 const afterState = store.getState();
@@ -337,7 +340,7 @@ export function useSaveGame({
 
             if (toSimulate.length === 0) { remaining = false; break; }
 
-            simulateMatchWithoutPlayer(toSimulate, nextWeekNum, '', dispatch);
+            simulateMatchWithoutPlayer(toSimulate, nextWeekNum, currentSeason, '', dispatch);
             dispatch(incrementWeek());
 
             const afterState = store.getState();
@@ -513,7 +516,7 @@ export function useSaveGame({
       // Update universities
       const uniGameStats = toRecord([homeStats, awayStats]);
       dispatch(
-        updateUniversityStats(teamGameStatsToDeltas(2026, uniGameStats)),
+        updateUniversityStats(teamGameStatsToDeltas(currentSeason, uniGameStats)),
       );
       await saveUniversities(folderName);
       await dispatch(saveScheduleThunk(folderName));
@@ -537,6 +540,7 @@ export function useSaveGame({
     awayStats,
     matchesToSimulate,
     week,
+    currentSeason,
     playerTeamId,
     dispatch,
     navigate,

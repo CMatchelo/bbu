@@ -45,9 +45,9 @@ export const DraftTable = ({ onDone }: DraftTableProps) => {
 
   const draftPlayers = useMemo(
     () =>
-      generateDraftPlayers(universities, user.currentUniversity.id)
+      generateDraftPlayers(universities, user.currentUniversity.id, user.currentSeason)
         .playerOptions,
-    [universities, user.currentUniversity.id],
+    [universities, user.currentUniversity.id, user.currentSeason],
   );
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());

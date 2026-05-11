@@ -26,7 +26,7 @@ export default function Team() {
   const [showDraft, setShowDraft] = useState(false);
 
   useEffect(() => {
-    if (!DRAFT_WEEKS.includes(currentWeek)) return;
+    if (currentWeek !== DRAFT_WEEKS) return;
     const key = `draft_shown_${user.id}_week${currentWeek}`;
     if (!localStorage.getItem(key)) {
       localStorage.setItem(key, "1");

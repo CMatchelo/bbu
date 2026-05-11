@@ -29,7 +29,7 @@ export function useSimulateToWeek35() {
         .map((m) => ({ ...m, homeTeam: uniById[m.home], awayTeam: uniById[m.away] }));
 
       if (weekMatches.length > 0) {
-        simulateMatchWithoutPlayer(weekMatches, week, user.currentUniversity.id, dispatch, true);
+        simulateMatchWithoutPlayer(weekMatches, week, user.currentSeason, user.currentUniversity.id, dispatch, true);
       }
 
       dispatch(setCurrentWeek(week + 1));

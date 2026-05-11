@@ -25,6 +25,7 @@ import {
   setSchedule,
 } from "../../../store/slices/scheduleSlice";
 import { createEmptyTeamSeasonStats } from "../../../utils/createEmptySeasonStats";
+import { STARTING_SEASON } from "../../../constants/game.constants";
 import { UniCard } from "./uniCard";
 import { UniSelect } from "./UniSelect";
 
@@ -123,7 +124,7 @@ export default function NewGame() {
     }
     return universities.map((uni) => ({
       ...uni,
-      stats: { [2026]: createEmptyTeamSeasonStats(2026) },
+      stats: { [STARTING_SEASON]: createEmptyTeamSeasonStats(STARTING_SEASON) },
       roster: playersByUni[uni.id] || [],
     }));
   };
@@ -133,7 +134,7 @@ export default function NewGame() {
     name,
     currentUniversity: uni,
     reputation: 50,
-    currentSeason: 2026,
+    currentSeason: STARTING_SEASON,
   });
 
   const startGame = async () => {
@@ -149,6 +150,7 @@ export default function NewGame() {
         universities,
         difficulty,
         selectedUni.id,
+        STARTING_SEASON,
       );
       const universitiesWithRoster = buildUniversitiesWithRoster(players);
       const hsPlayers = generateHighSchoolPlayers();

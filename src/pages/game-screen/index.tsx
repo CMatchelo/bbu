@@ -69,6 +69,7 @@ function GameScreenInner() {
     user: user!,
     matchId: match.id,
     week: match.week,
+    currentSeason: user!.currentSeason,
     playerTeamId: user!.currentUniversity.id,
     homePoints: homeStats.points,
     awayPoints: awayStats.points,
