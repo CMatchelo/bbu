@@ -1,3 +1,4 @@
+import { LeagueStandings } from "./LeagueStandings";
 import { Match } from "./Match";
 
 export type ScheduleSave = {
@@ -10,3 +11,7 @@ export type ScheduleState = {
   matchesById: Record<string, Match>;
   matchesByWeek: Record<number, string[]>;
 };
+
+export interface ExtendedScheduleState extends ScheduleState {
+  leagueStandingsHistory: LeagueStandings[];
+}

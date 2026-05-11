@@ -9,6 +9,8 @@ import {
   incrementWeek,
   saveScheduleThunk,
   setMatchResult,
+  addMatches,
+  addLeagueStandings,
 } from "../../../store/slices/scheduleSlice";
 import {
   updatePlayers,
@@ -28,22 +30,33 @@ import {
   selectAllPlayers,
   selectAllUniversities,
   selectAllHighSchoolPlayers,
+  selectUniversitiesGrouped,
 } from "../../../selectors/data.selectors";
 import { toRecord } from "../../../utils/toRecord";
 import { TeamGameStats } from "../../../types/TeamGameStats";
 import { setStarters } from "../../../store/slices/gameSettingsSlice";
-import { savePlayers, saveUniversities, saveHighSchoolPlayers } from "../../../utils/saveGame";
+import { savePlayers, saveUniversities, saveHighSchoolPlayers, saveLeagueStandings } from "../../../utils/saveGame";
 import { calcAllSkillRanges } from "../../../utils/createPlayer";
 import { progressPlayers } from "../../../game/playerProgression";
 import { CalculateHSGrades } from "../../../game/educationFunctions";
 import { Skill } from "../../../types/Skill";
 import { updatePlayersAttributes } from "../../../game/updatePlayers";
 import { runCpuScouting, runCpuSigning } from "../../../game/cpuScouting";
+import { REGULAR_SEASON_WEEKS, PLAYOFFS_CHAMPIONSHIP } from "../../../constants/game.constants";
+import {
+  getPlayoffQualifiers,
+  buildR1Matches,
+  advancePlayoffs,
+  buildLeagueStandings,
+  sortTeams,
+  computeSeriesStates,
+} from "../../../utils/playoffsUtils";
 
 interface UseSaveGameParams {
   user: User;
   matchId: string;
   week: number;
+  currentSeason: number;
   playerTeamId: string;
   homePoints: number;
   awayPoints: number;
@@ -62,6 +75,7 @@ export function useSaveGame({
   user,
   matchId,
   week,
+  currentSeason,
   playerTeamId,
   homePoints,
   awayPoints,
@@ -94,12 +108,294 @@ export function useSaveGame({
       simulateMatchWithoutPlayer(
         matchesToSimulate,
         week,
+        currentSeason,
         playerTeamId,
         dispatch,
       );
       const folderName = `${user.name}_${user.id}`;
-      // Update week
-      dispatch(incrementWeek());
+
+      // --- Playoffs logic ---
+      let skipIncrementWeek = false;
+      const allUniversities = selectAllUniversities(store.getState());
+      const leagueGroups = selectUniversitiesGrouped(store.getState());
+
+      if (week === REGULAR_SEASON_WEEKS) {
+        // End of regular season: set regional ranks and create R1 bracket
+        const tieRands = new Map<string, number>();
+        allUniversities.forEach((u) => tieRands.set(u.id, Math.random()));
+
+        const rankUpdates: { id: string; changes: Partial<typeof allUniversities[0]> }[] = [];
+        for (const [, teams] of Object.entries(leagueGroups)) {
+          const sorted = sortTeams(teams, user.currentSeason, tieRands);
+          sorted.forEach((u, idx) => {
+            const existing = u.seasonRecords ?? [];
+            rankUpdates.push({
+              id: u.id,
+              changes: {
+                seasonRecords: [
+                  ...existing.filter((r) => r.season !== user.currentSeason),
+                  { season: user.currentSeason, regionalRank: idx + 1, playoffResult: null },
+                ],
+              },
+            });
+          });
+        }
+        dispatch(updateUniversities(rankUpdates));
+
+        const qualifiers = getPlayoffQualifiers(leagueGroups, user.currentSeason);
+        const r1Matches = buildR1Matches(qualifiers, week + 1);
+        dispatch(addMatches(r1Matches));
+      }
+
+      if (week >= REGULAR_SEASON_WEEKS) {
+        // After each playoff week: advance series and rounds
+        const currentMatchesById = store.getState().schedule.matchesById;
+        const { newMatches, eliminated, champion } = advancePlayoffs(currentMatchesById);
+
+        if (newMatches.length > 0) {
+          dispatch(addMatches(newMatches));
+        }
+
+        if (eliminated.length > 0) {
+          const freshUnis = selectAllUniversities(store.getState());
+          const elimUpdates = eliminated.map(({ id, result }) => {
+            const uni = freshUnis.find((u) => u.id === id);
+            const existing = uni?.seasonRecords ?? [];
+            return {
+              id,
+              changes: {
+                seasonRecords: existing.map((r) =>
+                  r.season === user.currentSeason ? { ...r, playoffResult: result } : r,
+                ),
+              },
+            };
+          });
+          dispatch(updateUniversities(elimUpdates));
+        }
+
+        if (champion) {
+          // Mark champion
+          const freshUnis = selectAllUniversities(store.getState());
+          const champUni = freshUnis.find((u) => u.id === champion);
+          if (champUni) {
+            const existing = champUni.seasonRecords ?? [];
+            dispatch(updateUniversities([{
+              id: champion,
+              changes: {
+                seasonRecords: existing.map((r) =>
+                  r.season === user.currentSeason ? { ...r, playoffResult: 'champion' } : r,
+                ),
+              },
+            }]));
+          }
+
+          // Build and save LeagueStandings for this year
+          const tieRands = new Map<string, number>();
+          const latestUnis = selectAllUniversities(store.getState());
+          latestUnis.forEach((u) => tieRands.set(u.id, Math.random()));
+          const standings = buildLeagueStandings(selectUniversitiesGrouped(store.getState()), user.currentSeason, champion, tieRands);
+          dispatch(addLeagueStandings(standings));
+          const history = store.getState().schedule.leagueStandingsHistory;
+          await saveLeagueStandings(folderName, history);
+        }
+
+        // If user just won their series but other series in the same round are still pending,
+        // simulate those series to completion so the next round can be created
+        const justPlayedMatch = store.getState().schedule.matchesById[matchId];
+        if (justPlayedMatch?.playoffMatchupId) {
+          const allSeriesNow = computeSeriesStates(store.getState().schedule.matchesById);
+          const userSeries = allSeriesNow.find((s) => s.matchupId === justPlayedMatch.playoffMatchupId);
+
+          if (userSeries?.decided && userSeries.winnerId === playerTeamId) {
+            const sameRoundPending = allSeriesNow.filter(
+              (s) => s.round === userSeries.round && !s.decided,
+            );
+
+            if (sameRoundPending.length > 0) {
+              skipIncrementWeek = true;
+              dispatch(incrementWeek());
+
+              let roundComplete = false;
+              while (!roundComplete) {
+                const stateNow = store.getState();
+                const matchesNow = stateNow.schedule.matchesById;
+
+                const pendingMatchupIds = new Set(
+                  computeSeriesStates(matchesNow)
+                    .filter((s) => s.round === userSeries.round && !s.decided)
+                    .map((s) => s.matchupId),
+                );
+
+                if (pendingMatchupIds.size === 0) { roundComplete = true; break; }
+
+                const pendingMatches = Object.values(matchesNow).filter(
+                  (m) =>
+                    m.championship === PLAYOFFS_CHAMPIONSHIP &&
+                    !m.played &&
+                    m.playoffMatchupId != null &&
+                    pendingMatchupIds.has(m.playoffMatchupId),
+                );
+
+                if (pendingMatches.length === 0) { roundComplete = true; break; }
+
+                const nextWeekNum = Math.min(...pendingMatches.map((m) => m.week));
+                const uniById = Object.fromEntries(
+                  selectAllUniversities(stateNow).map((u) => [u.id, u]),
+                );
+                const toSimulate = pendingMatches
+                  .filter((m) => m.week === nextWeekNum)
+                  .map((m) => ({ ...m, homeTeam: uniById[m.home], awayTeam: uniById[m.away] }))
+                  .filter((m) => m.homeTeam && m.awayTeam);
+
+                if (toSimulate.length === 0) { roundComplete = true; break; }
+
+                simulateMatchWithoutPlayer(toSimulate, nextWeekNum, currentSeason, playerTeamId, dispatch);
+                dispatch(incrementWeek());
+
+                const afterState = store.getState();
+                const { newMatches: nm, eliminated: el, champion: champ } = advancePlayoffs(afterState.schedule.matchesById);
+
+                if (nm.length > 0) dispatch(addMatches(nm));
+
+                if (el.length > 0) {
+                  const freshUs = selectAllUniversities(afterState);
+                  const elUpdates = el.map(({ id, result }) => {
+                    const u = freshUs.find((u) => u.id === id);
+                    const ex = u?.seasonRecords ?? [];
+                    return {
+                      id,
+                      changes: {
+                        seasonRecords: ex.map((r) =>
+                          r.season === user.currentSeason ? { ...r, playoffResult: result } : r,
+                        ),
+                      },
+                    };
+                  });
+                  dispatch(updateUniversities(elUpdates));
+                }
+
+                if (champ) {
+                  const latestUs = selectAllUniversities(store.getState());
+                  const cu = latestUs.find((u) => u.id === champ);
+                  if (cu) {
+                    const ex = cu.seasonRecords ?? [];
+                    dispatch(updateUniversities([{
+                      id: champ,
+                      changes: {
+                        seasonRecords: ex.map((r) =>
+                          r.season === user.currentSeason ? { ...r, playoffResult: 'champion' } : r,
+                        ),
+                      },
+                    }]));
+                  }
+                  const tieRandsF = new Map<string, number>();
+                  selectAllUniversities(store.getState()).forEach((u) => tieRandsF.set(u.id, Math.random()));
+                  const st = buildLeagueStandings(selectUniversitiesGrouped(store.getState()), user.currentSeason, champ, tieRandsF);
+                  dispatch(addLeagueStandings(st));
+                  const hist = store.getState().schedule.leagueStandingsHistory;
+                  await saveLeagueStandings(folderName, hist);
+                  roundComplete = true;
+                }
+
+                // Round complete when no more pending series in user's round
+                const updatedSeries = computeSeriesStates(store.getState().schedule.matchesById);
+                if (updatedSeries.filter((s) => s.round === userSeries.round).every((s) => s.decided)) {
+                  roundComplete = true;
+                }
+              }
+            }
+          }
+        }
+
+        // If user's team is eliminated, simulate all remaining playoff weeks automatically
+        const allUnisCurrent = selectAllUniversities(store.getState());
+        const userUni = allUnisCurrent.find((u) => u.id === user.currentUniversity.id);
+        const userRecord = userUni?.seasonRecords?.find((r) => r.season === user.currentSeason);
+        const userEliminated = userRecord?.playoffResult != null && userRecord.playoffResult !== 'champion';
+
+        if (userEliminated) {
+          skipIncrementWeek = true;
+          // Increment week for the just-completed playoff game before auto-simulating the rest
+          dispatch(incrementWeek());
+          let remaining = true;
+          while (remaining) {
+            const stateNow = store.getState();
+            const matchesNow = stateNow.schedule.matchesById;
+            const allPlayoffMatches = Object.values(matchesNow).filter(
+              (m) => m.championship === 'playoffs' && !m.played,
+            );
+            if (allPlayoffMatches.length === 0) { remaining = false; break; }
+
+            // Simulate all unplayed playoff matches in the next week
+            const nextWeekNum = Math.min(...allPlayoffMatches.map((m) => m.week));
+            const toSimulate = allPlayoffMatches
+              .filter((m) => m.week === nextWeekNum)
+              .map((m) => {
+                const uniById = Object.fromEntries(
+                  selectAllUniversities(stateNow).map((u) => [u.id, u]),
+                );
+                return { ...m, homeTeam: uniById[m.home], awayTeam: uniById[m.away] };
+              })
+              .filter((m) => m.homeTeam && m.awayTeam);
+
+            if (toSimulate.length === 0) { remaining = false; break; }
+
+            simulateMatchWithoutPlayer(toSimulate, nextWeekNum, currentSeason, '', dispatch);
+            dispatch(incrementWeek());
+
+            const afterState = store.getState();
+            const { newMatches: nm, eliminated: el, champion: champ } = advancePlayoffs(afterState.schedule.matchesById);
+
+            if (nm.length > 0) dispatch(addMatches(nm));
+
+            if (el.length > 0) {
+              const freshUs = selectAllUniversities(afterState);
+              const elUpdates = el.map(({ id, result }) => {
+                const u = freshUs.find((u) => u.id === id);
+                const ex = u?.seasonRecords ?? [];
+                return {
+                  id,
+                  changes: {
+                    seasonRecords: ex.map((r) =>
+                      r.season === user.currentSeason ? { ...r, playoffResult: result } : r,
+                    ),
+                  },
+                };
+              });
+              dispatch(updateUniversities(elUpdates));
+            }
+
+            if (champ) {
+              const latestUs = selectAllUniversities(store.getState());
+              const cu = latestUs.find((u) => u.id === champ);
+              if (cu) {
+                const ex = cu.seasonRecords ?? [];
+                dispatch(updateUniversities([{
+                  id: champ,
+                  changes: {
+                    seasonRecords: ex.map((r) =>
+                      r.season === user.currentSeason ? { ...r, playoffResult: 'champion' } : r,
+                    ),
+                  },
+                }]));
+              }
+              const tieRandsF = new Map<string, number>();
+              selectAllUniversities(store.getState()).forEach((u) => tieRandsF.set(u.id, Math.random()));
+              const st = buildLeagueStandings(selectUniversitiesGrouped(store.getState()), user.currentSeason, champ, tieRandsF);
+              dispatch(addLeagueStandings(st));
+              const hist = store.getState().schedule.leagueStandingsHistory;
+              await saveLeagueStandings(folderName, hist);
+              remaining = false;
+            }
+          }
+        }
+      }
+      // --- End playoffs logic ---
+
+      // Update week (skipped when elimination loop already handled all increments)
+      if (!skipIncrementWeek) {
+        dispatch(incrementWeek());
+      }
 
       // Update players stats
       dispatch(
@@ -220,7 +516,7 @@ export function useSaveGame({
       // Update universities
       const uniGameStats = toRecord([homeStats, awayStats]);
       dispatch(
-        updateUniversityStats(teamGameStatsToDeltas(2026, uniGameStats)),
+        updateUniversityStats(teamGameStatsToDeltas(currentSeason, uniGameStats)),
       );
       await saveUniversities(folderName);
       await dispatch(saveScheduleThunk(folderName));
@@ -244,6 +540,7 @@ export function useSaveGame({
     awayStats,
     matchesToSimulate,
     week,
+    currentSeason,
     playerTeamId,
     dispatch,
     navigate,

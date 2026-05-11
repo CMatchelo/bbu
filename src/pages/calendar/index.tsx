@@ -12,7 +12,7 @@ export default function Calendar() {
   const teamSchedule = useSelector(teamSelector);
 
   return (
-    <ParentSecion className="px-4 pb-4">
+    <ParentSecion className="pb-4">
       {/* <StandingsTable leagueId={user!.currentUniversity.leagueId} /> */}
       <MatchesTable schedule={teamSchedule} />
     </ParentSecion>

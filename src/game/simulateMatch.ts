@@ -32,13 +32,14 @@ import { toRecord } from "../utils/toRecord";
 export function simulateMatchWithoutPlayer(
   schedule: MatchWithTeams[],
   currentWeek: number,
+  currentYear: number,
   userUni: string,
   dispatch: AppDispatch,
+  includeUserMatches = false,
 ) {
   const matches = schedule.filter(
     (match) =>
-      match.away !== userUni &&
-      match.home !== userUni &&
+      (includeUserMatches || (match.away !== userUni && match.home !== userUni)) &&
       !match.played &&
       match.week <= currentWeek,
   );
@@ -96,9 +97,9 @@ export function simulateMatchWithoutPlayer(
   const unis = toRecord(universities);
   const playersWithProgress = progressPlayers(allPlayers, allPlayerStats, unis);
 
-  dispatch(updatePlayerStats(playerGameStatsToDeltas(2026, allPlayerStats)));
+  dispatch(updatePlayerStats(playerGameStatsToDeltas(currentYear, allPlayerStats)));
   dispatch(updatePlayersSkills(playersWithProgress));
-  dispatch(updateUniversityStats(teamGameStatsToDeltas(2026, allTeamStats)));
+  dispatch(updateUniversityStats(teamGameStatsToDeltas(currentYear, allTeamStats)));
 }
 
 function simulateFullMatch(

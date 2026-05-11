@@ -2,6 +2,7 @@ import { Player } from "./types/Player";
 import { University } from "./types/University";
 import { User } from "./types/User";
 import { HighSchoolPlayer } from "./types/HighSchoolPlayer";
+import { LeagueStandings } from "./types/LeagueStandings";
 
 export {};
 
@@ -17,6 +18,7 @@ declare global {
         players: Record<string, Player>;
         universities: Record<string, University>;
         highSchoolPlayers: Record<string, HighSchoolPlayer> | null;
+        leagueStandingsHistory: LeagueStandings[];
       } | null>;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       loadFolders: () => Promise<any>;
@@ -32,6 +34,10 @@ declare global {
       saveHighSchoolPlayers: (
         userId: string,
         data: Record<string, HighSchoolPlayer>,
+      ) => Promise<void>;
+      saveLeagueStandings: (
+        userId: string,
+        data: LeagueStandings[],
       ) => Promise<void>;
     };
   }

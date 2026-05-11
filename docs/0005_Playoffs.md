@@ -2,9 +2,9 @@
 
 ## Config
 
-For this spec, use branch CL-0002, already created and active in vs-code
+For this spec, use branch CL-0005/Playoffs, already created and active in vscode
 Always create a plan and present it to me before running any changes
-If any questions, ask before deciding anythink
+If any questions, ask before deciding anything
 
 ## New feature
 
@@ -51,24 +51,29 @@ If any questions, ask before deciding anythink
 - This type should hold the champion of each regional league, as well as the National Champion
 - Create a new file that will save this, that will hold an array of LeagueStandings for each year player
 
-2. Create two new attributes in university type
-- 
+2. Create a new attribute in university type, teamSeasonStandings | null
+- teamSeasonStandings will have:
+- season: string, regionalStanding: number (1, 2, 3...10), playoffsStanding: (round1, round2... semifinal, 2nd place, champion)
+- you can use better names if you think in some
 
-2. Add to TeamSeasonStats a positionEnded = string | null
+3. After finishing the week36
 
-1. After finishing the week36
-
+- Update teamSeasonStandings of all universities
 - Create the matches
-- Add to
+- Add the matches to schedule
 
-2. In each match, create only the minimum amount necessary
+4. In each match, create only the minimum amount necessary
 
 - Round 1 - 2 matches
 - Round 2 - 3 matches
 - Round 3 - 4 matches
 
-3. Only create the next matches of a matchup ones if necessary
-4. Only create each round after ALL the matcheups from the previous one have been resolved
+5. Only create the next matches of a matchup ones if necessary
+6. Only create each round after ALL the matcheups from the previous one have been resolved
+7. After each round ends, update the playoffsStanding of each eliminated team
+8. About the games execution, follow exactly as it is today in regular season
+  - After the user play its game, simulate the rest.
+  - If the user is out of playoffs, in any round, just simulate every match. We'll handle the end of season later
 
 ## Screen/Taiwlind changes
 

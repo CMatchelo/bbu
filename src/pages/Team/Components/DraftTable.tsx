@@ -33,7 +33,7 @@ interface DraftTableProps {
 export const DraftTable = ({ onDone }: DraftTableProps) => {
   const user = useAuthUser();
   const dispatch = useAppDispatch();
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const universities = useSelector((state: RootState) =>
     selectAllUniversities(state),
@@ -45,9 +45,9 @@ export const DraftTable = ({ onDone }: DraftTableProps) => {
 
   const draftPlayers = useMemo(
     () =>
-      generateDraftPlayers(universities, user.currentUniversity.id)
+      generateDraftPlayers(universities, user.currentUniversity.id, user.currentSeason)
         .playerOptions,
-    [universities, user.currentUniversity.id],
+    [universities, user.currentUniversity.id, user.currentSeason],
   );
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -82,40 +82,46 @@ export const DraftTable = ({ onDone }: DraftTableProps) => {
     onDone();
   };
 
-  const prospectsSorted = draftPlayers
-    .slice()
-    .sort((a, b) => a.inCourtPosition.localeCompare(b.inCourtPosition));
+  const prospectsSorted = useMemo(
+    () => draftPlayers.slice().sort((a, b) => a.inCourtPosition.localeCompare(b.inCourtPosition)),
+    [draftPlayers],
+  );
 
   const playersWithOvr = useMemo(() => {
-  return prospectsSorted.map((player) => {
-    const avg = playerAverage(player);
-    const { minPotential, maxPotential } = calculatMaxMinGrade(avg);
+    return prospectsSorted.map((player) => {
+      const avg = playerAverage(player);
+      const { minPotential, maxPotential } = calculatMaxMinGrade(avg);
 
-    return {
-      ...player,
-      minOvr: minPotential,
-      maxOvr: maxPotential,
-    };
-  });
-}, [prospectsSorted]);
+      return {
+        ...player,
+        minOvr: minPotential,
+        maxOvr: maxPotential,
+      };
+    });
+  }, [prospectsSorted]);
 
   return (
     <div className="flex flex-col gap-4 overflow-auto">
       <div className="rounded-xl border border-highlights1/20 bg-cardbg px-5 py-4 text-sm text-text2 leading-relaxed">
         {t("faqLocale.openTryoutsExplain1")}{" "}
-        <span className="text-highlights1 font-medium">{t("faqLocale.openTryoutsExplain2")}</span> among
+        <span className="text-highlights1 font-medium">
+          {t("faqLocale.openTryoutsExplain2")}
+        </span>{" "}
+        among
         {t("faqLocale.openTryoutsExplain3")}{" "}
         <span className="text-text1 font-medium">
           {slotsLeft} {t("faqLocale.openTryoutsExplain4")}
         </span>
       </div>
 
-      <TableCard title={t("generalLocale.prospects")}>
+      <TableCard title={t("generalLocale.prospects")} className="overflow-auto">
         <table className="w-full min-w-[600px] border-collapse">
           <thead>
             <tr className="bg-cardbglight">
               <TableHead className="w-10 pl-5" children={undefined} />
-              <TableHead className="w-72 pl-5">{t("generalLocale.player")}</TableHead>
+              <TableHead className="w-72 pl-5">
+                {t("generalLocale.player")}
+              </TableHead>
               <TableHead>OVER</TableHead>
               <TableHead accent>POT</TableHead>
             </tr>
@@ -124,9 +130,6 @@ export const DraftTable = ({ onDone }: DraftTableProps) => {
             {playersWithOvr.map((player, index) => {
               const isSelected = selectedIds.has(player.id);
               const isDisabled = atCapacity && !isSelected;
-              const avg = playerAverage(player);
-              const { minPotential: minOvr, maxPotential: maxOvr } =
-                calculatMaxMinGrade(avg);
 
               return (
                 <TableRow
@@ -150,7 +153,7 @@ export const DraftTable = ({ onDone }: DraftTableProps) => {
                     </span>
                   </td>
                   <td className="text-center py-2.5 px-2 text-[12px] text-text2">
-                    {minOvr} – {maxOvr}
+                    {player.minOvr} – {player.maxOvr}
                   </td>
                   <td className="text-center py-2.5 px-2 text-[12px] text-highlights1 font-medium">
                     {player.minPotential} – {player.maxPotential}

@@ -44,8 +44,8 @@ export const PlayerStats = ({ players }: PlayerStatsProps) => {
   const f = (val: number, decimals = 1) =>
     isNaN(val) ? "—" : val.toFixed(decimals);
   return (
-    <TableCard title={t("generalLocale.stats")}>
-      <div ref={parentRef} className="h-[600px] overflow-auto">
+    <TableCard title={t("generalLocale.stats")} flexible>
+      <div ref={parentRef} className="h-full overflow-auto">
         <div className="min-w-[860px]">
           <div
             className="grid bg-cardbglight sticky top-0 z-10"
@@ -196,7 +196,7 @@ export const PlayerStats = ({ players }: PlayerStatsProps) => {
                     {f(stat.turnovers / matches)}
                   </div>
                   <div className={`text-text2 ${classname}`}>
-                    {f(stat.teamPoints - stat.teamPointsAllowed)}
+                    {f((stat.teamPoints - stat.teamPointsAllowed) / matches)}
                   </div>
                 </TableRow>
               );

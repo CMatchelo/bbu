@@ -54,7 +54,10 @@ export const EduTable = ({ players }: EduTableProps) => {
 
   return (
     <>
-      <TableCard title={t("generalLocale.roster")}>
+      <TableCard className="overflow-auto" title={t("generalLocale.roster")}>
+        <button onClick={saveTutoring} disabled={changedPlayers.length === 0}>
+          {t("systemGeneral.savePractice")}
+        </button>
         <table className="w-full min-w-[700px] border-collapse">
           <thead>
             <tr className="bg-cardbglight">
@@ -73,6 +76,9 @@ export const EduTable = ({ players }: EduTableProps) => {
               </TableHead>
               <TableHead className="w-36">
                 {t("generalLocale.yearToGraduate")}
+              </TableHead>
+              <TableHead className="w-40">
+                {t("generalLocale.course")}
               </TableHead>
               <TableHead className="w-20">
                 {t("generalLocale.tutoring")}
@@ -112,6 +118,9 @@ export const EduTable = ({ players }: EduTableProps) => {
                   <td className="text-center py-2.5 px-2 text-[13px] font-medium">
                     {player.yearsToGraduate}
                   </td>
+                  <td className="text-center py-2.5 px-2 text-[13px] text-text2">
+                    {t(`courseLocale.${player.course}`)}
+                  </td>
                   <td className="text-center py-2.5 px-2 text-[13px] font-medium">
                     <input
                       type="checkbox"
@@ -128,9 +137,6 @@ export const EduTable = ({ players }: EduTableProps) => {
           </tbody>
         </table>
       </TableCard>
-      <button onClick={saveTutoring} disabled={changedPlayers.length === 0}>
-        {t("systemGeneral.savePractice")}
-      </button>
     </>
   );
 };

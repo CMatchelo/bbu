@@ -60,7 +60,7 @@ export const ScoutingBoardTable = ({
   return (
     <TableCard title={t("scouting.board")} className="h-full">
       <div className="min-w-[860px]">
-        <div className="grid bg-cardbglight sticky top-0 z-10" style={{ gridTemplateColumns: COLUMNS }}>
+        <div className="grid bg-cardbglight/75 sticky top-0 z-10" style={{ gridTemplateColumns: COLUMNS }}>
           <TableHead className="text-center">{t("scouting.scout")}</TableHead>
           <TableHead align="left" className="pl-5">{t("generalLocale.player")}</TableHead>
           <TableHead align="left" className="pl-2">{t("scouting.interest")}</TableHead>

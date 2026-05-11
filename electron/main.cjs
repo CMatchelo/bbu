@@ -14,6 +14,8 @@ const { saveGame,
         loadUniversities,
         saveHighSchoolPlayers,
         loadHighSchoolPlayers,
+        saveLeagueStandings,
+        loadLeagueStandings,
       } = require('./saveManager.cjs');
 
 const isDev = !app.isPackaged;
@@ -66,7 +68,8 @@ ipcMain.handle("load-game", (_, userId) => {
   const players = loadPlayers(userId)
   const universities = loadUniversities(userId)
   const highSchoolPlayers = loadHighSchoolPlayers(userId)
-  return {user, schedule, players, universities, highSchoolPlayers}
+  const leagueStandingsHistory = loadLeagueStandings(userId)
+  return {user, schedule, players, universities, highSchoolPlayers, leagueStandingsHistory}
 })
 
 ipcMain.handle("save-high-school-players", (_, userId, data) => {
@@ -87,4 +90,8 @@ ipcMain.handle("save-players", (_, user, players) => {
 
 ipcMain.handle("save-universities", (_, user, universities) => {
   return saveUniversities(user, universities)
+});
+
+ipcMain.handle("save-league-standings", (_, userId, data) => {
+  return saveLeagueStandings(userId, data)
 });

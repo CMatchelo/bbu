@@ -11,7 +11,7 @@ export default function MedicalDepto() {
     (p) => p.currentUniversity === user?.currentUniversity.id,
   );
   return (
-    <ParentSecion className="px-4">
+    <ParentSecion>
       <MedicalDeptoTable players={playersFiltered} />
     </ParentSecion>
   );

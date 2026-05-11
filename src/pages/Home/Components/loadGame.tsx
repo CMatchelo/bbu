@@ -3,6 +3,7 @@ import { useUser } from "../../../Context/UserContext";
 import {
   setCurrentWeek,
   setSchedule,
+  setLeagueStandingsHistory,
 } from "../../../store/slices/scheduleSlice";
 import { setPlayers, setUniversities, setHighSchoolPlayers } from "../../../store/slices/dataSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
@@ -40,6 +41,9 @@ export const LoadGame = ({ saveIds }: LoadGameProps) => {
     dispatch(setPlayers(userLoaded.players));
     if (userLoaded.highSchoolPlayers) {
       dispatch(setHighSchoolPlayers(userLoaded.highSchoolPlayers));
+    }
+    if (userLoaded.leagueStandingsHistory) {
+      dispatch(setLeagueStandingsHistory(userLoaded.leagueStandingsHistory));
     }
 
     loadUser(userLoaded.user);

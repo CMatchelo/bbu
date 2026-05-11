@@ -6,9 +6,20 @@ import { selectPlayersFromUniversity } from "../../../selectors/data.selectors";
 import { RootState } from "../../../store";
 import { setStarters } from "../../../store/slices/gameSettingsSlice";
 import { Player } from "../../../types/Player";
+import { PlayerGameStats } from "../../../types/PlayerGameStats";
 import { Icons } from "../../../utils/icons";
 
-export const PlayerSelection = () => {
+interface PlayerSelectionProps {
+  playerStats?: Record<string, PlayerGameStats>;
+}
+
+function staminaColor(stamina: number): string {
+  if (stamina >= 70) return "bg-highlights1";
+  if (stamina >= 40) return "bg-highlights2";
+  return "bg-red-500";
+}
+
+export const PlayerSelection = ({ playerStats }: PlayerSelectionProps) => {
   const user = useAuthUser();
   const dispatch = useAppDispatch();
   const starters = useAppSelector(
@@ -32,7 +43,7 @@ export const PlayerSelection = () => {
   const count = starters.length;
 
   return (
-    <div className="rounded-xl overflow-hidden border border-highlights1/15 bg-mainbg">
+    <div className={`rounded-xl overflow-hidden border border-highlights1/15 bg-mainbg`}>
       {/* Header */}
       <div className="flex items-center gap-2.5 px-5 py-3.5 bg-cardbg border-b border-highlights1/25">
         <div className="w-1.5 h-1.5 rounded-full bg-highlights1 shrink-0" />
@@ -54,7 +65,7 @@ export const PlayerSelection = () => {
         </div>
       </div>
 
-      <div className="p-4 grid grid-cols-2 gap-2">
+      <div className="p-4 grid grid-cols-3 gap-2">
         {players.map((p: Player) => {
           const isStarter = !!starters.find((s) => s.id === p.id);
           const avg = playerAverage(p);
@@ -96,6 +107,20 @@ export const PlayerSelection = () => {
               >
                 {avg}
               </span>
+
+              {playerStats && (() => {
+                const stamina = playerStats[p.id]?.stamina ?? 100;
+                return (
+                  <div className="flex flex-col items-center gap-0.5 shrink-0">
+                    <div className="w-1.5 h-10 bg-white/10 rounded-full overflow-hidden flex flex-col-reverse">
+                      <div
+                        className={`w-full rounded-full transition-all ${staminaColor(stamina)}`}
+                        style={{ height: `${stamina}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })()}
             </button>
           );
         })}

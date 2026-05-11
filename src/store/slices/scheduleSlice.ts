@@ -2,21 +2,45 @@ import {
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit";
-import { ScheduleState } from "../../types/ScheduleState";
 import { Match } from "../../types/Match";
+import { LeagueStandings } from "../../types/LeagueStandings";
 import { scheduleStateToSave } from "../../utils/scheduleMappers";
 import { AppDispatch, RootState } from "..";
+import { ExtendedScheduleState } from "../../types/ScheduleState";
 
-const initialState: ScheduleState = {
+const initialState: ExtendedScheduleState = {
   currentWeek: 1,
   matchesById: {},
   matchesByWeek: {},
+  leagueStandingsHistory: [],
 };
 
 export const scheduleSlice = createSlice({
   name: "schedule",
   initialState,
   reducers: {
+    addMatches(state, action: PayloadAction<Match[]>) {
+      for (const match of action.payload) {
+        state.matchesById[match.id] = match;
+        if (!state.matchesByWeek[match.week]) {
+          state.matchesByWeek[match.week] = [];
+        }
+        state.matchesByWeek[match.week].push(match.id);
+      }
+    },
+    setLeagueStandingsHistory(state, action: PayloadAction<LeagueStandings[]>) {
+      state.leagueStandingsHistory = action.payload;
+    },
+    addLeagueStandings(state, action: PayloadAction<LeagueStandings>) {
+      const existing = state.leagueStandingsHistory.findIndex(
+        (ls) => ls.year === action.payload.year,
+      );
+      if (existing >= 0) {
+        state.leagueStandingsHistory[existing] = action.payload;
+      } else {
+        state.leagueStandingsHistory.push(action.payload);
+      }
+    },
     setSchedule(state, action: PayloadAction<Match[]>) {
       state.matchesById = {};
       state.matchesByWeek = {};
@@ -76,8 +100,16 @@ export const scheduleSlice = createSlice({
   },
 });
 
-export const { setSchedule, setCurrentWeek, incrementWeek, setMatchResult, setMultipleMatchResults } =
-  scheduleSlice.actions;
+export const {
+  setSchedule,
+  setCurrentWeek,
+  incrementWeek,
+  setMatchResult,
+  setMultipleMatchResults,
+  addMatches,
+  addLeagueStandings,
+  setLeagueStandingsHistory,
+} = scheduleSlice.actions;
 export default scheduleSlice.reducer;
 
 export const saveScheduleThunk =

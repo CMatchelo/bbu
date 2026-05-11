@@ -61,27 +61,21 @@ export default function RecruitingBoardPage() {
   };
 
   return (
-    <ParentSecion className="px-4 pb-10">
-      <div className="flex items-center gap-4">
-        <span className="text-[11px] font-bold uppercase tracking-widest text-text2">
-          {t("mainMenu.recruitingBoard")}
-        </span>
-        <div className="flex self-center bg-cardbg border border-highlights1/20 rounded-lg w-fit">
-          <TopMenuBtn onClick={() => setTable("board")} tableId="board" currentTable={table} className="w-36" />
-          <TopMenuBtn onClick={() => setTable("skills")} tableId="skills" currentTable={table} className="w-36" />
+    <ParentSecion>
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-4">
+          <div className="flex self-center bg-cardbg/75 border border-highlights1/20 rounded-lg w-fit">
+            <TopMenuBtn onClick={() => setTable("board")} tableId="board" currentTable={table} className="w-36" />
+            <TopMenuBtn onClick={() => setTable("skills")} tableId="skills" currentTable={table} className="w-36" />
+          </div>
+          <button
+            onClick={handleConfirm}
+            disabled={!hasPending}
+            className="ml-auto px-4 py-1.5 rounded-lg text-[12px] font-semibold uppercase tracking-wider bg-highlights1 text-mainbgdark hover:bg-highlights1light transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            {t("scouting.confirmChanges")}
+          </button>
         </div>
-        <button
-          onClick={handleConfirm}
-          disabled={!hasPending}
-          className="
-            ml-auto px-4 py-1.5 rounded-lg text-[12px] font-semibold uppercase tracking-wider
-            bg-highlights1 text-mainbgdark
-            hover:bg-highlights1light transition-colors
-            disabled:opacity-30 disabled:cursor-not-allowed
-          "
-        >
-          {t("scouting.confirmChanges")}
-        </button>
       </div>
       <div className="h-full pb-10">
         {table === "board" && (

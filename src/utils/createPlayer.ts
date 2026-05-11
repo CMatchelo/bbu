@@ -82,6 +82,7 @@ export function createPlayer(
   isEmergency: boolean,
   isDraft: boolean,
   isNewGame: boolean,
+  season: number,
 ): Player {
   const firstName = firtNames[rand(0, firtNames.length - 1)];
   const lastName = lastNames[rand(0, lastNames.length - 1)];
@@ -137,7 +138,7 @@ export function createPlayer(
 
     practicing: null,
     stats: {
-      [2026]: createEmptyPlayerSeasonStats(2026),
+      [season]: createEmptyPlayerSeasonStats(season),
     },
   };
 }
@@ -146,6 +147,7 @@ export function generateAllPlayers(
   universities: University[],
   difficulty: number,
   playerUni: string,
+  season: number,
 ) {
   const players: Player[] = [];
 
@@ -175,7 +177,7 @@ export function generateAllPlayers(
 
     dist.forEach((pos) => {
       players.push(
-        createPlayer(uni, pos, difficulty, playerUni, false, false, true),
+        createPlayer(uni, pos, difficulty, playerUni, false, false, true, season),
       );
     });
   });
@@ -186,6 +188,7 @@ export function generateAllPlayers(
 export function generateDraftPlayers(
   universities: University[],
   playerUni: string,
+  season: number,
 ) {
   const playerOptions: Player[] = [];
   const cpuPlayers: Player[] = [];
@@ -214,6 +217,7 @@ export function generateDraftPlayers(
         false,
         true,
         false,
+        season,
       );
       if (uni.id === playerUni) {
         playerOptions.push(newPlayer);

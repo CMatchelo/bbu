@@ -54,91 +54,96 @@ export default function Practice() {
   }
 
   return (
-    <ParentSecion className="px-4">
-      <TableCard title={t("generalLocale.practice")}>
-        <table className="w-full min-w-[700px] border-collapse">
-          <thead>
-            <tr className="bg-cardbglight">
-              <TableHead
-                align="left"
-                className="pl-5 w-10"
-                children={undefined}
-              />
-              <TableHead align="left" className="pl-3 w-40">
-                {t("generalLocale.player")}
-              </TableHead>
-              <TableHead className="pl-3 w-44">
-                {t("generalLocale.focus")}
-              </TableHead>
+    <ParentSecion backgroundImg='/practiceBg.png'>
+        <div className="flex items-center">
+          <button
+            onClick={savePractice}
+            disabled={pendingUpdates.length === 0}
+            className="ml-auto px-4 py-1.5 rounded-lg text-[12px] font-semibold uppercase tracking-wider bg-highlights1 text-mainbgdark hover:bg-highlights1light transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            {t("systemGeneral.savePractice")}
+          </button>
+        </div>
+        <TableCard title={t("generalLocale.practice")}>
+          <table className="w-full min-w-[700px] border-collapse">
+            <thead>
+              <tr className="bg-cardbglight/75">
+                <TableHead
+                  align="left"
+                  className="pl-5 w-10"
+                  children={undefined}
+                />
+                <TableHead align="left" className="pl-3 w-40">
+                  {t("generalLocale.player")}
+                </TableHead>
+                <TableHead className="pl-3 w-44">
+                  {t("generalLocale.focus")}
+                </TableHead>
 
-              <td className="w-px bg-detail3" />
+                <td className="w-px bg-detail3" />
 
-              <TableHead
-                align="left"
-                className="pl-5 w-10"
-                children={undefined}
-              />
-              <TableHead align="left" className="pl-3 w-40">
-                {t("generalLocale.player")}
-              </TableHead>
-              <TableHead className="pl-3 w-44">
-                {t("generalLocale.focus")}
-              </TableHead>
-            </tr>
-          </thead>
-          <tbody>
-            {pairs.map(([left, right], index) => (
-              <TableRow key={left.id} index={index}>
-                <td className="pl-5 py-2.5">
-                  <Pill variant="muted">{left.inCourtPosition}</Pill>
-                </td>
-                <td className="pl-3 py-2.5 flex flex-row gap-3">
-                  <span className="text-[13px] font-medium text-text1">
-                    {left.firstName} {left.lastName}
-                  </span>
-                  {left.injured && Icons.MedicalSymbol}
-                </td>
-                <td className="pl-3 py-2.5">
-                  <PracticeSelect
-                    player={left}
-                    pendingUpdates={pendingUpdates}
-                    onUpdate={updatePractice}
-                  />
-                </td>
+                <TableHead
+                  align="left"
+                  className="pl-5 w-10"
+                  children={undefined}
+                />
+                <TableHead align="left" className="pl-3 w-40">
+                  {t("generalLocale.player")}
+                </TableHead>
+                <TableHead className="pl-3 w-44">
+                  {t("generalLocale.focus")}
+                </TableHead>
+              </tr>
+            </thead>
+            <tbody>
+              {pairs.map(([left, right], index) => (
+                <TableRow key={left.id} index={index}>
+                  <td className="pl-5 py-2.5">
+                    <Pill variant="muted">{left.inCourtPosition}</Pill>
+                  </td>
+                  <td className="pl-3 py-2.5 flex flex-row gap-3">
+                    <span className="text-[13px] font-medium text-text1">
+                      {left.firstName} {left.lastName}
+                    </span>
+                    {left.injured && Icons.MedicalSymbol}
+                  </td>
+                  <td className="pl-3 py-2.5">
+                    <PracticeSelect
+                      player={left}
+                      pendingUpdates={pendingUpdates}
+                      onUpdate={updatePractice}
+                    />
+                  </td>
 
-                <td className="w-px bg-detail3 p-0" />
+                  <td className="w-px bg-detail3 p-0" />
 
-                {right ? (
-                  <>
-                    <td className="pl-5 py-2.5">
-                      <Pill variant="muted">{right.inCourtPosition}</Pill>
-                    </td>
-                    <td className="pl-3 py-2.5 flex flex-row gap-3">
-                      <span className="text-[13px] font-medium text-text1">
-                        {right.firstName} {right.lastName}
-                      </span>
-                      {right.injured && Icons.MedicalSymbol}
-                    </td>
-                    <td className="pl-3 py-2.5">
-                      <PracticeSelect
-                        player={right}
-                        pendingUpdates={pendingUpdates}
-                        onUpdate={updatePractice}
-                      />
-                    </td>
-                  </>
-                ) : (
-                  <td colSpan={3} />
-                )}
-              </TableRow>
-            ))}
-          </tbody>
-        </table>
-      </TableCard>
-
-      <button onClick={savePractice} disabled={pendingUpdates.length === 0}>
-        {t("systemGeneral.savePractice")}
-      </button>
+                  {right ? (
+                    <>
+                      <td className="pl-5 py-2.5">
+                        <Pill variant="muted">{right.inCourtPosition}</Pill>
+                      </td>
+                      <td className="pl-3 py-2.5 flex flex-row gap-3">
+                        <span className="text-[13px] font-medium text-text1">
+                          {right.firstName} {right.lastName}
+                        </span>
+                        {right.injured && Icons.MedicalSymbol}
+                      </td>
+                      <td className="pl-3 py-2.5">
+                        <PracticeSelect
+                          player={right}
+                          pendingUpdates={pendingUpdates}
+                          onUpdate={updatePractice}
+                        />
+                      </td>
+                    </>
+                  ) : (
+                    <td colSpan={3} />
+                  )}
+                </TableRow>
+              ))}
+            </tbody>
+          </table>
+        </TableCard>
     </ParentSecion>
   );
 }

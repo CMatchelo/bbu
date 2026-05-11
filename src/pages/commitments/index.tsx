@@ -14,24 +14,23 @@ export default function CommitmentsPage() {
   const [table, setTable] = useState<"board" | "skills">("board");
 
   return (
-    <ParentSecion className="px-4 pb-10">
-      <div className="flex items-center gap-4">
-        <span className="text-[11px] font-bold uppercase tracking-widest text-text2">
-          {t("mainMenu.commitments")}
-        </span>
-        <div className="flex self-center bg-cardbg border border-highlights1/20 rounded-lg w-fit">
-          <TopMenuBtn
-            onClick={() => setTable("board")}
-            tableId="board"
-            currentTable={table}
-            className="w-36"
-          />
-          <TopMenuBtn
-            onClick={() => setTable("skills")}
-            tableId="skills"
-            currentTable={table}
-            className="w-36"
-          />
+    <ParentSecion>
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-4">
+          <div className="flex self-center bg-cardbg/75 border border-highlights1/20 rounded-lg w-fit">
+            <TopMenuBtn
+              onClick={() => setTable("board")}
+              tableId="board"
+              currentTable={table}
+              className="w-36"
+            />
+            <TopMenuBtn
+              onClick={() => setTable("skills")}
+              tableId="skills"
+              currentTable={table}
+              className="w-36"
+            />
+          </div>
         </div>
       </div>
       <div className="h-full pb-10">

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAppSelector } from "../../hooks/useAppDispatch";
 import { useUser } from "../../Context/UserContext";
@@ -69,6 +69,7 @@ function GameScreenInner() {
     user: user!,
     matchId: match.id,
     week: match.week,
+    currentSeason: user!.currentSeason,
     playerTeamId: user!.currentUniversity.id,
     homePoints: homeStats.points,
     awayPoints: awayStats.points,
@@ -76,6 +77,39 @@ function GameScreenInner() {
     homeStats,
     awayStats
   });
+
+  // ── Auto-run possessions ─────────────────────────────────────────────────
+  const [isAutoRunning, setIsAutoRunning] = useState(false);
+  const [speed, setSpeed] = useState<'fast' | 'normal' | 'slow'>('normal');
+  const speedMs = speed === 'fast' ? 330 : speed === 'normal' ? 500 : 1000;
+  const runNextPossessionRef = useRef(runNextPossession);
+  useEffect(() => { runNextPossessionRef.current = runNextPossession; }, [runNextPossession]);
+
+  useEffect(() => {
+    if (!isAutoRunning || isGameOver) return;
+    const interval = setInterval(() => runNextPossessionRef.current(), speedMs);
+    return () => clearInterval(interval);
+  }, [isAutoRunning, isGameOver, speedMs]);
+
+  useEffect(() => {
+    if (isGameOver) setIsAutoRunning(false);
+  }, [isGameOver]);
+
+  // ── Pause auto-run while popup is open ───────────────────────────────────
+  const autoWasPausedForPopup = useRef(false);
+  useEffect(() => {
+    if (isOpen) {
+      if (isAutoRunning) {
+        autoWasPausedForPopup.current = true;
+        setIsAutoRunning(false);
+      }
+    } else {
+      if (autoWasPausedForPopup.current) {
+        autoWasPausedForPopup.current = false;
+        setIsAutoRunning(true);
+      }
+    }
+  }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── CPU timeout side-effect ──────────────────────────────────────────────
   useEffect(() => {
@@ -94,7 +128,7 @@ function GameScreenInner() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
-      <LineupPopup isOpen={isOpen} canClose={canClose} onClose={closePopup} />
+      <LineupPopup isOpen={isOpen} canClose={canClose} onClose={closePopup} playerStats={playerStats} />
       <div className="flex flex-col flex-1 pt-10 overflow-hidden">
         <div className="flex flex-col items-center gap-6">
           <TimeoutRow
@@ -115,9 +149,29 @@ function GameScreenInner() {
         </div>
 
         {/* TODO: replace with a proper styled button */}
-        <button onClick={runNextPossession} disabled={isGameOver}>
-          Posse
-        </button>
+        <div className="flex items-center justify-center gap-2 py-1">
+          <button onClick={runNextPossession} disabled={isGameOver || isAutoRunning}>
+            Posse
+          </button>
+          <button onClick={() => setIsAutoRunning((v) => !v)} disabled={isGameOver}>
+            {isAutoRunning ? "Pausar" : "Play"}
+          </button>
+          <div className="flex gap-1 ml-2">
+            {(['fast', 'normal', 'slow'] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => setSpeed(s)}
+                className={`px-2 py-0.5 rounded text-[11px] uppercase tracking-wider border transition-colors ${
+                  speed === s
+                    ? 'bg-highlights1/20 text-highlights1 border-highlights1/40'
+                    : 'text-text2 border-white/10 hover:text-text1 hover:border-white/20'
+                }`}
+              >
+                {s === 'fast' ? 'Rápido' : s === 'normal' ? 'Normal' : 'Lento'}
+              </button>
+            ))}
+          </div>
+        </div>
 
         <button onClick={saveGame} disabled={isSaving}>
           {isSaving ? "Saving…" : "Voltar"}

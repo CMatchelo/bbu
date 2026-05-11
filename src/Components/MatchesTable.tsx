@@ -15,12 +15,12 @@ export function MatchesTable({ schedule }: MatchesTableProps) {
 
   return (
     <TableCard
-      className="h-full"
+      className="h-full overflow-auto "
       title={t("generalLocale.matches")}
     >
       <table className="w-full border-collapse">
         <thead>
-          <tr className="bg-cardbglight">
+          <tr className="bg-cardbglight/75">
             <TableHead className="w-12">{t("generalLocale.round")}</TableHead>
             <TableHead align="right" className="pr-4">
               {t("generalLocale.home")}

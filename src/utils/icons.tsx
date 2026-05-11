@@ -320,6 +320,17 @@ export const Icons = {
       <rect x="3" y="9" width="18" height="6" rx="2" />
     </svg>
   ),
+  playoffs: (
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      className="w-full h-full"
+    >
+      <path d="M4 2h8M4 2v4a4 4 0 0 0 8 0V2M6 14h4M8 10v4M3 4H2M13 4h1" />
+    </svg>
+  ),
   AcademicWarning: (
     <svg
       width="24"

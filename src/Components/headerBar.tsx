@@ -5,7 +5,7 @@ export const HeaderBar = () => {
   const { user } = useUser();
   const navigate = useNavigate()
   return (
-    <div className="w-full bg-mainbgdark border-b border-highlights1 p-4 flex flex-col items-start mb-4 relative">
+    <div className="w-full bg-mainbgdark border-b border-highlights1 p-4 flex flex-col items-start relative">
       <h2>
         {user?.currentUniversity.name} {user?.currentUniversity.nickname}
       </h2>

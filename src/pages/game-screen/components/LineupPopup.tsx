@@ -2,14 +2,16 @@ import { useEffect, useRef } from "react";
 import { PlayerSelection } from "../../team-selection/components/PlayersSelection";
 import { PlayTypeSelection } from "../../team-selection/components/PlayTypeSelection";
 import { MIN_STARTERS } from "../../../constants/game.constants";
+import { PlayerGameStats } from "../../../types/PlayerGameStats";
 
 interface LineupPopupProps {
   isOpen: boolean;
   canClose: boolean;
   onClose: () => void;
+  playerStats?: Record<string, PlayerGameStats>;
 }
 
-export function LineupPopup({ isOpen, canClose, onClose }: LineupPopupProps) {
+export function LineupPopup({ isOpen, canClose, onClose, playerStats }: LineupPopupProps) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   // Focus the close button when popup opens, for keyboard accessibility
@@ -44,7 +46,7 @@ export function LineupPopup({ isOpen, canClose, onClose }: LineupPopupProps) {
     >
       <div className="h-11/12 w-1/2 max-h-170 flex flex-col gap-4 items-center p-4 rounded-xl shadow-2xl bg-mainbgdark">
         <PlayTypeSelection />
-        <PlayerSelection />
+        <PlayerSelection playerStats={playerStats} />
 
         <div className="flex flex-col items-center gap-1 w-full">
           <button
