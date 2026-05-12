@@ -522,7 +522,9 @@ export function useSaveGame({
       await dispatch(saveScheduleThunk(folderName));
       dispatch(setStarters([]));
 
-      navigate("/team");
+      const isSeasonOver = store.getState().schedule.leagueStandingsHistory
+        .some((s) => s.year === user.currentSeason && s.nationalChampion !== '');
+      navigate(isSeasonOver ? "/endOfSeason" : "/team");
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Failed to save game.";

@@ -54,6 +54,7 @@ function GameScreenInner() {
     cpuWantsTimeout,
     setCpuWantsTimeout,
     checkCPUSub,
+    callCpuTimeout,
     runNextPossession,
   } = useGameSimulation({
     homeUniversity,
@@ -114,10 +115,10 @@ function GameScreenInner() {
   // ── CPU timeout side-effect ──────────────────────────────────────────────
   useEffect(() => {
     if (!cpuWantsTimeout) return;
-    checkCPUSub();
+    callCpuTimeout();
     openPopup();
     setCpuWantsTimeout(false);
-  }, [cpuWantsTimeout, setCpuWantsTimeout, checkCPUSub, openPopup]);
+  }, [cpuWantsTimeout, setCpuWantsTimeout, callCpuTimeout, openPopup]);
 
   // ── User timeout handler ─────────────────────────────────────────────────
   const handleCallTimeout = () => {

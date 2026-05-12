@@ -10,4 +10,5 @@ contextBridge.exposeInMainWorld("api", {
   saveUniversities: (user, universities) => ipcRenderer.invoke("save-universities", user, universities),
   saveHighSchoolPlayers: (userId, data) => ipcRenderer.invoke("save-high-school-players", userId, data),
   saveLeagueStandings: (userId, data) => ipcRenderer.invoke("save-league-standings", userId, data),
+  saveGraduatedPlayers: (userId, players) => ipcRenderer.invoke("save-graduated-players", userId, players),
 });

@@ -8,7 +8,12 @@ export const firtNames = [
   "Douglas","Jonas","Rogério","Hugo","Victor","Kauã","Ryan","Patrick","Wallace","Jefferson",
   "Matias","Benício","Erick","Pietro","Gael","Luiz","Antônio","Francisco","João Pedro","João Lucas",
   "João Vitor","João Gabriel","Miguel","Nicolas","Theo","Tomás","Anderson","Denis","Edu","Flávio",
-  "Júnior","Kevin","Léo","Moisés","Orlando","Pablo","Renan","Saulo","Tales","Zeca"
+  "Júnior","Kevin","Léo","Moisés","Orlando","Pablo","Renan","Saulo","Tales","Zeca", 
+  "Afonso","Alberto","Alisson","Amaro","Ângelo","Anselmo","Armando","Baltazar","Bernardo","Cauê",
+  "Ciro","Conrado","Cristóvão","Darlan","Edson","Elton","Emerson","Estevão","Ezequiel","Frederico",
+  "Genaro","Geraldo","Ian","Israel","Jair","Jean","Jeremias","Josué","Kaique","Lauro",
+  "Lourenço","Maicon","Manoel","Mateus","Maurício","Natan","Nelson","Osvaldo","Raimundo","Reginaldo",
+  "Rômulo","Silas","Túlio","Valmir","Valter","Vicente","William","Xavier","Yago","Zion"
 ];
 
 export const lastNames = [
@@ -21,5 +26,10 @@ export const lastNames = [
   "Garcia","Gonçalves","Lacerda","Lopes","Machado","Marques","Melo","Morais","Paiva","Pacheco",
   "Prado","Ramos","Sales","Santana","Saraiva","Severino","Simões","Torres","Valente","Vasconcelos",
   "Xavier","Zanetti","Bittencourt","Caldeira","Damasceno","Delgado","Escobar","Estevão","Galvão","Guedes",
-  "Haddad","Junqueira","Klein","Leal","Magalhães","Noronha","Porto","Quintana","Rangel","Salazar"
+  "Haddad","Junqueira","Klein","Leal","Magalhães","Noronha","Porto","Quintana","Rangel","Salazar", 
+  "Abreu","Andrade","Antunes","Aragão","Arruda","Ávila","Bandeira","Beltrão","Bonfim","Brito",
+  "Camargo","Cândido","Chaves","Cordeiro","Coutinho","Drummond","Falcão","Feitosa","Fernandes","Gusmão",
+  "Holanda","Lins","Lourenço","Mansur","Marinho","Meireles","Mesquita","Miranda","Muniz","Navarro",
+  "Oliva","Pimenta","Quezada","Ribeirinho","Saldanha","Sampaio","Serra","Soares","Trindade","Uchoa",
+  "Valença","Veiga","Ventura","Veras","Vidal","Ximenes","Yamamoto","Zago","Zanon","Zurita"
 ];

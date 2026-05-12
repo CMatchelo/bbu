@@ -18,6 +18,7 @@ import ScoutingPage from "./pages/scouting";
 import RecruitingBoardPage from "./pages/recruiting-board";
 import CommitmentsPage from "./pages/commitments";
 import PlayoffsPage from "./pages/playoffs";
+import EndOfSeasonPage from "./pages/end-of-season";
 
 function App() {
   return (
@@ -44,6 +45,8 @@ function App() {
             <Route path="/scouting" element={<ScoutingPage />} />
             <Route path="/recruitingBoard" element={<RecruitingBoardPage />} />
             <Route path="/commitments" element={<CommitmentsPage />} />
+
+            <Route path="/endOfSeason" element={<EndOfSeasonPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

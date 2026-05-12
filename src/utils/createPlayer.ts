@@ -233,6 +233,43 @@ export function generateDraftPlayers(
   return { playerOptions, cpuPlayers };
 }
 
+export function convertHSPlayerToPlayer(hs: HighSchoolPlayer, season: number): Player {
+  return {
+    id: hs.id,
+    firstName: hs.firstName,
+    lastName: hs.lastName,
+    age: hs.age,
+
+    grades: 75,
+    yearsInCollege: 1,
+    yearsToGraduate: rand(4, 5),
+    course: courses[rand(0, courses.length - 1)],
+    currentUniversity: hs.signedWith!,
+    tutoring: false,
+
+    skills: hs.skills,
+    inCourtPosition: hs.inCourtPosition,
+    scholarship: false,
+    potential: hs.potential,
+    minPotential: hs.minPotential,
+    maxPotential: hs.maxPotential,
+    stamina: rand(60, 90),
+    intelligence: hs.intelligence,
+
+    injuryProne: hs.injuryProne,
+    injured: false,
+    injury: null,
+
+    active: true,
+    available: true,
+
+    practicing: null,
+    stats: {
+      [season]: createEmptyPlayerSeasonStats(season),
+    },
+  };
+}
+
 export function calcSkillRange(
   realValue: number,
   playerKnowledge: number,
