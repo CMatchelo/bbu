@@ -3,7 +3,7 @@ import {
   PayloadAction,
 } from "@reduxjs/toolkit";
 import { Match } from "../../types/Match";
-import { LeagueStandings } from "../../types/LeagueStandings";
+import { LeagueStandings, StatLeader } from "../../types/LeagueStandings";
 import { scheduleStateToSave } from "../../utils/scheduleMappers";
 import { AppDispatch, RootState } from "..";
 import { ExtendedScheduleState } from "../../types/ScheduleState";
@@ -53,6 +53,24 @@ export const scheduleSlice = createSlice({
         }
         state.matchesByWeek[match.week].push(match.id);
       }
+    },
+    updateLeagueStandingsLeaders(
+      state,
+      action: PayloadAction<{
+        year: number;
+        leaders_points?: StatLeader | null;
+        leaders_assists?: StatLeader | null;
+        leaders_rebounds?: StatLeader | null;
+        leaders_tpm?: StatLeader | null;
+        leaders_steals?: StatLeader | null;
+      }>,
+    ) {
+      const entry = state.leagueStandingsHistory.find(
+        (ls) => ls.year === action.payload.year,
+      );
+      if (!entry) return;
+      const { year: _, ...leaders } = action.payload;
+      Object.assign(entry, leaders);
     },
     setCurrentWeek(state, action: PayloadAction<number>) {
       state.currentWeek = action.payload;
@@ -109,6 +127,7 @@ export const {
   addMatches,
   addLeagueStandings,
   setLeagueStandingsHistory,
+  updateLeagueStandingsLeaders,
 } = scheduleSlice.actions;
 export default scheduleSlice.reducer;
 

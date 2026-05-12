@@ -261,6 +261,10 @@ export function useGameSimulation({
       [];
 
     setCpuOnCourt(updateCpuOnCourt);
+  };
+
+  const callCpuTimeout = () => {
+    checkCPUSub();
     setCpuTimeouts((prev) => prev - 1);
     setCpuTimeoutsOnQrt((prev) => prev + 1);
   };
@@ -295,6 +299,7 @@ export function useGameSimulation({
     setInjuredUserPlayerIds,
 
     checkCPUSub,
+    callCpuTimeout,
 
     currentPoss,
     playerStats,

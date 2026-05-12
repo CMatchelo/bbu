@@ -117,7 +117,7 @@ export const SideMenu = () => {
           icon={Icons.playoffs}
         />
         <NavItem
-          goTo="/team"
+          goTo="/champions"
           text={t("mainMenu.champions")}
           icon={Icons.champions}
         />

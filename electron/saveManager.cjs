@@ -152,6 +152,23 @@ function loadLeagueStandings(userId) {
   return JSON.parse(fs.readFileSync(filePath, "utf-8"));
 }
 
+function saveGraduatedPlayers(userId, players) {
+  if (!fs.existsSync(savesDir)) {
+    fs.mkdirSync(savesDir, { recursive: true });
+  }
+  const userDir = path.join(savesDir, userId);
+  if (!fs.existsSync(userDir)) {
+    fs.mkdirSync(userDir, { recursive: true });
+  }
+  const filePath = path.join(userDir, "graduatedPlayers.json");
+  let existing = [];
+  if (fs.existsSync(filePath)) {
+    existing = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+  }
+  fs.writeFileSync(filePath, JSON.stringify([...existing, ...players], null, 2), "utf-8");
+  return true;
+}
+
 module.exports = {
   saveGame,
   loadGame,
@@ -166,4 +183,5 @@ module.exports = {
   loadHighSchoolPlayers,
   saveLeagueStandings,
   loadLeagueStandings,
+  saveGraduatedPlayers,
 }

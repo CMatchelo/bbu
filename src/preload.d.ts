@@ -39,6 +39,10 @@ declare global {
         userId: string,
         data: LeagueStandings[],
       ) => Promise<void>;
+      saveGraduatedPlayers: (
+        userId: string,
+        players: Player[],
+      ) => Promise<void>;
     };
   }
 }

@@ -183,6 +183,11 @@ const dataSlice = createSlice({
         if (player) Object.assign(player, changes);
       }
     },
+    removePlayers(state, action: PayloadAction<string[]>) {
+      for (const id of action.payload) {
+        delete state.playersById[id];
+      }
+    },
     updateUniversities(
       state,
       action: PayloadAction<{ id: string; changes: Partial<University> }[]>,
@@ -216,6 +221,7 @@ export const {
   addPlayers,
   updatePlayer,
   updatePlayers,
+  removePlayers,
   updatePlayerStats,
   updatePlayersSkills,
   updateUniversityStats,

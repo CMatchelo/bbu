@@ -12,6 +12,14 @@ export type SeasonRecord = {
   playoffResult: PlayoffResult | null
 }
 
+export type StatLeader = {
+  id: string
+  firstName: string
+  lastName: string
+  universityId: string
+  value: number
+}
+
 export type LeagueStandings = {
   year: number
   ne_league: string
@@ -20,4 +28,9 @@ export type LeagueStandings = {
   se_league: string
   s_league: string
   nationalChampion: string
+  leaders_points?: StatLeader | null
+  leaders_assists?: StatLeader | null
+  leaders_rebounds?: StatLeader | null
+  leaders_tpm?: StatLeader | null
+  leaders_steals?: StatLeader | null
 }

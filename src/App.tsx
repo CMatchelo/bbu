@@ -18,6 +18,8 @@ import ScoutingPage from "./pages/scouting";
 import RecruitingBoardPage from "./pages/recruiting-board";
 import CommitmentsPage from "./pages/commitments";
 import PlayoffsPage from "./pages/playoffs";
+import EndOfSeasonPage from "./pages/end-of-season";
+import ChampionsPage from "./pages/champions";
 
 function App() {
   return (
@@ -26,6 +28,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/gameScreen" element={<GameScreen />} />
+          <Route path="/endOfSeason" element={<EndOfSeasonPage />} />
           <Route element={<Layout />}>
             <Route path="/teamSelection" element={<TeamSelection />} />
 
@@ -38,12 +41,14 @@ function App() {
             <Route path="/leagues" element={<Leagues />} />
             <Route path="/playoffs" element={<PlayoffsPage />} />
             <Route path="/leaguesInjuries" element={<LeaguesInjuries />} />
-            
+
             <Route path="/university" element={<UniversityPage />} />
 
             <Route path="/scouting" element={<ScoutingPage />} />
             <Route path="/recruitingBoard" element={<RecruitingBoardPage />} />
             <Route path="/commitments" element={<CommitmentsPage />} />
+
+            <Route path="/champions" element={<ChampionsPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

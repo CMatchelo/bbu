@@ -21,3 +21,7 @@ export async function saveHighSchoolPlayers(folderName: string) {
 export async function saveLeagueStandings(folderName: string, standings: LeagueStandings[]) {
   await window.api.saveLeagueStandings(folderName, standings);
 }
+
+export async function saveGraduatedPlayers(folderName: string, players: import("../types/Player").Player[]) {
+  await window.api.saveGraduatedPlayers(folderName, players);
+}

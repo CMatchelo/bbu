@@ -21,7 +21,12 @@ export function generateLeagueSchedules(universities: University[]): Match[] {
   let allMatches: Match[] = [];
 
   Object.entries(grouped).forEach(([leagueId, teams]) => {
-    const leagueMatches = GenerateSchedule([...teams], leagueId);
+    const shuffled = [...teams];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    const leagueMatches = GenerateSchedule(shuffled, leagueId);
     allMatches = allMatches.concat(leagueMatches);
   });
   return allMatches;
