@@ -12,6 +12,7 @@ import "./i18n/i18n";
 import { Leagues } from "./pages/leagues";
 import Stats from "./pages/stats";
 import Practice from "./pages/practice";
+import TeamPractice from "./pages/team-practice";
 import MedicalDepto from "./pages/medical-depto";
 import LeaguesInjuries from "./pages/leagues-injuries";
 import ScoutingPage from "./pages/scouting";
@@ -33,7 +34,8 @@ function App() {
             <Route path="/teamSelection" element={<TeamSelection />} />
 
             <Route path="/team" element={<Team />} />
-            <Route path="/practice" element={<Practice />} />
+            <Route path="/playerDevelopment" element={<Practice />} />
+            <Route path="/teamPractice" element={<TeamPractice />} />
             <Route path="/medicalDept" element={<MedicalDepto />} />
             <Route path="/calendar" element={<Calendar />} />
 

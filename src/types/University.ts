@@ -1,6 +1,7 @@
 import { Player } from "./Player";
 import { TeamSeasonStats } from "./SeasonStats";
 import { SeasonRecord } from "./LeagueStandings";
+import { DefensivePlaySystem, OffensivePlaySystem } from "./PlaySystem";
 
 export type University = {
   id: string;
@@ -23,6 +24,8 @@ export type University = {
   seasonRecords?: SeasonRecord[];
   signedPlayers?: string[];
   watchlist?: string[];
+  offensive?: OffensivePlaySystem;
+  defensive?: DefensivePlaySystem;
 };
 
 export type TeamSimInfo = {

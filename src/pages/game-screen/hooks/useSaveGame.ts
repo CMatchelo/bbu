@@ -43,6 +43,8 @@ import { Skill } from "../../../types/Skill";
 import { updatePlayersAttributes } from "../../../game/updatePlayers";
 import { runCpuScouting, runCpuSigning } from "../../../game/cpuScouting";
 import { REGULAR_SEASON_WEEKS, PLAYOFFS_CHAMPIONSHIP } from "../../../constants/game.constants";
+import { familiarityDelta, createDefaultOffensivePlaySystem, createDefaultDefensivePlaySystem } from "../../../utils/createPlaySystem";
+import { OffensivePlaySystem, DefensivePlaySystem } from "../../../types/PlaySystem";
 import {
   getPlayoffQualifiers,
   buildR1Matches,
@@ -512,6 +514,35 @@ export function useSaveGame({
 
       // Save players
       await savePlayers(folderName);
+
+      // Update play system familiarity for user university
+      const userUni = selectAllUniversities(store.getState()).find(
+        (u) => u.id === playerTeamId,
+      );
+      if (userUni) {
+        const applyDelta = <T extends OffensivePlaySystem | DefensivePlaySystem>(
+          system: T,
+        ): T => {
+          const updated = {} as T;
+          for (const key of Object.keys(system) as (keyof T)[]) {
+            const entry = system[key] as { familiarity: number; practicingPoints: number };
+            updated[key] = {
+              familiarity: Math.min(100, Math.max(0, entry.familiarity + familiarityDelta(entry.practicingPoints))),
+              practicingPoints: entry.practicingPoints,
+            } as T[keyof T];
+          }
+          return updated;
+        };
+        dispatch(
+          updateUniversities([{
+            id: playerTeamId,
+            changes: {
+              offensive: applyDelta(userUni.offensive ?? createDefaultOffensivePlaySystem()),
+              defensive: applyDelta(userUni.defensive ?? createDefaultDefensivePlaySystem()),
+            },
+          }]),
+        );
+      }
 
       // Update universities
       const uniGameStats = toRecord([homeStats, awayStats]);

@@ -1,6 +1,7 @@
 export const mainMenu = {
   team: "Team",
-  practice: "Practice",
+  playerDevelopment: "Player Development",
+  teamPractice: "Team System",
   medicalDept: "Medical Center",
   stats: "Stats",
   scouts: "Scout",
@@ -13,4 +14,10 @@ export const mainMenu = {
   facilities: "Facilities",
   university: "University",
   playoffs: "Playoffs",
+  sections: {
+    team: "Team",
+    recruiting: "Recruiting",
+    league: "League",
+    club: "Club",
+  },
 }

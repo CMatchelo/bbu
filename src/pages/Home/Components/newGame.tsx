@@ -26,6 +26,7 @@ import {
 } from "../../../store/slices/scheduleSlice";
 import { createEmptyTeamSeasonStats } from "../../../utils/createEmptySeasonStats";
 import { STARTING_SEASON } from "../../../constants/game.constants";
+import { createDefaultOffensivePlaySystem, createDefaultDefensivePlaySystem } from "../../../utils/createPlaySystem";
 import { UniCard } from "./uniCard";
 import { UniSelect } from "./UniSelect";
 
@@ -126,6 +127,8 @@ export default function NewGame() {
       ...uni,
       stats: { [STARTING_SEASON]: createEmptyTeamSeasonStats(STARTING_SEASON) },
       roster: playersByUni[uni.id] || [],
+      offensive: createDefaultOffensivePlaySystem(),
+      defensive: createDefaultDefensivePlaySystem(),
     }));
   };
 
