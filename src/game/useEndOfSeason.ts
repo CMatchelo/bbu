@@ -15,12 +15,14 @@ import {
   setHighSchoolPlayers,
   updateUniversities,
 } from "../store/slices/dataSlice";
-import { setSchedule, setCurrentWeek, saveScheduleThunk } from "../store/slices/scheduleSlice";
+import { setSchedule, setCurrentWeek, saveScheduleThunk, updateLeagueStandingsLeaders } from "../store/slices/scheduleSlice";
 import { generateLeagueSchedules } from "../utils/managerSchedule";
-import { generateHighSchoolPlayers, convertHSPlayerToPlayer } from "../utils/createPlayer";
+import { generateHighSchoolPlayers, convertHSPlayerToPlayer, createPlayer } from "../utils/createPlayer";
 import { createEmptyPlayerSeasonStats, createEmptyTeamSeasonStats } from "../utils/createEmptySeasonStats";
-import { savePlayers, saveUniversities, saveHighSchoolPlayers, saveGraduatedPlayers } from "../utils/saveGame";
+import { savePlayers, saveUniversities, saveHighSchoolPlayers, saveGraduatedPlayers, saveLeagueStandings } from "../utils/saveGame";
 import { rand } from "../utils/mathFunc";
+import { StatLeader } from "../types/LeagueStandings";
+import { Position } from "../types/Player";
 
 export function useEndOfSeason() {
   const dispatch = useAppDispatch();
@@ -102,18 +104,86 @@ export function useEndOfSeason() {
     });
     dispatch(updateUniversities(uniUpdates));
 
-    // ── 5. New schedule ───────────────────────────────────────────────────
+    // ── 5. Fill universities to 3 players per position ───────────────────
+    const POSITIONS: Position[] = ["PG", "SG", "SF", "PF", "C"];
+    const allPlayersForFill = selectAllPlayers(store.getState());
+    const universitiesForFill = selectAllUniversities(store.getState());
+    const fillPlayers = universitiesForFill.flatMap((uni) => {
+      if (uni.id === user.currentUniversity.id) return [];
+      return POSITIONS.flatMap((pos) => {
+        const count = allPlayersForFill.filter(
+          (p) => p.currentUniversity === uni.id && p.inCourtPosition === pos,
+        ).length;
+        const missing = Math.max(0, 3 - count);
+        return Array.from({ length: missing }, () =>
+          createPlayer(uni, pos, 2, user.currentUniversity.id, false, true, false, newSeason),
+        );
+      });
+    });
+    if (fillPlayers.length > 0) {
+      dispatch(addPlayers(fillPlayers));
+      const fillByUni: Record<string, string[]> = {};
+      for (const p of fillPlayers) {
+        if (!fillByUni[p.currentUniversity]) fillByUni[p.currentUniversity] = [];
+        fillByUni[p.currentUniversity].push(p.id);
+      }
+      dispatch(
+        updateUniversities(
+          universitiesForFill.map((uni) => ({
+            id: uni.id,
+            changes: {
+              roster: [
+                ...(uni.roster ?? []),
+                ...(fillByUni[uni.id] ?? []),
+              ],
+            },
+          })),
+        ),
+      );
+    }
+
+    // ── 6. Compute and persist stat leaders ───────────────────────────────
+    const allPlayersForLeaders = selectAllPlayers(store.getState());
+    const currentSeason = user.currentSeason;
+    function computeLeader(
+      key: "points" | "assists" | "rebounds" | "tpm" | "steals",
+    ): StatLeader | null {
+      let best: StatLeader | null = null;
+      for (const p of allPlayersForLeaders) {
+        const s = p.stats[currentSeason];
+        if (!s || s.matches === 0) continue;
+        const value = parseFloat((s[key] / s.matches).toFixed(1));
+        if (!best || value > best.value) {
+          best = { id: p.id, firstName: p.firstName, lastName: p.lastName, universityId: p.currentUniversity, value };
+        }
+      }
+      return best;
+    }
+    dispatch(
+      updateLeagueStandingsLeaders({
+        year: currentSeason,
+        leaders_points: computeLeader("points"),
+        leaders_assists: computeLeader("assists"),
+        leaders_rebounds: computeLeader("rebounds"),
+        leaders_tpm: computeLeader("tpm"),
+        leaders_steals: computeLeader("steals"),
+      }),
+    );
+
+    await saveLeagueStandings(folderName, store.getState().schedule.leagueStandingsHistory);
+
+    // ── 7. New schedule ───────────────────────────────────────────────────
     const freshUniversities = selectAllUniversities(store.getState());
     const newSchedule = generateLeagueSchedules(freshUniversities);
     dispatch(setSchedule(newSchedule));
     dispatch(setCurrentWeek(1));
 
-    // ── 6. Increment user season ──────────────────────────────────────────
+    // ── 8. Increment user season ──────────────────────────────────────────
     const updatedUser = { ...user, currentSeason: newSeason };
     await window.api.saveGame(updatedUser);
     loadUser(updatedUser);
 
-    // ── 7. Save everything ────────────────────────────────────────────────
+    // ── 9. Save everything ────────────────────────────────────────────────
     await Promise.all([
       savePlayers(folderName),
       saveHighSchoolPlayers(folderName),
@@ -121,6 +191,6 @@ export function useEndOfSeason() {
       dispatch(saveScheduleThunk(folderName)),
     ]);
 
-    navigate("/team");
+    navigate("/team", { state: { showDraft: true } });
   }, [dispatch, navigate, user, loadUser]);
 }

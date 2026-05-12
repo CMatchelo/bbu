@@ -11,6 +11,13 @@ import { clamp, rand, randomFloat } from "./mathFunc";
 
 const SKILL_CAP = 80;
 
+function randomPotential(): number {
+  const roll = Math.random();
+  if (roll < 0.60) return rand(75, 80);
+  if (roll < 0.90) return rand(81, 88);
+  return rand(89, 99);
+}
+
 function getSkillRangeByRating(rating: 1 | 2 | 3 | 4 | 5): [number, number] {
   const ranges: Record<number, [number, number]> = {
     1: [44, 55],
@@ -105,7 +112,7 @@ export function createPlayer(
   const [minRange, maxRange] = getSkillRangeByRating(rating);
 
   // Calculate player potential, as well as max and min potential that will be displayed to user
-  const potential = isEmergency ? rand(minRange, maxRange) : rand(maxRange, 99);
+  const potential = isEmergency ? rand(minRange, maxRange) : randomPotential();
   const { minPotential, maxPotential } = calculatMaxMinGrade(potential);
   return {
     id: crypto.randomUUID(),
@@ -322,7 +329,7 @@ export function generateHighSchoolPlayers(): HighSchoolPlayer[] {
       const lastName = lastNames[rand(0, lastNames.length - 1)];
       const rating = rand(1, 3) as 1 | 2 | 3;
       const skills = skillByPosition(pos, rating);
-      const potential = rand(getSkillRangeByRating(rating)[1], 99);
+      const potential = randomPotential();
       const { minPotential, maxPotential } = calculatMaxMinGrade(potential);
       const { minSkills, maxSkills } = calcAllSkillRanges(skills, 1);
       const skillKeys = Object.keys(skills) as (keyof Skill)[];

@@ -9,7 +9,17 @@ Always create a plan and present it to me before running the changes
 
 ## New Features
 
-1. No need
+1. Add in leagueStandings.json, the player leader in Points, assists, rebounds, 3pt made, steals per game, save ID, FirstName, LastName e o valor do stat
+
+2. Champions route
+
+- If first season, display a message saying that still there arent champions, leagues finished, or something like that
+- Display, by year, The champion of each regional and the national champions
+- Display, by year, the leader in Points, assists, rebounds, 3pt made, steals
+
+3. Each university should have 3 players by position.
+
+- At the end of the season, AFTER removing the graduated class and adding the ones from high school, create the players missing to hit that criteria using the createPlayer function passing isDraft as true
 
 ## Screen/Taiwlind changes
 
@@ -22,7 +32,7 @@ Always create a plan and present it to me before running the changes
 
 ## Fixes
 
-1. WHen going to next season, the player should be redirect to team route with DraftTable active
+1. When going to next season, the player should be redirect to team route with DraftTable active
 
 - If you think is better, create a route to display the Draft, instead of displaying inside the route /team
 

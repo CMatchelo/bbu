@@ -11,10 +11,12 @@ import { TopMenuBtn } from "../../Components/TopMenuBtn";
 import { EduTable } from "./Components/EduTable";
 import { DraftTable } from "./Components/DraftTable";
 import { DRAFT_WEEKS } from "../../constants/game.constants";
+import { useLocation } from "react-router-dom";
 
 export default function Team() {
   const { t } = useTranslation();
   const user = useAuthUser();
+  const location = useLocation();
 
   const players = useSelector((state: RootState) =>
     selectPlayersFromUniversity(state, user.currentUniversity.id),
@@ -23,7 +25,9 @@ export default function Team() {
   const currentWeek = useSelector((state: RootState) => state.schedule.currentWeek);
 
   const [table, setTable] = useState<string>("skills");
-  const [showDraft, setShowDraft] = useState(false);
+  const [showDraft, setShowDraft] = useState(
+    () => !!(location.state as { showDraft?: boolean } | null)?.showDraft,
+  );
 
   useEffect(() => {
     if (currentWeek !== DRAFT_WEEKS) return;
