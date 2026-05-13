@@ -43,6 +43,8 @@ import { Skill } from "../../../types/Skill";
 import { updatePlayersAttributes } from "../../../game/updatePlayers";
 import { runCpuScouting, runCpuSigning } from "../../../game/cpuScouting";
 import { REGULAR_SEASON_WEEKS, PLAYOFFS_CHAMPIONSHIP } from "../../../constants/game.constants";
+import { familiarityDelta, createDefaultOffensivePlaySystem, createDefaultDefensivePlaySystem } from "../../../utils/createPlaySystem";
+import { OffensivePlaySystem, DefensivePlaySystem } from "../../../types/PlaySystem";
 import {
   getPlayoffQualifiers,
   buildR1Matches,
@@ -307,11 +309,16 @@ export function useSaveGame({
           }
         }
 
-        // If user's team is eliminated, simulate all remaining playoff weeks automatically
+        // If user's team is eliminated or never qualified, simulate all remaining playoff weeks automatically
         const allUnisCurrent = selectAllUniversities(store.getState());
         const userUni = allUnisCurrent.find((u) => u.id === user.currentUniversity.id);
         const userRecord = userUni?.seasonRecords?.find((r) => r.season === user.currentSeason);
-        const userEliminated = userRecord?.playoffResult != null && userRecord.playoffResult !== 'champion';
+        const userNotInPlayoffs = !Object.values(store.getState().schedule.matchesById).some(
+          (m) => m.championship === PLAYOFFS_CHAMPIONSHIP && (m.home === playerTeamId || m.away === playerTeamId),
+        );
+        const userEliminated =
+          (userRecord?.playoffResult != null && userRecord.playoffResult !== 'champion') ||
+          userNotInPlayoffs;
 
         if (userEliminated) {
           skipIncrementWeek = true;
@@ -512,6 +519,35 @@ export function useSaveGame({
 
       // Save players
       await savePlayers(folderName);
+
+      // Update play system familiarity for user university
+      const userUni = selectAllUniversities(store.getState()).find(
+        (u) => u.id === playerTeamId,
+      );
+      if (userUni) {
+        const applyDelta = <T extends OffensivePlaySystem | DefensivePlaySystem>(
+          system: T,
+        ): T => {
+          const updated = {} as T;
+          for (const key of Object.keys(system) as (keyof T)[]) {
+            const entry = system[key] as { familiarity: number; practicingPoints: number };
+            updated[key] = {
+              familiarity: Math.min(100, Math.max(0, entry.familiarity + familiarityDelta(entry.practicingPoints))),
+              practicingPoints: entry.practicingPoints,
+            } as T[keyof T];
+          }
+          return updated;
+        };
+        dispatch(
+          updateUniversities([{
+            id: playerTeamId,
+            changes: {
+              offensive: applyDelta(userUni.offensive ?? createDefaultOffensivePlaySystem()),
+              defensive: applyDelta(userUni.defensive ?? createDefaultDefensivePlaySystem()),
+            },
+          }]),
+        );
+      }
 
       // Update universities
       const uniGameStats = toRecord([homeStats, awayStats]);

@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { PlayLog } from "../../../types/PlayLog";
+import { OFFENSIVE_PLAY_LABELS } from "../../../types/PlaySystem";
 
 interface PlayLineRowProps {
   play: PlayLog;
@@ -74,11 +75,16 @@ export const PlayLineRow = ({ play, team }: PlayLineRowProps) => {
           )}
 
           <div
-            className={`w-30 gap-2 flex ${
-              isHome ? "flex-row-reverse" : "flex-row"
+            className={`w-30 gap-2 flex flex-col items-start ${
+              isHome ? "items-end" : "items-start"
             }`}
           >
             <span>{primaryPlayer}</span>
+            {play.offensivePlay && (
+              <span className="text-[9px] text-text2 tracking-wider uppercase">
+                {OFFENSIVE_PLAY_LABELS[play.offensivePlay]}
+              </span>
+            )}
           </div>
 
           <div

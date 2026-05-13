@@ -132,7 +132,7 @@ export function StandingsTable({ leagueId }: StandingsTableProps) {
                 </td>
                 <td className="pl-5 py-2.5">
                   <div className="flex items-center gap-2.5">
-                    <Pill variant="green" className="w-20">
+                    <Pill variant="green" className="w-20 min-w-20">
                       {uni.id.toUpperCase()}
                     </Pill>
                     <span className="text-[13px] font-medium text-text1">

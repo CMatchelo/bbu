@@ -67,11 +67,16 @@ export const SideMenu = () => {
 
       <nav className="flex-1 overflow-y-auto py-2 scrollbar-thin scrollbar-thumb-highlights1/20">
         {/* Team */}
-        <SectionLabel>{t("mainMenu.sections.team", "Time")}</SectionLabel>
+        <SectionLabel>{t("mainMenu.sections.team")}</SectionLabel>
         <NavItem goTo="/team" text={t("mainMenu.team")} icon={Icons.roster} />
         <NavItem
-          goTo="/practice"
-          text={t("mainMenu.practice")}
+          goTo="/playerDevelopment"
+          text={t("mainMenu.playerDevelopment")}
+          icon={Icons.practice}
+        />
+        <NavItem
+          goTo="/teamPractice"
+          text={t("mainMenu.teamPractice")}
           icon={Icons.practice}
         />
         <NavItem
@@ -87,9 +92,7 @@ export const SideMenu = () => {
 
         <Divider />
         {/* Draft */}
-        <SectionLabel>
-          {t("mainMenu.sections.recruiting", "Recrutamento")}
-        </SectionLabel>
+        <SectionLabel>{t("mainMenu.sections.recruiting")}</SectionLabel>
         <NavItem goTo="/scouting" text={t("mainMenu.scouts")} icon={Icons.scouts} />
         <NavItem
           goTo="/recruitingBoard"
@@ -104,7 +107,7 @@ export const SideMenu = () => {
 
         <Divider />
         {/* League */}
-        <SectionLabel>{t("mainMenu.sections.league", "Liga")}</SectionLabel>
+        <SectionLabel>{t("mainMenu.sections.league")}</SectionLabel>
         <NavItem goTo="/stats" text={t("mainMenu.stats")} icon={Icons.stats} />
         <NavItem
           goTo="/leagues"
@@ -141,7 +144,7 @@ export const SideMenu = () => {
 
         <Divider />
         {/* University */}
-        <SectionLabel>{t("mainMenu.sections.club", "Clube")}</SectionLabel>
+        <SectionLabel>{t("mainMenu.sections.club")}</SectionLabel>
         <NavItem
           goTo="/team"
           text={t("mainMenu.facilities")}

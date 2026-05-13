@@ -1,14 +1,19 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Player } from "../../types/Player";
-import { PlayType } from "../../types/PlayType";
+import { DefensivePlaySystem, OffensivePlaySystem } from "../../types/PlaySystem";
+
+export type OffensivePlayKey = keyof OffensivePlaySystem;
+export type DefensivePlayKey = keyof DefensivePlaySystem;
 
 interface GameSettingsState {
-  attackPreferences: PlayType[];
+  offensivePlayOrder: OffensivePlayKey[];
+  defensivePlayOrder: DefensivePlayKey[];
   starters: Player[];
 }
 
 const initialState: GameSettingsState = {
-  attackPreferences: ["THREE", "TWO", "LAYUP"],
+  offensivePlayOrder: ["PickAndRoll", "Motion", "Isolation", "FiveOut", "PostUp", "FastBreak"],
+  defensivePlayOrder: ["ManToMan", "Zone", "PerimeterPressure", "FullCourtPress", "SwitchEverything", "PackedPaint"],
   starters: [],
 };
 
@@ -16,8 +21,11 @@ export const gameSettingsSlice = createSlice({
   name: "gameSettings",
   initialState,
   reducers: {
-    setAttackPreferences(state, action: PayloadAction<PlayType[]>) {
-      state.attackPreferences = action.payload;
+    setOffensivePlayOrder(state, action: PayloadAction<OffensivePlayKey[]>) {
+      state.offensivePlayOrder = action.payload;
+    },
+    setDefensivePlayOrder(state, action: PayloadAction<DefensivePlayKey[]>) {
+      state.defensivePlayOrder = action.payload;
     },
     setStarters(state, action: PayloadAction<Player[]>) {
       state.starters = action.payload;
@@ -25,5 +33,5 @@ export const gameSettingsSlice = createSlice({
   },
 });
 
-export const { setAttackPreferences, setStarters } = gameSettingsSlice.actions;
+export const { setOffensivePlayOrder, setDefensivePlayOrder, setStarters } = gameSettingsSlice.actions;
 export default gameSettingsSlice.reducer;

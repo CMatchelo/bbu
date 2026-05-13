@@ -5,8 +5,8 @@ import { University } from "../types/University";
 import { clamp } from "../utils/mathFunc";
 
 const PROGRESSION = {
-  basePerGame: 0.04,
-  trainingBonus: 0.08,
+  basePerGame: 0.12,
+  trainingBonus: 0.18,
   skillCap: 99,
 };
 

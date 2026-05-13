@@ -1,70 +1,101 @@
 import { useAppDispatch, useAppSelector } from "../../../hooks/useAppDispatch";
+import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
-import { setAttackPreferences } from "../../../store/slices/gameSettingsSlice";
-import { PlayType } from "../../../types/PlayType";
+import {
+  setOffensivePlayOrder,
+  setDefensivePlayOrder,
+  OffensivePlayKey,
+  DefensivePlayKey,
+} from "../../../store/slices/gameSettingsSlice";
+import { selectUniversityById } from "../../../selectors/data.selectors";
+import { useAuthUser } from "../../../hooks/useAuthUser";
+import {
+  OFFENSIVE_PLAY_LABELS,
+  DEFENSIVE_PLAY_LABELS,
+  OffensivePlaySystem,
+  DefensivePlaySystem,
+} from "../../../types/PlaySystem";
+import {
+  createDefaultOffensivePlaySystem,
+  createDefaultDefensivePlaySystem,
+} from "../../../utils/createPlaySystem";
+import { PlayOrderTable } from "./PlayOrderTable";
 
-const ATTACK_OPTIONS = [
-  { label: "3 Pontos", value: "THREE" },
-  { label: "2 Pontos", value: "TWO"   },
-  { label: "Bandeja",  value: "LAYUP" },
-] as const;
-
-const ORDINALS = ["1ª", "2ª", "3ª"];
+function swap<T>(arr: T[], i: number, j: number): T[] {
+  const next = [...arr];
+  [next[i], next[j]] = [next[j], next[i]];
+  return next;
+}
 
 export const PlayTypeSelection = () => {
   const dispatch = useAppDispatch();
-  const attackPreferences = useAppSelector(
-    (state: RootState) => state.gameSettings.attackPreferences
+  const user = useAuthUser();
+
+  const offensivePlayOrder = useAppSelector(
+    (state: RootState) => state.gameSettings.offensivePlayOrder,
+  );
+  const defensivePlayOrder = useAppSelector(
+    (state: RootState) => state.gameSettings.defensivePlayOrder,
   );
 
-  const updateAttackPref = (index: number, newValue: string) => {
-    const updated = [...attackPreferences];
-    const oldIndex = updated.indexOf(newValue as PlayType);
-    if (oldIndex !== -1) {
-      [updated[index], updated[oldIndex]] = [updated[oldIndex], updated[index]];
-    } else {
-      updated[index] = newValue as PlayType;
-    }
-    dispatch(setAttackPreferences(updated as PlayType[]));
-  };
+  const university = useSelector(
+    selectUniversityById(user.currentUniversity.id),
+  );
+  const offSystem: OffensivePlaySystem =
+    university.offensive ?? createDefaultOffensivePlaySystem();
+  const defSystem: DefensivePlaySystem =
+    university.defensive ?? createDefaultDefensivePlaySystem();
+
+  const offFamiliarity = Object.fromEntries(
+    Object.entries(offSystem).map(([k, v]) => [k, v.familiarity]),
+  );
+  const defFamiliarity = Object.fromEntries(
+    Object.entries(defSystem).map(([k, v]) => [k, v.familiarity]),
+  );
+
+  const moveOffUp = (idx: number) =>
+    dispatch(
+      setOffensivePlayOrder(
+        swap(offensivePlayOrder, idx, idx - 1) as OffensivePlayKey[],
+      ),
+    );
+  const moveOffDown = (idx: number) =>
+    dispatch(
+      setOffensivePlayOrder(
+        swap(offensivePlayOrder, idx, idx + 1) as OffensivePlayKey[],
+      ),
+    );
+  const moveDefUp = (idx: number) =>
+    dispatch(
+      setDefensivePlayOrder(
+        swap(defensivePlayOrder, idx, idx - 1) as DefensivePlayKey[],
+      ),
+    );
+  const moveDefDown = (idx: number) =>
+    dispatch(
+      setDefensivePlayOrder(
+        swap(defensivePlayOrder, idx, idx + 1) as DefensivePlayKey[],
+      ),
+    );
 
   return (
-    <div className="rounded-xl overflow-hidden border border-highlights1/15 bg-mainbg">
-      <div className="flex items-center gap-2.5 px-5 py-3.5 bg-cardbg border-b border-highlights1/25">
-        <div className="w-1.5 h-1.5 rounded-full bg-highlights1 shrink-0" />
-        <span className="text-[13px] font-medium tracking-widest uppercase text-text2">
-          Ordem de Ataque
-        </span>
-      </div>
-
-      <div className="px-5 py-4 flex flex-col gap-3">
-        {attackPreferences.map((atk: PlayType, idx: number) => (
-          <div key={idx} className="flex items-center gap-4">
-            <span className="text-[11px] font-medium tracking-wider text-text2 w-10">
-              {ORDINALS[idx]}
-            </span>
-
-            <div className="flex gap-2">
-              {ATTACK_OPTIONS.map((opt) => {
-                const active = atk === opt.value;
-                return (
-                  <button
-                    key={opt.value}
-                    onClick={() => updateAttackPref(idx, opt.value)}
-                    className={`px-3.5 py-1.5 rounded-md text-[12px] font-medium border transition-all ${
-                      active
-                        ? "bg-highlights1/15 text-highlights1 border-highlights1/40"
-                        : "bg-white/3 text-text2 border-white/8 hover:bg-white/[0.07] hover:text-text1"
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className="flex gap-3">
+      <PlayOrderTable
+        title="Offense"
+        order={offensivePlayOrder}
+        labels={OFFENSIVE_PLAY_LABELS}
+        familiarity={offFamiliarity}
+        onMoveUp={moveOffUp}
+        onMoveDown={moveOffDown}
+      />
+      <PlayOrderTable
+        title="Defense"
+        order={defensivePlayOrder}
+        labels={DEFENSIVE_PLAY_LABELS}
+        familiarity={defFamiliarity}
+        onMoveUp={moveDefUp}
+        onMoveDown={moveDefDown}
+      />
     </div>
   );
 };

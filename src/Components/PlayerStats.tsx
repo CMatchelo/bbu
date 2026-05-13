@@ -160,7 +160,7 @@ export const PlayerStats = ({ players }: PlayerStatsProps) => {
                   </div>
 
                   <div className={`font-medium text-highlights1 ${classname}`}>
-                    <Pill variant="green">
+                    <Pill className="min-w-20" variant="green">
                       {player.currentUniversity.toUpperCase()}
                     </Pill>
                   </div>

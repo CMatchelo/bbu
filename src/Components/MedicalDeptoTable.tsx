@@ -45,7 +45,7 @@ export default function MedicalDeptoTable({ players }: MedicalDeptoProps) {
                 </span>
               </td>
               <td>
-                <Pill variant="green">{p.currentUniversity.toUpperCase()}</Pill>
+                <Pill className="min-w-20" variant="green">{p.currentUniversity.toUpperCase()}</Pill>
               </td>
               <td>{t(`injuries.${p.injury?.injuryId}`)}</td>
               <td>{t(`bodyParts.${p.injury?.bodyPart}`)}</td>

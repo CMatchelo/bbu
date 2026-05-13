@@ -89,7 +89,7 @@ export default function EndOfSeasonPage() {
               <span className="text-[22px] font-bold text-text1 mt-1">
                 {uniById[standings.nationalChampion]?.nickname ?? standings.nationalChampion}
               </span>
-              <Pill variant="muted">{standings.nationalChampion.toUpperCase()}</Pill>
+              <Pill className="min-w-20" variant="muted">{standings.nationalChampion.toUpperCase()}</Pill>
             </div>
           )}
 
@@ -113,7 +113,7 @@ export default function EndOfSeasonPage() {
                       <span className="text-[13px] font-semibold text-text1 mt-1 text-center">
                         {uni?.nickname ?? uniId}
                       </span>
-                      <Pill variant="muted">{uniId.toUpperCase()}</Pill>
+                      <Pill className="min-w-20" variant="muted">{uniId.toUpperCase()}</Pill>
                     </div>
                   );
                 })}
@@ -139,7 +139,7 @@ export default function EndOfSeasonPage() {
                         <span className="text-[13px] font-medium text-text1 flex-1">
                           {leader.name}
                         </span>
-                        <Pill variant="muted" className="mx-3">
+                        <Pill variant="muted" className="mx-3 min-w-20">
                           {leader.universityId.toUpperCase()}
                         </Pill>
                         <span className="text-[13px] font-semibold text-highlights2 w-12 text-right">
