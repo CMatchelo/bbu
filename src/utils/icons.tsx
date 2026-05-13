@@ -331,6 +331,18 @@ export const Icons = {
       <path d="M4 2h8M4 2v4a4 4 0 0 0 8 0V2M6 14h4M8 10v4M3 4H2M13 4h1" />
     </svg>
   ),
+  settings: (
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      className="w-full h-full"
+    >
+      <circle cx="8" cy="8" r="2" />
+      <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.1 3.1l1.4 1.4M11.5 11.5l1.4 1.4M11.5 3.1l1.4 1.4M3.1 11.5l1.4 1.4" />
+    </svg>
+  ),
   AcademicWarning: (
     <svg
       width="24"

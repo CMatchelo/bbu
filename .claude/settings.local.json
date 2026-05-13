@@ -5,7 +5,9 @@
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\cmatc\\\\OneDrive\\\\Documents\\\\pp\\\\bbu\\\\src\" -Recurse)",
       "Bash(Select-Object -First 50)",
       "Bash(Format-Table FullName)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(dir /s /b \"C:\\\\Users\\\\cmatc\\\\OneDrive\\\\Documents\\\\pp\\\\bbu\\\\public\\\\audio\")",
+      "Bash(npm install *)"
     ]
   }
 }

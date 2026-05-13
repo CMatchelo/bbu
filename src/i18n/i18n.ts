@@ -12,6 +12,7 @@ import { bodyParts as bodyPartsEN } from "./en/bodyParts";
 import { injuries as injuriesEN } from "./en/injuries";
 import { faqLocale as faqLocaleEN } from "./en/faqLocale";
 import { scouting as scoutingEN } from "./en/scouting";
+import { configLocale as configLocaleEN } from "./en/configLocale";
 
 import { inGame as inGamePT } from "./pt/inGame";
 import { mainMenu as mainMenuPT } from "./pt/mainMenu";
@@ -24,6 +25,7 @@ import { bodyParts as bodyPartsPT } from "./pt/bodyParts";
 import { injuries as injuriesPT } from "./pt/injuries";
 import { faqLocale as faqLocalePT } from "./pt/faqLocale";
 import { scouting as scoutingPT } from "./pt/scouting";
+import { configLocale as configLocalePT } from "./pt/configLocale";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -40,6 +42,7 @@ i18n.use(initReactI18next).init({
         injuries: injuriesEN,
         faqLocale: faqLocaleEN,
         scouting: scoutingEN,
+        configLocale: configLocaleEN,
       },
     },
     pt: {
@@ -55,6 +58,7 @@ i18n.use(initReactI18next).init({
         injuries: injuriesPT,
         faqLocale: faqLocalePT,
         scouting: scoutingPT,
+        configLocale: configLocalePT,
       },
     },
   },

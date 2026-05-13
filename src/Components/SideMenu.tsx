@@ -1,10 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../Context/UserContext";
 import { useTranslation } from "react-i18next";
 import { changeLanguage } from "i18next";
 import { Icons } from "../utils/icons";
 import { useHsTick } from "../game/useHsTick";
 import { useSimulateToWeek35 } from "../game/useSimulateToWeek35";
+import { useAudio } from "../Context/AudioContext";
 
 interface NavItemProps {
   goTo: string;
@@ -14,10 +15,12 @@ interface NavItemProps {
 
 const NavItem = ({ goTo, text, icon }: NavItemProps) => {
   const isActive = location.pathname === goTo;
+  const { playClick } = useAudio();
 
   return (
     <Link
       to={goTo}
+      onClick={playClick}
       className={`flex items-center gap-2.5 px-[18px] py-2 text-[13px] border-l-2 transition-all duration-150 ${
         isActive
           ? "bg-highlights2/10 text-highlights1 border-highlights2 font-medium"
@@ -45,6 +48,7 @@ const Divider = () => <div className="h-px bg-highlights1/12 my-1.5" />;
 export const SideMenu = () => {
   const { loadUser, user } = useUser();
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const runHsTick = useHsTick();
   const simulateToWeek35 = useSimulateToWeek35();
 
@@ -159,13 +163,22 @@ export const SideMenu = () => {
 
       {/* Bottom */}
       <div className="p-3 border-t border-highlights1/12 bg-mainbgdark flex flex-col gap-1.5">
-        <button
-          onClick={() => loadUser(null)}
-          className="flex items-center gap-2 w-full px-2.5 py-1.5 text-[12px] text-text2 bg-transparent border border-white/8 rounded-md hover:bg-red-500/8 hover:text-red-300 hover:border-red-400/20 transition-all"
-        >
-          <span className="w-3.5 h-3.5 shrink-0">{Icons.logout}</span>
-          Sair
-        </button>
+        <div className="flex gap-1.5">
+          <button
+            onClick={() => loadUser(null)}
+            className="flex items-center gap-2 flex-1 px-2.5 py-1.5 text-[12px] text-text2 bg-transparent border border-white/8 rounded-md hover:bg-red-500/8 hover:text-red-300 hover:border-red-400/20 transition-all"
+          >
+            <span className="w-3.5 h-3.5 shrink-0">{Icons.logout}</span>
+            Sair
+          </button>
+          <button
+            onClick={() => navigate("/configs")}
+            className="flex items-center gap-2 px-2.5 py-1.5 text-[12px] text-text2 bg-transparent border border-white/8 rounded-md hover:bg-highlights1/8 hover:text-text1 hover:border-highlights1/20 transition-all"
+          >
+            <span className="w-3.5 h-3.5 shrink-0">{Icons.settings}</span>
+            {t("configLocale.config")}
+          </button>
+        </div>
 
         <div className="flex gap-1.5">
           {(["pt", "en"] as const).map((lang) => (
