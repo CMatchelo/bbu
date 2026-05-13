@@ -28,6 +28,8 @@ import { QUARTER_DURATION, TIMEOUTS_QTY } from "../constants/game.constants";
 import { progressPlayers } from "./playerProgression";
 import { substituteCPU } from "./cpuSubs";
 import { toRecord } from "../utils/toRecord";
+import { selectPlayForPossession, getCpuOffensiveOrder, getCpuDefensiveOrder } from "./playSelection";
+import { OffensivePlaySystem, DefensivePlaySystem } from "../types/PlaySystem";
 
 export function simulateMatchWithoutPlayer(
   schedule: MatchWithTeams[],
@@ -158,9 +160,17 @@ function runNextPossessionPure(
   }
 
   const offenseIsHome = state.currentPoss === state.homeStats.id;
+  const offUni = offenseIsHome ? homeUniversity : awayUniversity;
+  const defUni = offenseIsHome ? awayUniversity : homeUniversity;
+
+  const offOrder = getCpuOffensiveOrder(offUni.offensive);
+  const defOrder = getCpuDefensiveOrder(defUni.defensive);
+  const selectedOffPlay = selectPlayForPossession(offOrder) as keyof OffensivePlaySystem;
+  const selectedDefPlay = selectPlayForPossession(defOrder) as keyof DefensivePlaySystem;
+  const offFam = offUni.offensive?.[selectedOffPlay]?.familiarity ?? 50;
+  const defFam = defUni.defensive?.[selectedDefPlay]?.familiarity ?? 50;
 
   const offensePlayers = offenseIsHome ? state.homeLineup : state.awayLineup;
-
   const defensePlayers = offenseIsHome ? state.awayLineup : state.homeLineup;
 
   const result = simulatePossession(
@@ -169,6 +179,10 @@ function runNextPossessionPure(
     offenseIsHome,
     80,
     state.playerStats,
+    selectedOffPlay,
+    selectedDefPlay,
+    offFam,
+    defFam,
   );
 
   const duration = Math.floor(Math.random() * 10) + 15;

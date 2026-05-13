@@ -2,6 +2,7 @@ import { Player } from "../types/Player";
 import { PlayerGameStats } from "../types/PlayerGameStats";
 import { PlayType } from "../types/PlayType";
 import { PossessionResult } from "../types/PossessionResult";
+import { DefensivePlaySystem, OffensivePlaySystem } from "../types/PlaySystem";
 import { clamp, randomFloat } from "../utils/mathFunc";
 import {
   calcDefAvg,
@@ -13,6 +14,7 @@ import {
   sigmoid,
   weightedRandom,
 } from "./matchAuxFunctions";
+import { MATCHUP_TABLE, SHOT_DIST } from "./playSelection";
 
 export function simulatePossession(
   offenseTeam: Player[],
@@ -20,18 +22,20 @@ export function simulatePossession(
   isHomeTeam: boolean,
   fanbase: number,
   playerStats: Record<string, PlayerGameStats> | null,
-  playOrder: PlayType[] = ["THREE", "TWO", "LAYUP"],
+  offensivePlay: keyof OffensivePlaySystem = "PickAndRoll",
+  defensivePlay: keyof DefensivePlaySystem = "ManToMan",
+  offenseFamiliarity: number = 50,
+  defenseFamiliarity: number = 50,
 ): PossessionResult {
   // ====================================================
-  // Pick play (50%, 35%, 15%)
+  // 1. Shot type distribution by offensive play
   // ====================================================
-
+  const [threePct, twoPct] = SHOT_DIST[offensivePlay];
   const r = Math.random() * 100;
   let playType: PlayType;
-
-  if (r < 50) playType = playOrder[0];
-  else if (r < 85) playType = playOrder[1];
-  else playType = playOrder[2];
+  if (r < threePct) playType = "THREE";
+  else if (r < threePct + twoPct) playType = "TWO";
+  else playType = "LAYUP";
 
   // Skill used
   const skillKey =
@@ -40,7 +44,6 @@ export function simulatePossession(
   // ====================================================
   // 2. Pick shooter
   // ====================================================
-
   if (offenseTeam.length === 0) throw new Error("University missing players");
   const weights = offenseTeam.map(
     (p) => p.skills[skillKey] * (0.8 + Math.random() * 0.4),
@@ -61,25 +64,17 @@ export function simulatePossession(
   const skillDelta = (skillValue - 0.5) * 0.24;
 
   const baseMultiplier =
-    playType === "THREE" ? 0.47 : playType === "TWO" ? 0.7 : 0.95;
+    playType === "THREE" ? 0.6 : playType === "TWO" ? 0.7 : 0.95;
 
   // ====================================================
-  // 4. Shooter skill influence
-  // ====================================================
-
-  // ====================================================
-  // 4. ATK Average
+  // 4. Team averages
   // ====================================================
   const offAvg = calcOffAvg(offenseTeam, playerStats) / 100;
-
-  // ====================================================
-  // 5. DEF Average
-  // ====================================================
   const defAvg = calcDefAvg(defenseTeam, playerStats) / 100;
-
   const matchupDelta = (offAvg - defAvg) * 0.16;
+
   // ====================================================
-  // 5. Check if turnover
+  // 5. Turnover check
   // ====================================================
   const turnover = Math.random() < calculateTurnoverChance(offAvg, defAvg);
 
@@ -109,7 +104,6 @@ export function simulatePossession(
   // ====================================================
   // 6. Home advantage
   // ====================================================
-
   const homeDelta = isHomeTeam ? (fanbase / 100) * 0.04 : 0;
 
   // ====================================================
@@ -118,24 +112,30 @@ export function simulatePossession(
   const rngDelta = randomFloat(-0.015, 0.015);
 
   // ====================================================
-  // 8. Final Prov
+  // 8. Play system bonus/penalty (clamped to ±0.1 total)
   // ====================================================
-  //let finalProb = baseAccuracy * shooterFactor * offFactor * defFactor * staminaFactor * rng + homeAdv;
+  const matchupBonus = MATCHUP_TABLE[offensivePlay][defensivePlay] / 100;
+  const familiarityBonus = (offenseFamiliarity - defenseFamiliarity) / 2000;
+  const playSystemDelta = clamp(matchupBonus + familiarityBonus, -0.1, 0.1);
 
+  // ====================================================
+  // 9. Final probability
+  // ====================================================
   const rawProb =
     baseMultiplier +
     skillDelta +
     matchupDelta +
     staminaDelta +
     homeDelta +
-    rngDelta;
+    rngDelta +
+    playSystemDelta;
+  
+  console.log(playSystemDelta, rawProb)
 
   const finalProb = clamp(sigmoid(rawProb), 0.15, 0.92);
 
-  //finalProb = clamp(finalProb, 0.18, 0.92);
-
   // ====================================================
-  // 9. Check if points
+  // 10. Check if points
   // ====================================================
   let blockBy: Player | undefined = undefined;
   const randomN = Math.random();
@@ -178,13 +178,13 @@ export function simulatePossession(
   }
 
   // ====================================================
-  // 10. Rebound if not points
+  // 11. Rebound if not points
   // ====================================================
   const bestAtkReb = get2Best(offenseTeam, "rebound");
   const bestDefReb = get2Best(defenseTeam, "rebound");
 
   const atkRebScore = (bestAtkReb[0] + bestAtkReb[1]) / 2;
-  const defRebScore = ((bestDefReb[0] + bestDefReb[1]) / 2) * 1.15; // vantagem defensiva
+  const defRebScore = ((bestDefReb[0] + bestDefReb[1]) / 2) * 1.15;
 
   const atkFinalReb = atkRebScore * randomFloat(0.85, 1.15);
   const defFinalReb = defRebScore * randomFloat(0.85, 1.15);

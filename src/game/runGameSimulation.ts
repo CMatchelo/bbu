@@ -13,8 +13,10 @@ import { TeamGameStats } from "../types/TeamGameStats";
 import { updateStats, updateTeamStats } from "./updateGameStats";
 import { createEmptyTeamStats } from "../utils/createEmptyStats";
 import { QUARTER_DURATION, TIMEOUTS_QTY } from "../constants/game.constants";
-import { selectPlayersFromUniversity } from "../selectors/data.selectors";
+import { selectPlayersFromUniversity, selectUniversityById } from "../selectors/data.selectors";
 import { setStarters } from "../store/slices/gameSettingsSlice";
+import { DefensivePlayKey, OffensivePlayKey } from "../store/slices/gameSettingsSlice";
+import { selectPlayForPossession, getCpuOffensiveOrder, getCpuDefensiveOrder } from "./playSelection";
 
 
 interface UseGameSimulationParams {
@@ -83,6 +85,12 @@ export function useGameSimulation({
   const playerStarters = useAppSelector(
     (state: RootState) => state.gameSettings.starters,
   );
+  const offensivePlayOrder = useAppSelector(
+    (state: RootState) => state.gameSettings.offensivePlayOrder,
+  );
+  const defensivePlayOrder = useAppSelector(
+    (state: RootState) => state.gameSettings.defensivePlayOrder,
+  );
 
   const homeLineup = isPlayerHome ? playerStarters : cpuOnCourt;
   const awayLineup = isPlayerHome ? cpuOnCourt : playerStarters;
@@ -113,12 +121,37 @@ export function useGameSimulation({
 
     const defensePlayers = offenseIsHome ? awayLineup! : homeLineup!;
 
+    // Determine play types for this possession
+    const playerUniData = selectUniversityById(playerTeamId)(store.getState());
+    const cpuUniId = isPlayerHome ? awayUniversity.id : homeUniversity.id;
+    const cpuUniData = selectUniversityById(cpuUniId)(store.getState());
+
+    const cpuOffOrder = getCpuOffensiveOrder(cpuUniData.offensive);
+    const cpuDefOrder = getCpuDefensiveOrder(cpuUniData.defensive);
+
+    const playerIsOffense = offenseIsHome === isPlayerHome;
+    const selectedOffPlay = playerIsOffense
+      ? (selectPlayForPossession(offensivePlayOrder) as OffensivePlayKey)
+      : (selectPlayForPossession(cpuOffOrder) as OffensivePlayKey);
+    const selectedDefPlay = playerIsOffense
+      ? (selectPlayForPossession(cpuDefOrder) as DefensivePlayKey)
+      : (selectPlayForPossession(defensivePlayOrder) as DefensivePlayKey);
+
+    const offUniData = playerIsOffense ? playerUniData : cpuUniData;
+    const defUniData = playerIsOffense ? cpuUniData : playerUniData;
+    const offFam = offUniData.offensive?.[selectedOffPlay]?.familiarity ?? 50;
+    const defFam = defUniData.defensive?.[selectedDefPlay]?.familiarity ?? 50;
+
     const possessionResult = simulatePossession(
       offensePlayers,
       defensePlayers,
       offenseIsHome,
       80,
       playerStats,
+      selectedOffPlay,
+      selectedDefPlay,
+      offFam,
+      defFam,
     );
 
     const duration = getPossessionDuration();
@@ -129,6 +162,7 @@ export function useGameSimulation({
       {
         team: offenseIsHome ? "HOME" : "AWAY",
         result: possessionResult,
+        offensivePlay: selectedOffPlay,
       },
     ]);
 

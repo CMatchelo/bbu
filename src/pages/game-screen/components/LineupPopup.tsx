@@ -42,13 +42,15 @@ export function LineupPopup({ isOpen, canClose, onClose, playerStats }: LineupPo
       role="dialog"
       aria-modal="true"
       aria-label="Lineup selection"
-      className="absolute inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/20"
+      className="absolute inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/20 overflow-auto"
     >
-      <div className="h-11/12 w-1/2 max-h-170 flex flex-col gap-4 items-center p-4 rounded-xl shadow-2xl bg-mainbgdark">
-        <PlayTypeSelection />
-        <PlayerSelection playerStats={playerStats} />
+      <div className="h-11/12 w-[70%] flex flex-col rounded-xl shadow-2xl bg-mainbgdark overflow-hidden">
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 flex flex-col gap-4 scrollbar-thin scrollbar-thumb-highlights1/20">
+          <PlayTypeSelection />
+          <PlayerSelection playerStats={playerStats} />
+        </div>
 
-        <div className="flex flex-col items-center gap-1 w-full">
+        <div className="shrink-0 flex flex-col items-center gap-1 px-4 py-3 border-t border-highlights1/15 bg-mainbgdark">
           <button
             ref={closeButtonRef}
             onClick={onClose}
@@ -56,7 +58,7 @@ export function LineupPopup({ isOpen, canClose, onClose, playerStats }: LineupPo
             aria-disabled={!canClose}
             className="
               bg-highlights2 text-gray-700
-              p-2 rounded-2xl
+              p-2 rounded-2xl w-full
               hover:bg-highlights2light
               transition-colors duration-300 ease-out
               disabled:opacity-50 disabled:cursor-not-allowed

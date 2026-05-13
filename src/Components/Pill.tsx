@@ -17,7 +17,7 @@ const variants: Record<PillVariant, string> = {
 export function Pill({ children, className, variant = "green", rounded = false }: PillProps) {
   return (
     <span
-      className={`text-[10px] font-medium border px-1.5 py-0.5 tracking-wider ${className} ${variants[variant]} ${
+      className={`inline-block text-[10px] font-medium border px-1.5 py-0.5 tracking-wider ${className} ${variants[variant]} ${
         rounded ? "rounded-full" : "rounded"
       }`}
     >

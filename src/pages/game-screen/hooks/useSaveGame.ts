@@ -309,11 +309,16 @@ export function useSaveGame({
           }
         }
 
-        // If user's team is eliminated, simulate all remaining playoff weeks automatically
+        // If user's team is eliminated or never qualified, simulate all remaining playoff weeks automatically
         const allUnisCurrent = selectAllUniversities(store.getState());
         const userUni = allUnisCurrent.find((u) => u.id === user.currentUniversity.id);
         const userRecord = userUni?.seasonRecords?.find((r) => r.season === user.currentSeason);
-        const userEliminated = userRecord?.playoffResult != null && userRecord.playoffResult !== 'champion';
+        const userNotInPlayoffs = !Object.values(store.getState().schedule.matchesById).some(
+          (m) => m.championship === PLAYOFFS_CHAMPIONSHIP && (m.home === playerTeamId || m.away === playerTeamId),
+        );
+        const userEliminated =
+          (userRecord?.playoffResult != null && userRecord.playoffResult !== 'champion') ||
+          userNotInPlayoffs;
 
         if (userEliminated) {
           skipIncrementWeek = true;

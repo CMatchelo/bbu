@@ -16,6 +16,7 @@ import { savePlayers } from "../../utils/saveGame";
 import { useTranslation } from "react-i18next";
 import { Icons } from "../../utils/icons";
 import { RootState } from "../../store";
+import { playerAverage } from "../../game/skillsAverage";
 
 export default function Practice() {
   const user = useAuthUser();
@@ -103,7 +104,7 @@ export default function Practice() {
                   </td>
                   <td className="pl-3 py-2.5 flex flex-row gap-3">
                     <span className="text-[13px] font-medium text-text1">
-                      {left.firstName} {left.lastName}
+                      {left.firstName} {left.lastName} ({playerAverage(left)})
                     </span>
                     {left.injured && Icons.MedicalSymbol}
                   </td>
@@ -124,7 +125,7 @@ export default function Practice() {
                       </td>
                       <td className="pl-3 py-2.5 flex flex-row gap-3">
                         <span className="text-[13px] font-medium text-text1">
-                          {right.firstName} {right.lastName}
+                          {right.firstName} {right.lastName} ({playerAverage(right)})
                         </span>
                         {right.injured && Icons.MedicalSymbol}
                       </td>

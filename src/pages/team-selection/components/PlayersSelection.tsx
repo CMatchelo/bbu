@@ -43,7 +43,7 @@ export const PlayerSelection = ({ playerStats }: PlayerSelectionProps) => {
   const count = starters.length;
 
   return (
-    <div className={`rounded-xl overflow-hidden border border-highlights1/15 bg-mainbg`}>
+    <div className={`rounded-xl border border-highlights1/15 bg-mainbg`}>
       {/* Header */}
       <div className="flex items-center gap-2.5 px-5 py-3.5 bg-cardbg border-b border-highlights1/25">
         <div className="w-1.5 h-1.5 rounded-full bg-highlights1 shrink-0" />

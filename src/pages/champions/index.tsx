@@ -65,7 +65,7 @@ export default function ChampionsPage() {
                   {champion && (
                     <span className="text-[12px] text-text2">{champion.name}</span>
                   )}
-                  <Pill variant="yellow" className="mt-1">
+                  <Pill variant="yellow" className="mt-1 min-w-20">
                     {standings.nationalChampion.toUpperCase()}
                   </Pill>
                 </div>
@@ -93,7 +93,7 @@ export default function ChampionsPage() {
                               <span className="text-[11px] text-text1">
                                 {uni?.nickname ?? uniId}
                               </span>
-                              <Pill variant="muted">{uniId.toUpperCase()}</Pill>
+                              <Pill className="min-w-20" variant="muted">{uniId.toUpperCase()}</Pill>
                             </div>
                           </div>
                         );
@@ -120,7 +120,7 @@ export default function ChampionsPage() {
                                   {leader.firstName} {leader.lastName}
                                 </span>
                                 <div className="flex items-center gap-1.5">
-                                  <Pill variant="muted">{leader.universityId.toUpperCase()}</Pill>
+                                  <Pill variant="muted" className="min-w-20">{leader.universityId.toUpperCase()}</Pill>
                                   <span className="text-[11px] font-semibold text-highlights2 w-8 text-right">
                                     {leader.value}
                                   </span>

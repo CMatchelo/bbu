@@ -112,7 +112,7 @@ export const ScoutingBoardTable = ({
 
                   <div className="flex flex-wrap gap-1 pl-2 py-1">
                     {player.universityInterest.map((uniId) => (
-                      <Pill key={uniId} variant="muted">{uniId}</Pill>
+                      <Pill className="min-w-20" key={uniId} variant="muted">{uniId}</Pill>
                     ))}
                   </div>
                   <div className="text-center text-[12px] text-text2">
