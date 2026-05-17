@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Team from "./pages/team";
 import Home from "./pages/home";
 import { UserProvider } from "./Context/UserContext";
@@ -21,11 +21,24 @@ import CommitmentsPage from "./pages/commitments";
 import PlayoffsPage from "./pages/playoffs";
 import EndOfSeasonPage from "./pages/end-of-season";
 import ChampionsPage from "./pages/champions";
+import ConfigsPage from "./pages/configs";
+import { AudioProvider } from "./Context/AudioContext";
+import { useMenuMusic } from "./hooks/useMenuMusic";
+
+function MusicController() {
+  const location = useLocation();
+  const disabledRoutes = ["/gameScreen"];
+  const shouldPlayMusic = !disabledRoutes.includes(location.pathname);
+  useMenuMusic(shouldPlayMusic);
+  return null;
+}
 
 function App() {
   return (
+    <AudioProvider>
     <UserProvider>
       <BrowserRouter>
+        <MusicController />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/gameScreen" element={<GameScreen />} />
@@ -51,10 +64,12 @@ function App() {
             <Route path="/commitments" element={<CommitmentsPage />} />
 
             <Route path="/champions" element={<ChampionsPage />} />
+            <Route path="/configs" element={<ConfigsPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
     </UserProvider>
+    </AudioProvider>
   );
 }
 

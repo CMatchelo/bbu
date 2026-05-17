@@ -12,6 +12,7 @@ import { LineupPopup } from "./components/LineupPopup";
 import { TimeoutRow } from "./components/TimeoutRow";
 import { useLineupPopup } from "./hooks/useLineupPopup";
 import { useSaveGame } from "./hooks/useSaveGame";
+import { useInGameMusic } from "../../hooks/useInGameMusic";
 
 export default function GameScreen() {
   const { user } = useUser();
@@ -28,6 +29,7 @@ export default function GameScreen() {
 
 function GameScreenInner() {
   const { user } = useUser();
+  useInGameMusic();
 
   const gameContext = useAppSelector((state) =>
     // Non-null assertion is safe: the guard above guarantees context exists
