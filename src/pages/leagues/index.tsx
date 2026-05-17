@@ -36,22 +36,22 @@ export const Leagues = () => {
         <span className="text-[11px] font-bold uppercase tracking-widest text-text2 text-center">
           {t("mainMenu.leagues")}
         </span>
-          <div className="flex self-center bg-cardbg/75 border border-highlights1/20 rounded-lg w-fit">
-            {LEAGUES.map((league) => (
-              <button
-                key={league.value}
-                onClick={() => setLeagueId(league.value)}
-                className={`px-4 py-2 text-[12px] font-medium whitespace-nowrap transition-all ${
-                  leagueId === league.value
-                    ? "bg-highlights2/12 text-highlights2"
-                    : "text-text2 hover:bg-highlights2/6 hover:text-text1"
-                }`}
-              >
-                {t(`championshipLocale.${league.value}`)}
-              </button>
-            ))}
-          </div>
+        <div className="flex self-center bg-cardbg/75 border border-highlights1/20 rounded-lg w-fit">
+          {LEAGUES.map((league) => (
+            <button
+              key={league.value}
+              onClick={() => setLeagueId(league.value)}
+              className={`px-4 py-2 text-[12px] font-medium whitespace-nowrap transition-all ${
+                leagueId === league.value
+                  ? "bg-highlights2/12 text-highlights2"
+                  : "text-text2 hover:bg-highlights2/6 hover:text-text1"
+              }`}
+            >
+              {t(`championshipLocale.${league.value}`)}
+            </button>
+          ))}
         </div>
+      </div>
       <div className="flex flex-col gap-4 overflow-auto">
         <StandingsTable leagueId={leagueId} />
         <MatchesTable schedule={schedule} />

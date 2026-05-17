@@ -138,6 +138,9 @@ export default function NewGame() {
     currentUniversity: uni,
     reputation: 50,
     currentSeason: STARTING_SEASON,
+    careerWins: 0,
+    careerLosses: 0,
+    careerPointsMade: 0,
   });
 
   const startGame = async () => {

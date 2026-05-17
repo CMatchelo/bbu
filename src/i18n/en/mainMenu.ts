@@ -1,4 +1,5 @@
 export const mainMenu = {
+  coachDashboard: "Dashboard",
   team: "Team",
   playerDevelopment: "Player Development",
   teamPractice: "Team System",

@@ -103,8 +103,8 @@ export const EduTable = ({ players }: EduTableProps) => {
                   </td>
                   <td
                     className={`text-center py-2.5 px-2 text-[13px] font-medium 
-                  ${player.grades >= 60 && player.grades < 70 ? "text-highlights2/80" : ""}
-                  ${player.grades < 60 ? "text-red-500/80" : ""}
+                  ${player.grades >= 70 && player.grades < 75 ? "text-highlights2/80" : ""}
+                  ${player.grades < 70 ? "text-red-500/80" : ""}
                 `}
                   >
                     {player.grades.toFixed(2)}

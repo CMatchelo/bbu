@@ -8,7 +8,24 @@
       "Bash(npx tsc *)",
       "Bash(dir /s /b \"C:\\\\Users\\\\cmatc\\\\OneDrive\\\\Documents\\\\pp\\\\bbu\\\\public\\\\audio\")",
       "Bash(npm install *)",
-      "Bash(Get-ChildItem *)"
+      "Bash(Get-ChildItem *)",
+      "Bash(git checkout *)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(curl -L \"https://raw.githubusercontent.com/deldersveld/topojson/master/countries/brazil/brazil-states.json\" -o public/brazil-states.json)",
+      "Bash(curl -L \"https://cdn.jsdelivr.net/npm/brazil-states-topojson@1.0.0/brazil-states.json\" -o public/brazil-states.json)",
+      "Bash(curl -L \"https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson\" -o public/brazil-states.json)",
+      "Bash(curl -sL \"https://raw.githubusercontent.com/tbrugz/geodata-br/master/geojson/geojs-100-mun.json\" -o /dev/null -w \"%{http_code}\")",
+      "Bash(node -e ' *)",
+      "Bash(curl -sL \"https://servicodados.ibge.gov.br/api/v3/malhas/paises/BR?formato=application/vnd.geo+json&resolucao=2&qualidade=minima\" -o public/brazil-states.json)",
+      "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\('public/brazil-states.json','utf8'\\)\\); console.log\\('features:',d.features.length\\); console.log\\('props:',Object.keys\\(d.features[0]?.properties||{}\\)\\);\")",
+      "Bash(curl -sL \"https://servicodados.ibge.gov.br/api/v3/malhas/regioes/1,2,3,4,5?formato=application/vnd.geo+json&resolucao=3&qualidade=minima\" -o public/brazil-states.json)",
+      "Bash(node -e \"const d=JSON.parse\\(require\\('fs'\\).readFileSync\\('public/brazil-states.json','utf8'\\)\\); console.log\\('features:',d.features.length\\); console.log\\('props:',JSON.stringify\\(d.features[0]?.properties\\)\\);\")",
+      "Bash(curl -sL \"https://servicodados.ibge.gov.br/api/v3/malhas/estados?formato=application/vnd.geo+json&resolucao=2&qualidade=minima\" -o public/brazil-states.json)",
+      "Bash(curl -sL \"https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson\" -o public/brazil-states-full.json)",
+      "Bash(node *)",
+      "Bash(npx vite *)",
+      "Bash(npm uninstall *)",
+      "Bash(xargs grep -n \"WEEK\\\\|SEASON\\\\|PLAYOFF\")"
     ]
   }
 }
