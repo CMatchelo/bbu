@@ -88,7 +88,8 @@ export default function ConfigsPage() {
 
   return (
     <ParentSecion className="px-4 pb-10">
-      <div className="flex flex-col gap-6 max-w-5xl mx-auto w-full overflow-auto">
+      <div className="absolute inset-0 overflow-y-auto">
+      <div className="flex flex-col gap-6 max-w-5xl mx-auto w-full py-4 px-4">
         {/* Header */}
         <div className="text-center">
           <span className="text-[11px] font-bold uppercase tracking-widest text-text2">
@@ -96,8 +97,8 @@ export default function ConfigsPage() {
           </span>
         </div>
 
-        {/* Language + Audio + Credits — side by side */}
-        <div className="grid grid-cols-3 gap-4">
+        {/* Language + Audio — side by side */}
+        <div className="grid grid-cols-2 gap-4">
           {/* Language */}
           <ConfigCard title="Language / Idioma">
             {(["en", "pt"] as const).map((lang) => (
@@ -133,27 +134,66 @@ export default function ConfigsPage() {
               </button>
             ))}
           </ConfigCard>
-
-          {/* Credits */}
-          <ConfigCard title={t("configLocale.credits")} classname="flex-col">
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-[12px] text-text2 shrink-0">
-                {t("configLocale.creatorDeveloper")}
-              </span>
-              <span className="text-[13px] font-medium text-text1">
-                Cicero Leite
-              </span>
-            </div>
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-[12px] text-text2 shrink-0">
-                {t("configLocale.visitWebsite")}
-              </span>
-              <span className="text-[13px] font-medium text-highlights1">
-                ciceromll.dev.br
-              </span>
-            </div>
-          </ConfigCard>
         </div>
+
+        {/* Credits — full width */}
+        <ConfigCard title={t("configLocale.credits")} classname="flex-col">
+          {/* Creator */}
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[12px] text-text2 shrink-0">
+              {t("configLocale.creatorDeveloper")}
+            </span>
+            <span className="text-[13px] font-medium text-text1">
+              Cicero Leite
+            </span>
+          </div>
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[12px] text-text2 shrink-0">
+              {t("configLocale.visitWebsite")}
+            </span>
+            <span className="text-[13px] font-medium text-highlights1">
+              ciceromll.dev.br
+            </span>
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-highlights1/15 my-1" />
+
+          {/* Music */}
+          <p className="text-[11px] font-medium tracking-widest uppercase text-text2">
+            {t("configLocale.music")}
+          </p>
+          {(
+            [
+              { file: "menu01_song01.mp3", artist: "Mykola Sosin", source: "Pixabay" },
+              { file: "menu02_song02.mp3", artist: "Mykola Sosin", source: "Pixabay" },
+              { file: "menu03_song03.mp3", artist: "Mykola Sosin", source: "Pixabay" },
+            ] as const
+          ).map(({ file, artist, source }) => (
+            <div key={file} className="flex items-center justify-between gap-4">
+              <span className="text-[12px] font-mono text-text2">{file}</span>
+              <span className="text-[12px] text-text1">{artist} — {source}</span>
+            </div>
+          ))}
+
+          {/* Sound Effects */}
+          <p className="text-[11px] font-medium tracking-widest uppercase text-text2 mt-1">
+            {t("configLocale.soundEffects")}
+          </p>
+          {(
+            [
+              { file: "click01.wav", artist: "Jaszunio15", source: "Freesound", license: "CC0" },
+              { file: "inGame02_crowd01.m4a", artist: "egg_leg420", source: "Freesound", license: "CC0" },
+              { file: "inGame03_crowd02.m4a", artist: "True_Killian", source: "Freesound", license: "CC0" },
+              { file: "inGame04_crowd03.m4a", artist: "True_Killian", source: "Freesound", license: "CC0" },
+            ] as const
+          ).map(({ file, artist, source, license }) => (
+            <div key={file} className="flex items-center justify-between gap-4">
+              <span className="text-[12px] font-mono text-text2">{file}</span>
+              <span className="text-[12px] text-text1">{artist} — {source} — {license}</span>
+            </div>
+          ))}
+        </ConfigCard>
 
         {/* FAQ */}
         <div className="flex flex-col gap-2 ove">
@@ -168,6 +208,7 @@ export default function ConfigsPage() {
             />
           ))}
         </div>
+      </div>
       </div>
     </ParentSecion>
   );

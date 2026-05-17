@@ -7,7 +7,8 @@
       "Bash(Format-Table FullName)",
       "Bash(npx tsc *)",
       "Bash(dir /s /b \"C:\\\\Users\\\\cmatc\\\\OneDrive\\\\Documents\\\\pp\\\\bbu\\\\public\\\\audio\")",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(Get-ChildItem *)"
     ]
   }
 }

@@ -6,6 +6,9 @@ export const configLocale = {
   credits: "Créditos",
   creatorDeveloper: "Criador & Desenvolvedor",
   visitWebsite: "Visitar site",
+  audioCredits: "Créditos de Áudio",
+  music: "Música",
+  soundEffects: "Efeitos Sonoros",
   faq: "Perguntas Frequentes",
 
   faqTeamTitle: "Time",
