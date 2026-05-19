@@ -36,5 +36,6 @@ export type Player = {
   available: boolean;
 
   practicing: keyof Skill | null;
+  skillsStartSeason?: Partial<Skill>;
   stats: Record<number, PlayerSeasonStats>;
 };

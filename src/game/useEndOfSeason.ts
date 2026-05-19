@@ -61,6 +61,7 @@ export function useEndOfSeason() {
             yearsToGraduate: newYearsToGraduate,
             stamina: rand(60, 90),
             available: true,
+            skillsStartSeason: { ...p.skills },
             stats: { ...p.stats, [newSeason]: createEmptyPlayerSeasonStats(newSeason) },
           },
         };

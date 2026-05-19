@@ -2,21 +2,30 @@ import { useSelector } from "react-redux";
 import { ParentSecion } from "../../Components/ParentSection";
 import { useAuthUser } from "../../hooks/useAuthUser";
 import { selectPlayersFromUniversity } from "../../selectors/data.selectors";
-import { TableCard } from "../../Components/TableCard";
-import { TableHead } from "../../Components/TableHead";
-import { TableRow } from "../../Components/TableRow";
 import { Pill } from "../../Components/Pill";
 import { Skill } from "../../types/Skill";
 import { useState } from "react";
 import { Player } from "../../types/Player";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { updatePlayers } from "../../store/slices/dataSlice";
-import { PracticeSelect } from "./components/PracticeSelect";
 import { savePlayers } from "../../utils/saveGame";
 import { useTranslation } from "react-i18next";
 import { Icons } from "../../utils/icons";
 import { RootState } from "../../store";
 import { playerAverage } from "../../game/skillsAverage";
+
+const SKILLS: { abbr: string; key: keyof Skill }[] = [
+  { abbr: "LAY", key: "layup" },
+  { abbr: "2PT", key: "twopt" },
+  { abbr: "3PT", key: "threept" },
+  { abbr: "PAS", key: "pass" },
+  { abbr: "DRI", key: "ballHandling" },
+  { abbr: "AGL", key: "speedWithBall" },
+  { abbr: "REB", key: "rebound" },
+  { abbr: "DEF", key: "defense" },
+  { abbr: "STL", key: "steal" },
+  { abbr: "BLK", key: "block" },
+];
 
 export default function Practice() {
   const user = useAuthUser();
@@ -38,7 +47,7 @@ export default function Practice() {
         existing.changes.practicing = key;
         return [...prev];
       }
-      return [...prev, { id: id, changes: { practicing: key } }];
+      return [...prev, { id, changes: { practicing: key } }];
     });
   };
 
@@ -49,13 +58,9 @@ export default function Practice() {
     await savePlayers(folderName);
   };
 
-  const pairs: [Player, Player | null][] = [];
-  for (let i = 0; i < players.length; i += 2) {
-    pairs.push([players[i], players[i + 1] ?? null]);
-  }
-
   return (
-    <ParentSecion backgroundImg='/practiceBg.png'>
+    <ParentSecion backgroundImg="/practiceBg.png">
+      <div className="absolute inset-0 overflow-y-auto p-4 flex flex-col gap-4">
         <div className="flex items-center">
           <button
             onClick={savePractice}
@@ -65,86 +70,95 @@ export default function Practice() {
             {t("systemGeneral.savePractice")}
           </button>
         </div>
-        <TableCard title={t("generalLocale.practice")}>
-          <table className="w-full min-w-[700px] border-collapse">
-            <thead>
-              <tr className="bg-cardbglight/75">
-                <TableHead
-                  align="left"
-                  className="pl-5 w-10"
-                  children={undefined}
-                />
-                <TableHead align="left" className="pl-3 w-40">
-                  {t("generalLocale.player")}
-                </TableHead>
-                <TableHead className="pl-3 w-44">
-                  {t("generalLocale.focus")}
-                </TableHead>
 
-                <td className="w-px bg-detail3" />
+        <div className="flex flex-col gap-3">
+          {players.map((player) => {
+            const pending = pendingUpdates.find((p) => p.id === player.id);
+            const hasPendingChange = !!pending;
+            const currentPracticing = (pending?.changes.practicing ?? player.practicing) as
+              | keyof Skill
+              | null
+              | undefined;
+            const selectedSkillRaw = currentPracticing
+              ? player.skills[currentPracticing]
+              : undefined;
 
-                <TableHead
-                  align="left"
-                  className="pl-5 w-10"
-                  children={undefined}
-                />
-                <TableHead align="left" className="pl-3 w-40">
-                  {t("generalLocale.player")}
-                </TableHead>
-                <TableHead className="pl-3 w-44">
-                  {t("generalLocale.focus")}
-                </TableHead>
-              </tr>
-            </thead>
-            <tbody>
-              {pairs.map(([left, right], index) => (
-                <TableRow key={left.id} index={index}>
-                  <td className="pl-5 py-2.5">
-                    <Pill variant="muted">{left.inCourtPosition}</Pill>
-                  </td>
-                  <td className="pl-3 py-2.5 flex flex-row gap-3">
-                    <span className="text-[13px] font-medium text-text1">
-                      {left.firstName} {left.lastName} ({playerAverage(left)})
-                    </span>
-                    {left.injured && Icons.MedicalSymbol}
-                  </td>
-                  <td className="pl-3 py-2.5">
-                    <PracticeSelect
-                      player={left}
-                      pendingUpdates={pendingUpdates}
-                      onUpdate={updatePractice}
-                    />
-                  </td>
+            return (
+              <div
+                key={player.id}
+                className={`flex gap-3 px-4 py-3 rounded-xl bg-cardbg/75 border border-highlights1/10 transition-all ${
+                  hasPendingChange ? "border-l-[3px] border-l-highlights1" : ""
+                }`}
+              >
+                <div className="flex items-center gap-2 w-60">
+                  <Pill variant="muted">{player.inCourtPosition}</Pill>
+                  <span className="text-[13px] text-left font-semibold text-text1">
+                    {player.firstName} {player.lastName}
+                  </span>
+                  <span className="text-[12px] text-text2/60">({playerAverage(player)})</span>
+                  {player.injured && <span className="w-4 h-4 shrink-0">{Icons.MedicalSymbol}</span>}
+                </div>
 
-                  <td className="w-px bg-detail3 p-0" />
+                <div className="flex flex-wrap gap-1.5">
+                  {SKILLS.map(({ abbr, key }) => {
+                    const rawVal = player.skills[key];
+                    const flooredVal = Math.floor(rawVal);
+                    const startVal = player.skillsStartSeason?.[key];
+                    const hasEvolution =
+                      startVal !== undefined && Math.floor(rawVal) > Math.floor(startVal);
+                    const isSelected = currentPracticing === key;
 
-                  {right ? (
-                    <>
-                      <td className="pl-5 py-2.5">
-                        <Pill variant="muted">{right.inCourtPosition}</Pill>
-                      </td>
-                      <td className="pl-3 py-2.5 flex flex-row gap-3">
-                        <span className="text-[13px] font-medium text-text1">
-                          {right.firstName} {right.lastName} ({playerAverage(right)})
+                    return (
+                      <button
+                        key={key}
+                        onClick={() => updatePractice(key, player.id)}
+                        className={`flex flex-col items-center px-2.5 py-1.5 rounded-lg min-w-11 transition-colors ${
+                          isSelected
+                            ? "bg-highlights1 text-mainbgdark"
+                            : "bg-cardbglight/70 text-text2 hover:bg-highlights1/20 hover:text-text1"
+                        }`}
+                      >
+                        <span className="text-[9px] uppercase tracking-widest font-bold leading-tight">
+                          {abbr}
                         </span>
-                        {right.injured && Icons.MedicalSymbol}
-                      </td>
-                      <td className="pl-3 py-2.5">
-                        <PracticeSelect
-                          player={right}
-                          pendingUpdates={pendingUpdates}
-                          onUpdate={updatePractice}
-                        />
-                      </td>
-                    </>
-                  ) : (
-                    <td colSpan={3} />
-                  )}
-                </TableRow>
-              ))}
-            </tbody>
-          </table>
-        </TableCard>
+                        <span className="text-[13px] font-black tabular-nums leading-tight">
+                          {flooredVal}
+                        </span>
+                        {hasEvolution && (
+                          <span
+                            className={`text-[9px] leading-tight ${
+                              isSelected ? "text-mainbgdark/60" : "text-highlights1/70"
+                            }`}
+                          >
+                            {Math.floor(startVal!)}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {selectedSkillRaw !== undefined && (
+                  <div className="flex items-center gap-2 flex-1">
+                    <span className="text-[10px] text-text2/50 uppercase tracking-wide shrink-0">
+                      Next pt
+                    </span>
+                    <div className="flex-1 h-1.5 rounded-full bg-highlights1/15">
+                      <div
+                        className="h-full rounded-full bg-highlights1 transition-all"
+                        style={{ width: `${(selectedSkillRaw % 1) * 100}%` }}
+                      />
+                    </div>
+                    <span className="text-[10px] text-text2/50 tabular-nums">
+                      {Math.floor(selectedSkillRaw)}
+                    </span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </ParentSecion>
   );
 }

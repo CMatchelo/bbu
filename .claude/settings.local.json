@@ -25,7 +25,8 @@
       "Bash(node *)",
       "Bash(npx vite *)",
       "Bash(npm uninstall *)",
-      "Bash(xargs grep -n \"WEEK\\\\|SEASON\\\\|PLAYOFF\")"
+      "Bash(xargs grep -n \"WEEK\\\\|SEASON\\\\|PLAYOFF\")",
+      "Bash(Remove-Item *)"
     ]
   }
 }
