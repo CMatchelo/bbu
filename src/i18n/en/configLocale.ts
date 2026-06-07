@@ -60,4 +60,6 @@ export const configLocale = {
   faqUniversityPhysio: "Your physio department reduces stamina drain while a player is on court and speeds up recovery while on the bench.",
   faqUniversityEducation: "Your education support level influences player grades.",
   faqUniversityPrestige: "Your academic prestige increases the chances of a prospect accepting your Letter of Intent.",
+  faqUniversityImprove: "The higher your reputation, the greater the chance that the University Administration will approve your facility improvement requests.",
+  faqUniversityReputation: "Your reputation changes based on your results on the court — wins build it up, losses bring it down.",
 };

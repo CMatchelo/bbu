@@ -6,9 +6,10 @@ type FacilityCardProps = {
   level?: number;
   description: string;
   onImprove: () => void;
+  disabled?: boolean;
 };
 
-export function FacilityCard({ title, level, description, onImprove }: FacilityCardProps) {
+export function FacilityCard({ title, level, description, onImprove, disabled }: FacilityCardProps) {
   const { t } = useTranslation();
 
   return (
@@ -21,15 +22,17 @@ export function FacilityCard({ title, level, description, onImprove }: FacilityC
           </span>
           {level !== undefined && (
             <span className="text-[10px] font-medium text-highlights2 bg-highlights2/10 border border-highlights2/25 rounded px-1.5 py-0.5">
-              Nível {level}
+              {t("universityStrings.levelBadge")} {level}
             </span>
           )}
         </div>
         <button
           onClick={onImprove}
+          disabled={disabled}
           className="text-[10px] font-medium tracking-wider uppercase px-3 py-1.5
             text-highlights1 bg-highlights1/10 border border-highlights1/30 rounded-md
-            hover:bg-highlights1/20 hover:border-highlights1 transition-all"
+            hover:bg-highlights1/20 hover:border-highlights1 transition-all
+            disabled:opacity-30 disabled:cursor-not-allowed"
         >
           {t("universityStrings.improveBtn")}
         </button>

@@ -60,4 +60,6 @@ export const configLocale = {
   faqUniversityPhysio: "O departamento de fisioterapia reduz o gasto de stamina em quadra e acelera a recuperação no banco.",
   faqUniversityEducation: "O nível de suporte educacional influencia as notas dos jogadores.",
   faqUniversityPrestige: "O prestígio acadêmico aumenta as chances de um candidato aceitar sua Carta de Intenção.",
+  faqUniversityImprove: "Quanto maior for sua reputação, maiores são as chances de a Administração da Universidade aprovar seus pedidos de melhoria de instalações.",
+  faqUniversityReputation: "Sua reputação varia de acordo com seus resultados em quadra — vitórias aumentam, derrotas diminuem.",
 };
