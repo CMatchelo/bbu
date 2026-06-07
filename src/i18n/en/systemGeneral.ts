@@ -12,5 +12,6 @@ export const systemGeneral = {
   hard: "Hard",
   hardDesc: "Your team starts weaker",
   select: "Select",
-  savePractice: "Save Practice"
+  savePractice: "Save Practice",
+  saveChanges: "Save changes"
 };

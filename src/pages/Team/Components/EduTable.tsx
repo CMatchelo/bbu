@@ -5,29 +5,20 @@ import { Pill } from "../../../Components/Pill";
 import { TableRow } from "../../../Components/TableRow";
 import { playerAverage } from "../../../game/skillsAverage";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
 import { TUTORING_QTY } from "../../../constants/game.constants";
-import { updatePlayers } from "../../../store/slices/dataSlice";
-import { useAppDispatch } from "../../../hooks/useAppDispatch";
-import { useAuthUser } from "../../../hooks/useAuthUser";
-import { savePlayers } from "../../../utils/saveGame";
 
 interface EduTableProps {
   players: Player[];
+  changedPlayers: { id: string; changes: Partial<Player> }[];
+  onChangedPlayers: React.Dispatch<React.SetStateAction<{ id: string; changes: Partial<Player> }[]>>;
 }
 
-export const EduTable = ({ players }: EduTableProps) => {
-  const user = useAuthUser();
+export const EduTable = ({ players, changedPlayers, onChangedPlayers }: EduTableProps) => {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
 
   const playersSorted = players
     ?.slice()
     .sort((a, b) => a.inCourtPosition.localeCompare(b.inCourtPosition));
-
-  const [changedPlayers, setChangedPlayers] = useState<
-    { id: string; changes: Partial<Player> }[]
-  >([]);
 
   const qtyTutor = players.filter((p) => {
     const local = changedPlayers.find((c) => c.id === p.id);
@@ -35,7 +26,7 @@ export const EduTable = ({ players }: EduTableProps) => {
   }).length;
 
   const handleToggleTutor = (id: string, checked: boolean) => {
-    setChangedPlayers((prev) => {
+    onChangedPlayers((prev) => {
       const existing = prev.find((p) => p.id === id);
       if (existing) {
         existing.changes.tutoring = checked;
@@ -45,19 +36,9 @@ export const EduTable = ({ players }: EduTableProps) => {
     });
   };
 
-  const saveTutoring = async () => {
-    dispatch(updatePlayers(changedPlayers));
-    setChangedPlayers([]);
-    const folderName = `${user.name}_${user.id}`;
-    await savePlayers(folderName);
-  };
-
   return (
     <>
       <TableCard className="overflow-auto" title={t("generalLocale.roster")}>
-        <button onClick={saveTutoring} disabled={changedPlayers.length === 0}>
-          {t("systemGeneral.savePractice")}
-        </button>
         <table className="w-full min-w-[700px] border-collapse">
           <thead>
             <tr className="bg-cardbglight">
