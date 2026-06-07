@@ -12,10 +12,15 @@ import { EduTable } from "./Components/EduTable";
 import { DraftTable } from "./Components/DraftTable";
 import { DRAFT_WEEKS } from "../../constants/game.constants";
 import { useLocation } from "react-router-dom";
+import { Player } from "../../types/Player";
+import { updatePlayers } from "../../store/slices/dataSlice";
+import { useAppDispatch } from "../../hooks/useAppDispatch";
+import { savePlayers } from "../../utils/saveGame";
 
 export default function Team() {
   const { t } = useTranslation();
   const user = useAuthUser();
+  const dispatch = useAppDispatch();
   const location = useLocation();
 
   const players = useSelector((state: RootState) =>
@@ -28,6 +33,13 @@ export default function Team() {
   const [showDraft, setShowDraft] = useState(
     () => !!(location.state as { showDraft?: boolean } | null)?.showDraft,
   );
+  const [changedPlayers, setChangedPlayers] = useState<{ id: string; changes: Partial<Player> }[]>([]);
+
+  const handleSaveTutoring = async () => {
+    dispatch(updatePlayers(changedPlayers));
+    setChangedPlayers([]);
+    await savePlayers(`${user.name}_${user.id}`);
+  };
 
   useEffect(() => {
     if (currentWeek !== DRAFT_WEEKS) return;
@@ -49,17 +61,34 @@ export default function Team() {
   return (
     <ParentSecion backgroundImg='/teamBg.png'>
       <div className="flex flex-col gap-2 mb-4">
-        <div className="flex self-center bg-cardbg/75 border border-highlights1/20 rounded-lg w-fit">
-          <TopMenuBtn onClick={() => setTable("skills")} tableId="skills" currentTable={table} className="w-40" />
-          <TopMenuBtn onClick={() => setTable("stats")} tableId="stats" currentTable={table} className="w-40" />
-          <TopMenuBtn onClick={() => setTable("education")} tableId="education" currentTable={table} className="w-40" />
+        <div className="flex items-center gap-4">
+          <div className="flex self-center bg-cardbg/75 border border-highlights1/20 rounded-lg w-fit">
+            <TopMenuBtn onClick={() => setTable("skills")} tableId="skills" currentTable={table} className="w-40" />
+            <TopMenuBtn onClick={() => setTable("stats")} tableId="stats" currentTable={table} className="w-40" />
+            <TopMenuBtn onClick={() => setTable("education")} tableId="education" currentTable={table} className="w-40" />
+          </div>
+          {table === "education" && (
+            <button
+              onClick={handleSaveTutoring}
+              disabled={changedPlayers.length === 0}
+              className="ml-auto px-4 py-1.5 rounded-lg text-[12px] font-semibold uppercase tracking-wider bg-highlights1 text-mainbgdark hover:bg-highlights1light transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              {t("systemGeneral.saveChanges")}
+            </button>
+          )}
         </div>
       </div>
       <div className="flex-1 min-h-0 overflow-auto">
         {table === "skills" && <SkillsTable players={players} />}
         {/* {table === "skills" && <PlayerStatsTwo players={players} />} */}
         {table === "stats" && <PlayerStats players={players} />}
-        {table === "education" && <EduTable players={players} />}
+        {table === "education" && (
+          <EduTable
+            players={players}
+            changedPlayers={changedPlayers}
+            onChangedPlayers={setChangedPlayers}
+          />
+        )}
       </div>
     </ParentSecion>
   );

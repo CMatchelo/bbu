@@ -15,7 +15,7 @@ export function CalculateGrades(players: Player[]) {
 
     const newGrades = clamp(p.grades + delta, 0, 100);
     const newIntelligence = clamp(p.intelligence + intGain, 0, 100);
-    const newAvailable = newGrades >= 60;
+    const newAvailable = newGrades >= 70;
 
     updates.push({
       id: p.id,

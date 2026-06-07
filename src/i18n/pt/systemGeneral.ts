@@ -12,5 +12,6 @@ export const systemGeneral = {
   hard: "Difícil",
   hardDesc: "Seu time começa mais fraco",
   select: "Selecionar",
-  savePractice: "Salvar treino"
+  savePractice: "Salvar treino",
+  saveChanges: "Salvar alterações"
 };

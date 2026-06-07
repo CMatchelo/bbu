@@ -19,6 +19,7 @@ import ScoutingPage from "./pages/scouting";
 import RecruitingBoardPage from "./pages/recruiting-board";
 import CommitmentsPage from "./pages/commitments";
 import PlayoffsPage from "./pages/playoffs";
+import CoachDashboardPage from "./pages/coach-dashboard";
 import EndOfSeasonPage from "./pages/end-of-season";
 import ChampionsPage from "./pages/champions";
 import ConfigsPage from "./pages/configs";
@@ -44,6 +45,7 @@ function App() {
           <Route path="/gameScreen" element={<GameScreen />} />
           <Route path="/endOfSeason" element={<EndOfSeasonPage />} />
           <Route element={<Layout />}>
+            <Route path="/coachDashboard" element={<CoachDashboardPage />} />
             <Route path="/teamSelection" element={<TeamSelection />} />
 
             <Route path="/team" element={<Team />} />

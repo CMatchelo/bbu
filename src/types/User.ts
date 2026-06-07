@@ -6,6 +6,9 @@ export type User = {
   currentUniversity: University
   reputation: number;
   currentSeason: number;
+  careerWins: number;
+  careerLosses: number;
+  careerPointsMade: number;
 }
 
 export type UserContextType = {

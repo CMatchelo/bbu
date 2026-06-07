@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { useUser } from "../../../Context/UserContext";
 import { useSelector } from "react-redux";
 import { RootState, store } from "../../../store";
 import { selectMatchesToSimulate } from "../../../selectors/data.scheduleSelector";
@@ -87,6 +88,7 @@ export function useSaveGame({
 }: UseSaveGameParams): UseSaveGameReturn {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { updateUser } = useUser();
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -558,6 +560,20 @@ export function useSaveGame({
       await dispatch(saveScheduleThunk(folderName));
       dispatch(setStarters([]));
 
+      // Update career stats on user
+      const userMatch = store.getState().schedule.matchesById[matchId];
+      const userIsHome = userMatch?.home === playerTeamId;
+      const userScore = userIsHome ? homePoints : awayPoints;
+      const userWon = userIsHome ? homePoints > awayPoints : awayPoints > homePoints;
+      const updatedUser = {
+        ...user,
+        careerWins: (user.careerWins ?? 0) + (userWon ? 1 : 0),
+        careerLosses: (user.careerLosses ?? 0) + (userWon ? 0 : 1),
+        careerPointsMade: (user.careerPointsMade ?? 0) + userScore,
+      };
+      updateUser(updatedUser);
+      await window.api.saveGame(updatedUser);
+
       const isSeasonOver = store.getState().schedule.leagueStandingsHistory
         .some((s) => s.year === user.currentSeason && s.nationalChampion !== '');
       navigate(isSeasonOver ? "/endOfSeason" : "/team");
@@ -582,6 +598,7 @@ export function useSaveGame({
     playerTeamId,
     dispatch,
     navigate,
+    updateUser,
   ]);
 
   return { isSaving, saveError, saveGame };

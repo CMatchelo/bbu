@@ -114,6 +114,7 @@ export function createPlayer(
   // Calculate player potential, as well as max and min potential that will be displayed to user
   const potential = isEmergency ? rand(minRange, maxRange) : randomPotential();
   const { minPotential, maxPotential } = calculatMaxMinGrade(potential);
+  const skills = skillByPosition(pos, rating);
   return {
     id: crypto.randomUUID(),
     firstName,
@@ -127,7 +128,7 @@ export function createPlayer(
     currentUniversity: university.id,
     tutoring: false,
 
-    skills: skillByPosition(pos, rating),
+    skills,
     inCourtPosition: pos,
     scholarship: Math.random() > 0.4,
     potential,
@@ -144,6 +145,7 @@ export function createPlayer(
     available: true,
 
     practicing: null,
+    skillsStartSeason: { ...skills },
     stats: {
       [season]: createEmptyPlayerSeasonStats(season),
     },
@@ -271,6 +273,7 @@ export function convertHSPlayerToPlayer(hs: HighSchoolPlayer, season: number): P
     available: true,
 
     practicing: null,
+    skillsStartSeason: { ...hs.skills },
     stats: {
       [season]: createEmptyPlayerSeasonStats(season),
     },
