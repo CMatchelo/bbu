@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { RootState, store } from "../../../store";
 import { selectMatchesToSimulate } from "../../../selectors/data.scheduleSelector";
 import { simulateMatchWithoutPlayer } from "../../../game/simulateMatch";
+import { calcReputationChange } from "../../../game/reputationChange";
 import {
   incrementWeek,
   saveScheduleThunk,
@@ -564,12 +565,15 @@ export function useSaveGame({
       const userMatch = store.getState().schedule.matchesById[matchId];
       const userIsHome = userMatch?.home === playerTeamId;
       const userScore = userIsHome ? homePoints : awayPoints;
-      const userWon = userIsHome ? homePoints > awayPoints : awayPoints > homePoints;
+      const opponentScore = userIsHome ? awayPoints : homePoints;
+      const userWon = userScore > opponentScore;
+      const repDelta = calcReputationChange(user.reputation ?? 50, userScore, opponentScore);
       const updatedUser = {
         ...user,
         careerWins: (user.careerWins ?? 0) + (userWon ? 1 : 0),
         careerLosses: (user.careerLosses ?? 0) + (userWon ? 0 : 1),
         careerPointsMade: (user.careerPointsMade ?? 0) + userScore,
+        reputation: Math.min(100, Math.max(0, (user.reputation ?? 50) + repDelta)),
       };
       updateUser(updatedUser);
       await window.api.saveGame(updatedUser);

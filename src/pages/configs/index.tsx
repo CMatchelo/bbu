@@ -82,6 +82,8 @@ export default function ConfigsPage() {
         t("configLocale.faqUniversityPhysio"),
         t("configLocale.faqUniversityEducation"),
         t("configLocale.faqUniversityPrestige"),
+        t("configLocale.faqUniversityImprove"),
+        t("configLocale.faqUniversityReputation"),
       ],
     },
   ];

@@ -20,4 +20,9 @@ export const universityStrings = {
     "Reflete a reputação acadêmica da universidade, influenciando o sucesso no recrutamento e o interesse em transferências.",
 
   improveBtn: "Melhorar",
+  levelBadge: "Nível",
+  officialCommunication: "Comunicado Oficial",
+  requestAccepted: "Prezado Treinador,\n\nApós cuidadosa deliberação pelo Conselho de Administração da Universidade, temos o prazer de informar que seu pedido de melhoria de instalações foi aprovado.\n\nA administração reconhece suas contribuições excepcionais a esta instituição e confia que este investimento elevará ainda mais nosso programa esportivo.\n\nAtenciosamente,\nA Administração da Universidade",
+  requestRejected: "Prezado Treinador,\n\nAgradecemos por submeter sua solicitação de melhoria de instalações. Após análise minuciosa, o Conselho de Administração da Universidade determinou que, no momento, não é possível aprovar a alocação de recursos solicitada.\n\nEncorajamos que continue demonstrando seu comprometimento com esta instituição e que reapresente sua solicitação em oportunidade futura.\n\nAtenciosamente,\nA Administração da Universidade",
+  closeBtn: "Fechar"
 };
