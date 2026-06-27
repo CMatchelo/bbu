@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { RootState } from "../../store";
-import { ParentSecion } from "../../Components/ParentSection";
+import { ParentSection } from "../../Components/ParentSection";
 import { computeSeriesStates } from "../../utils/playoffsUtils";
 import { selectAllUniversities } from "../../selectors/data.selectors";
 import { toRecord } from "../../utils/toRecord";
@@ -69,7 +69,7 @@ export default function PlayoffsPage() {
                       "grid-cols-2 lg:grid-cols-4";
 
   return (
-    <ParentSecion className="px-4 pb-10">
+    <ParentSection className="px-4 pb-10">
       <div className="absolute inset-0 overflow-y-auto">
         <div className="flex flex-col gap-4 max-w-5xl mx-auto w-full px-4 py-4">
 
@@ -150,6 +150,6 @@ export default function PlayoffsPage() {
           )}
         </div>
       </div>
-    </ParentSecion>
+    </ParentSection>
   );
 }

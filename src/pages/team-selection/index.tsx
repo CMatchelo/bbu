@@ -3,7 +3,7 @@ import { useAppSelector } from "../../hooks/useAppDispatch";
 import { useNavigate } from "react-router-dom";
 import { PlayTypeSelection } from "./components/PlayTypeSelection";
 import { PlayerSelection } from "./components/PlayersSelection";
-import { ParentSecion } from "../../Components/ParentSection";
+import { ParentSection } from "../../Components/ParentSection";
 import { useAuthUser } from "../../hooks/useAuthUser";
 import { selectcurrentWeekMatchByUniversity } from "../../selectors/data.scheduleSelector";
 import { selectUniversitiesGrouped } from "../../selectors/data.selectors";
@@ -49,7 +49,7 @@ export default function TeamSelection() {
   const ready = starters.length === 5;
 
   return (
-    <ParentSecion className="p-0!" classNameInside="p-4 overflow-auto!">
+    <ParentSection className="p-0!" classNameInside="p-4 overflow-auto!">
       <div className="flex flex-col gap-4">
         {matchInfo && (
           <div className="flex items-center py-3 px-6 rounded-xl bg-cardbg/75 border border-highlights1/15">
@@ -99,6 +99,6 @@ export default function TeamSelection() {
           </button>
         </div>
       </div>
-    </ParentSecion>
+    </ParentSection>
   );
 }

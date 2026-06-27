@@ -70,6 +70,10 @@ export const SideMenu = () => {
       </div>
 
       <nav className="flex-1 overflow-y-auto py-2 scrollbar-thin scrollbar-thumb-highlights1/20">
+        {/* News */}
+        <NavItem goTo="/news" text={t("mainMenu.news")} icon={Icons.news} />
+        <Divider />
+
         {/* Dashboard */}
         <NavItem goTo="/coachDashboard" text={t("mainMenu.coachDashboard")} icon={Icons.dashboard} />
         <Divider />

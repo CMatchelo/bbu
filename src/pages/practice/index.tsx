@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { ParentSecion } from "../../Components/ParentSection";
+import { ParentSection } from "../../Components/ParentSection";
 import { useAuthUser } from "../../hooks/useAuthUser";
 import { selectPlayersFromUniversity } from "../../selectors/data.selectors";
 import { Pill } from "../../Components/Pill";
@@ -59,7 +59,7 @@ export default function Practice() {
   };
 
   return (
-    <ParentSecion backgroundImg="/practiceBg.png">
+    <ParentSection backgroundImg="/practiceBg.png">
       <div className="absolute inset-0 overflow-y-auto p-4 flex flex-col gap-4">
         <div className="flex items-center">
           <button
@@ -159,6 +159,6 @@ export default function Practice() {
           })}
         </div>
       </div>
-    </ParentSecion>
+    </ParentSection>
   );
 }

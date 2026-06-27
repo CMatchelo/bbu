@@ -5,7 +5,7 @@ interface ParentSectionProps {
   backgroundImg?: string | null;
 }
 
-export const ParentSecion = ({ children, className, classNameInside, backgroundImg }: ParentSectionProps) => {
+export const ParentSection = ({ children, className, classNameInside, backgroundImg }: ParentSectionProps) => {
   backgroundImg = '/practiceBg.png'
   return (
     <section className={`flex flex-col p-4 h-full relative ${className ?? ''}`}>

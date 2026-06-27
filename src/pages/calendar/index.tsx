@@ -2,7 +2,7 @@ import { selectTeamSchedule } from "../../selectors/data.scheduleSelector";
 import { useSelector } from "react-redux";
 import { useUser } from "../../Context/UserContext";
 import { MatchesTable } from "../../Components/MatchesTable";
-import { ParentSecion } from "../../Components/ParentSection";
+import { ParentSection } from "../../Components/ParentSection";
 import { useMemo } from "react";
 
 export default function Calendar() {
@@ -12,9 +12,9 @@ export default function Calendar() {
   const teamSchedule = useSelector(teamSelector);
 
   return (
-    <ParentSecion className="pb-4">
+    <ParentSection className="pb-4">
       {/* <StandingsTable leagueId={user!.currentUniversity.leagueId} /> */}
       <MatchesTable schedule={teamSchedule} />
-    </ParentSecion>
+    </ParentSection>
   );
 }

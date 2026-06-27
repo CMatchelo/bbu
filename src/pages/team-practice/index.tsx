@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { ParentSecion } from "../../Components/ParentSection";
+import { ParentSection } from "../../Components/ParentSection";
 import { useAuthUser } from "../../hooks/useAuthUser";
 import { selectUniversityById } from "../../selectors/data.selectors";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
@@ -169,7 +169,7 @@ export default function TeamPractice() {
   };
 
   return (
-    <ParentSecion className="px-4">
+    <ParentSection className="px-4">
       <div className="flex items-center mb-4">
         <button
           onClick={handleSave}
@@ -196,6 +196,6 @@ export default function TeamPractice() {
           usedPoints={defPoints}
         />
       </div>
-    </ParentSecion>
+    </ParentSection>
   );
 }

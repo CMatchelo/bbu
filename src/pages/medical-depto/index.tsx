@@ -1,4 +1,4 @@
-import { ParentSecion } from "../../Components/ParentSection";
+import { ParentSection } from "../../Components/ParentSection";
 import { useUser } from "../../Context/UserContext";
 import { selectInjuredPlayers } from "../../selectors/data.selectors";
 import { store } from "../../store";
@@ -11,8 +11,8 @@ export default function MedicalDepto() {
     (p) => p.currentUniversity === user?.currentUniversity.id,
   );
   return (
-    <ParentSecion>
+    <ParentSection>
       <MedicalDeptoTable players={playersFiltered} />
-    </ParentSecion>
+    </ParentSection>
   );
 }

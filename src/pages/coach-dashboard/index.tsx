@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
-import { ParentSecion } from "../../Components/ParentSection";
+import { ParentSection } from "../../Components/ParentSection";
 import { StandingsTable } from "../../Components/StandingsTable";
 import { BracketMatchup } from "../playoffs/components/BracketMatchup";
 import { useUser } from "../../Context/UserContext";
@@ -92,7 +92,7 @@ export default function CoachDashboard() {
   if (!rawUser) return null;
 
   return (
-    <ParentSecion backgroundImg="/practiceBg.png">
+    <ParentSection backgroundImg="/practiceBg.png">
       <div className="absolute inset-0 overflow-y-auto p-4 flex flex-col gap-4">
         {/* Row 1: Coach | Next Match | Last Match */}
         <div className="grid grid-cols-3 gap-4">
@@ -150,6 +150,6 @@ export default function CoachDashboard() {
           </div>
         )}
       </div>
-    </ParentSecion>
+    </ParentSection>
   );
 }

@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { changeLanguage } from "i18next";
-import { ParentSecion } from "../../Components/ParentSection";
+import { ParentSection } from "../../Components/ParentSection";
 import { FaqSection, FaqSectionProps } from "./components/FaqSection";
 import { ConfigCard } from "./components/ConfigCard";
 import { useAudio } from "../../Context/AudioContext";
@@ -89,7 +89,7 @@ export default function ConfigsPage() {
   ];
 
   return (
-    <ParentSecion className="px-4 pb-10">
+    <ParentSection className="px-4 pb-10">
       <div className="absolute inset-0 overflow-y-auto">
       <div className="flex flex-col gap-6 max-w-5xl mx-auto w-full py-4 px-4">
         {/* Header */}
@@ -212,6 +212,6 @@ export default function ConfigsPage() {
         </div>
       </div>
       </div>
-    </ParentSecion>
+    </ParentSection>
   );
 }

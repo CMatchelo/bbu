@@ -30,6 +30,8 @@ import { substituteCPU } from "./cpuSubs";
 import { toRecord } from "../utils/toRecord";
 import { selectPlayForPossession, getCpuOffensiveOrder, getCpuDefensiveOrder } from "./playSelection";
 import { OffensivePlaySystem, DefensivePlaySystem } from "../types/PlaySystem";
+import { generateWeekNews } from "./generateWeekNews";
+import { addWeekNews } from "../store/slices/newsSlice";
 
 export function simulateMatchWithoutPlayer(
   schedule: MatchWithTeams[],
@@ -60,6 +62,8 @@ export function simulateMatchWithoutPlayer(
 
       return {
         matchId: match.id,
+        homeTeamId: match.homeTeam.id,
+        awayTeamId: match.awayTeam.id,
         homeScore: result?.homeScore || 0,
         awayScore: result?.awayScore || 0,
         playerStats: result.playerStats,
@@ -102,6 +106,11 @@ export function simulateMatchWithoutPlayer(
   dispatch(updatePlayerStats(playerGameStatsToDeltas(currentYear, allPlayerStats)));
   dispatch(updatePlayersSkills(playersWithProgress));
   dispatch(updateUniversityStats(teamGameStatsToDeltas(currentYear, allTeamStats)));
+
+  if (matchesSimulated.length > 0) {
+    const newsItems = generateWeekNews(matchesSimulated, currentWeek, currentYear);
+    dispatch(addWeekNews({ week: currentWeek, items: newsItems }));
+  }
 }
 
 function simulateFullMatch(

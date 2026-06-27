@@ -3,14 +3,14 @@ import { useUser } from "../../Context/UserContext";
 import { University } from "../../types/University";
 import { useAppSelector } from "../../hooks/useAppDispatch";
 import { selectUniversityById } from "../../selectors/data.selectors";
-import { FacilityCard } from "./components/FacilityCard";
 import { FacilityResponseModal } from "./components/FacilityResponseModal";
 import { useTranslation } from "react-i18next";
-import { ParentSecion } from "../../Components/ParentSection";
+import { ParentSection } from "../../Components/ParentSection";
 import { calcFacilityAcceptance } from "../../game/facilityImprovement";
 import { updateUniversities } from "../../store/slices/dataSlice";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { saveUniversities } from "../../utils/saveGame";
+import { FacilityCard } from "./components/facilityCard";
 
 type FacilityKey = keyof Pick<
   University,
@@ -67,7 +67,7 @@ export default function UniversityPage() {
   };
 
   return (
-    <ParentSecion className="px-4">
+    <ParentSection className="px-4">
       {/* Header */}
       <div className="pb-4 mb-2 border-b border-highlights1/15">
         <h2 className="text-lg font-semibold tracking-widest uppercase text-text1">
@@ -132,6 +132,6 @@ export default function UniversityPage() {
         accepted={lastAccepted}
         onClose={() => setModalOpen(false)}
       />
-    </ParentSecion>
+    </ParentSection>
   );
 }

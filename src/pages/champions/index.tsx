@@ -4,7 +4,7 @@ import { RootState } from "../../store";
 import { selectAllUniversities } from "../../selectors/data.selectors";
 import { toRecord } from "../../utils/toRecord";
 import { Pill } from "../../Components/Pill";
-import { ParentSecion } from "../../Components/ParentSection";
+import { ParentSection } from "../../Components/ParentSection";
 
 const LEAGUE_KEYS = ["ne_league", "n_league", "cw_league", "se_league", "s_league"] as const;
 
@@ -28,7 +28,7 @@ export default function ChampionsPage() {
   const sorted = [...standingsHistory].sort((a, b) => b.year - a.year);
 
   return (
-    <ParentSecion>
+    <ParentSection>
       <div className="flex flex-col gap-2 mb-5">
         <h1 className="text-[16px] font-semibold text-text1 tracking-wider uppercase">
           {t("generalLocale.champions")}
@@ -141,6 +141,6 @@ export default function ChampionsPage() {
           })}
         </div>
       )}
-    </ParentSecion>
+    </ParentSection>
   );
 }
