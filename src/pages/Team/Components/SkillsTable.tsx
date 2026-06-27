@@ -5,6 +5,7 @@ import { Pill } from "../../../Components/Pill";
 import { TableRow } from "../../../Components/TableRow";
 import { playerAverage } from "../../../game/skillsAverage";
 import { useTranslation } from "react-i18next";
+import { PlayerAvatar } from "../../../Components/PlayerAvatar";
 
 interface SkillsTableProps {
   players: Player[];
@@ -78,7 +79,8 @@ export const SkillsTable = ({ players, selectedIds, onToggle, disableUnselected,
                     />
                   </td>
                 )}
-                <td className="pl-5 py-2.5 flex gap-2">
+                <td className="pl-5 py-2.5 flex items-center gap-2">
+                  <PlayerAvatar seed={player.id} size={28} />
                   <Pill variant="muted">{player.inCourtPosition}</Pill>
                   <span className="text-[13px] font-medium text-text1">
                     {player.firstName} {player.lastName}
