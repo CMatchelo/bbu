@@ -2,6 +2,7 @@ import { selectAllPlayers, selectAllUniversities, selectAllHighSchoolPlayers } f
 import { store } from "../store";
 import { toRecord } from "./toRecord";
 import { LeagueStandings } from "../types/LeagueStandings";
+import { MatchNews } from "../types/MatchNews";
 
 export async function savePlayers(folderName: string) {
   const players = selectAllPlayers(store.getState());
@@ -24,4 +25,8 @@ export async function saveLeagueStandings(folderName: string, standings: LeagueS
 
 export async function saveGraduatedPlayers(folderName: string, players: import("../types/Player").Player[]) {
   await window.api.saveGraduatedPlayers(folderName, players);
+}
+
+export async function saveNews(folderName: string, news: Record<number, MatchNews[]>) {
+  await window.api.saveNews(folderName, news);
 }

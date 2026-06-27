@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { selectAllHighSchoolPlayers } from "../../selectors/data.selectors";
 import { useTranslation } from "react-i18next";
-import { ParentSecion } from "../../Components/ParentSection";
+import { ParentSection } from "../../Components/ParentSection";
 import { ScoutingBoardTable } from "./components/ScoutingBoardTable";
 import { ScoutingSkillsTable } from "./components/ScoutingSkillsTable";
 import { TopMenuBtn } from "../../Components/TopMenuBtn";
@@ -60,7 +60,7 @@ export default function ScoutingPage() {
   };
 
   return (
-    <ParentSecion className="pb-10" backgroundImg='scoutBg.png'>
+    <ParentSection className="pb-10" backgroundImg='scoutBg.png'>
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-4">
           <div className="flex self-center bg-cardbg/75 border border-highlights1/20 rounded-lg w-fit">
@@ -88,6 +88,6 @@ export default function ScoutingPage() {
         )}
         {table === "skills" && <ScoutingSkillsTable players={allPlayers} />}
       </div>
-    </ParentSecion>
+    </ParentSection>
   );
 }

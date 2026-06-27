@@ -15,6 +15,7 @@ export const mainMenu = {
   facilities: "Instalações",
   university: "Universidade",
   playoffs: "Playoffs",
+  news: "Notícias",
   sections: {
     team: "Time",
     recruiting: "Recrutamento",

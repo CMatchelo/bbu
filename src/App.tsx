@@ -23,6 +23,7 @@ import CoachDashboardPage from "./pages/coach-dashboard";
 import EndOfSeasonPage from "./pages/end-of-season";
 import ChampionsPage from "./pages/champions";
 import ConfigsPage from "./pages/configs";
+import NewsPage from "./pages/news";
 import { AudioProvider } from "./Context/AudioContext";
 import { useMenuMusic } from "./hooks/useMenuMusic";
 
@@ -67,6 +68,7 @@ function App() {
 
             <Route path="/champions" element={<ChampionsPage />} />
             <Route path="/configs" element={<ConfigsPage />} />
+            <Route path="/news" element={<NewsPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

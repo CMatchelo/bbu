@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { ParentSecion } from "../../Components/ParentSection";
+import { ParentSection } from "../../Components/ParentSection";
 import { useAuthUser } from "../../hooks/useAuthUser";
 import { SkillsTable } from "./Components/SkillsTable";
 import { selectPlayersFromUniversity } from "../../selectors/data.selectors";
@@ -52,14 +52,14 @@ export default function Team() {
 
   if (showDraft) {
     return (
-      <ParentSecion className="px-4 pb-10">
+      <ParentSection className="px-4 pb-10">
         <DraftTable onDone={() => setShowDraft(false)} />
-      </ParentSecion>
+      </ParentSection>
     );
   }
 
   return (
-    <ParentSecion backgroundImg='/teamBg.png'>
+    <ParentSection backgroundImg='/teamBg.png'>
       <div className="flex flex-col gap-2 mb-4">
         <div className="flex items-center gap-4">
           <div className="flex self-center bg-cardbg/75 border border-highlights1/20 rounded-lg w-fit">
@@ -90,6 +90,6 @@ export default function Team() {
           />
         )}
       </div>
-    </ParentSecion>
+    </ParentSection>
   );
 }

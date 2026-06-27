@@ -6,6 +6,7 @@ import {
   setLeagueStandingsHistory,
 } from "../../../store/slices/scheduleSlice";
 import { setPlayers, setUniversities, setHighSchoolPlayers } from "../../../store/slices/dataSlice";
+import { setAllNews } from "../../../store/slices/newsSlice";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { useNavigate } from "react-router-dom";
 import { Icons } from "../../../utils/icons";
@@ -44,6 +45,9 @@ export const LoadGame = ({ saveIds }: LoadGameProps) => {
     }
     if (userLoaded.leagueStandingsHistory) {
       dispatch(setLeagueStandingsHistory(userLoaded.leagueStandingsHistory));
+    }
+    if (userLoaded.news) {
+      dispatch(setAllNews(userLoaded.news));
     }
 
     loadUser(userLoaded.user);

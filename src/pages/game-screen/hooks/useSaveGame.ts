@@ -37,7 +37,9 @@ import {
 import { toRecord } from "../../../utils/toRecord";
 import { TeamGameStats } from "../../../types/TeamGameStats";
 import { setStarters } from "../../../store/slices/gameSettingsSlice";
-import { savePlayers, saveUniversities, saveHighSchoolPlayers, saveLeagueStandings } from "../../../utils/saveGame";
+import { addWeekNews } from "../../../store/slices/newsSlice";
+import { generateWeekNews } from "../../../game/generateWeekNews";
+import { savePlayers, saveUniversities, saveHighSchoolPlayers, saveLeagueStandings, saveNews } from "../../../utils/saveGame";
 import { calcAllSkillRanges } from "../../../utils/createPlayer";
 import { progressPlayers } from "../../../game/playerProgression";
 import { CalculateHSGrades } from "../../../game/educationFunctions";
@@ -110,6 +112,25 @@ export function useSaveGame({
       };
 
       dispatch(setMatchResult(matchResult));
+
+      // Generate news for the user's own match
+      const userMatch = store.getState().schedule.matchesById[matchId];
+      if (userMatch) {
+        const userMatchNews = generateWeekNews(
+          [{
+            matchId,
+            homeTeamId: userMatch.home,
+            awayTeamId: userMatch.away,
+            homeScore: homePoints,
+            awayScore: awayPoints,
+            playerStats: playerGameStats,
+          }],
+          week,
+          currentSeason,
+        );
+        dispatch(addWeekNews({ week, items: userMatchNews }));
+      }
+
       simulateMatchWithoutPlayer(
         matchesToSimulate,
         week,
@@ -559,10 +580,10 @@ export function useSaveGame({
       );
       await saveUniversities(folderName);
       await dispatch(saveScheduleThunk(folderName));
+      await saveNews(folderName, store.getState().news.newsByWeek);
       dispatch(setStarters([]));
 
       // Update career stats on user
-      const userMatch = store.getState().schedule.matchesById[matchId];
       const userIsHome = userMatch?.home === playerTeamId;
       const userScore = userIsHome ? homePoints : awayPoints;
       const opponentScore = userIsHome ? awayPoints : homePoints;
@@ -580,7 +601,7 @@ export function useSaveGame({
 
       const isSeasonOver = store.getState().schedule.leagueStandingsHistory
         .some((s) => s.year === user.currentSeason && s.nationalChampion !== '');
-      navigate(isSeasonOver ? "/endOfSeason" : "/team");
+      navigate(isSeasonOver ? "/endOfSeason" : "/news");
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Failed to save game.";

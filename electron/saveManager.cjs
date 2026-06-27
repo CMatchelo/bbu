@@ -169,6 +169,25 @@ function saveGraduatedPlayers(userId, players) {
   return true;
 }
 
+function saveNews(userId, data) {
+  if (!fs.existsSync(savesDir)) {
+    fs.mkdirSync(savesDir, { recursive: true });
+  }
+  const userDir = path.join(savesDir, userId);
+  if (!fs.existsSync(userDir)) {
+    fs.mkdirSync(userDir, { recursive: true });
+  }
+  const filePath = path.join(userDir, "news.json");
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf-8");
+  return true;
+}
+
+function loadNews(userId) {
+  const filePath = path.join(savesDir, userId, "news.json");
+  if (!fs.existsSync(filePath)) return null;
+  return JSON.parse(fs.readFileSync(filePath, "utf-8"));
+}
+
 module.exports = {
   saveGame,
   loadGame,
@@ -184,4 +203,6 @@ module.exports = {
   saveLeagueStandings,
   loadLeagueStandings,
   saveGraduatedPlayers,
+  saveNews,
+  loadNews,
 }

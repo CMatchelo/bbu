@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { selectAllMatchesByLeague } from "../../selectors/data.scheduleSelector";
 import { MatchesTable } from "../../Components/MatchesTable";
-import { ParentSecion } from "../../Components/ParentSection";
+import { ParentSection } from "../../Components/ParentSection";
 import { useEffect, useState } from "react";
 import { RootState } from "../../store";
 import { useUser } from "../../Context/UserContext";
@@ -31,7 +31,7 @@ export const Leagues = () => {
     setLeagueId(user?.currentUniversity?.leagueId || "ne_league");
   }, [user?.currentUniversity?.leagueId]);
   return (
-    <ParentSecion>
+    <ParentSection>
       <div className="flex flex-col gap-2">
         <span className="text-[11px] font-bold uppercase tracking-widest text-text2 text-center">
           {t("mainMenu.leagues")}
@@ -56,6 +56,6 @@ export const Leagues = () => {
         <StandingsTable leagueId={leagueId} />
         <MatchesTable schedule={schedule} />
       </div>
-    </ParentSecion>
+    </ParentSection>
   );
 };
