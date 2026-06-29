@@ -7,6 +7,7 @@ export const generalLocale = {
   player: "Player",
   standings: "Standings",
   practice: "Practice",
+  playbookFamiliarity: "Playbook Familiarity",
   focus: "Focus",
   season: "Season",
   matches: "Matches",
