@@ -92,6 +92,21 @@ export const selectTeamSchedule = (teamId: string) => {
   );
 };
 
+export const selectHeadToHeadMatches = (teamA: string, teamB: string) =>
+  createSelector(
+    [(state: RootState) => state.schedule.matchesById],
+    (matchesById): Match[] => {
+      return Object.values(matchesById)
+        .filter(
+          (match) =>
+            match.played &&
+            ((match.home === teamA && match.away === teamB) ||
+              (match.home === teamB && match.away === teamA)),
+        )
+        .sort((a, b) => b.week - a.week);
+    },
+  );
+
 export const selectcurrentWeekMatchByUniversity = createSelector(
   [
     (state: RootState) => state.schedule.currentWeek,

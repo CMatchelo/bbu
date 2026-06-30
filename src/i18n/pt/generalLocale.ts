@@ -45,4 +45,13 @@ export const generalLocale = {
   threePtMade: "Cestas de 3",
   steals: "Roubos",
   champions: "Campeões",
+  startGame: "Iniciar Jogo",
+  rosterReady: "Elenco pronto, boa sorte!",
+  selectStarters: "Selecionar Titulares",
+  offense: "Ataque",
+  defense: "Defesa",
+  opponent: "Adversário",
+  highlights: "Destaques",
+  seasonMatchups: "Confrontos na Temporada",
+  firstMatchupOfSeason: "Primeiro confronto da temporada",
 };

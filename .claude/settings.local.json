@@ -28,7 +28,8 @@
       "Bash(xargs grep -n \"WEEK\\\\|SEASON\\\\|PLAYOFF\")",
       "Bash(Remove-Item *)",
       "Bash(xargs grep -l \"type\\\\|interface\")",
-      "Bash(xargs grep -l \"useState\\\\|useCallback\\\\|useEffect\")"
+      "Bash(xargs grep -l \"useState\\\\|useCallback\\\\|useEffect\")",
+      "Bash(npx eslint *)"
     ]
   }
 }

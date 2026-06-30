@@ -44,4 +44,13 @@ export const generalLocale = {
   threePtMade: "3PT Made",
   steals: "Steals",
   champions: "Champions",
+  startGame: "Start Game",
+  rosterReady: "Roster ready. Good luck!",
+  selectStarters: "Select Starters",
+  offense: "Offense",
+  defense: "Defense",
+  opponent: "Opponent",
+  highlights: "Highlights",
+  seasonMatchups: "Season Matchups",
+  firstMatchupOfSeason: "First matchup of the season",
 };
