@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { Icons } from "../../utils/icons";
 import { RootState } from "../../store";
 import { playerAverage } from "../../game/skillsAverage";
+import { PlayerAvatar } from "../../Components/PlayerAvatar";
 
 const SKILLS: { abbr: string; key: keyof Skill }[] = [
   { abbr: "LAY", key: "layup" },
@@ -91,6 +92,7 @@ export default function Practice() {
                 }`}
               >
                 <div className="flex items-center gap-2 w-60">
+                  <PlayerAvatar seed={player.id} size={36} />
                   <Pill variant="muted">{player.inCourtPosition}</Pill>
                   <span className="text-[13px] text-left font-semibold text-text1">
                     {player.firstName} {player.lastName}

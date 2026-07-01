@@ -1,8 +1,8 @@
+import { useTranslation } from "react-i18next";
 import { RootState } from "../../store";
 import { useAppSelector } from "../../hooks/useAppDispatch";
 import { useNavigate } from "react-router-dom";
-import { PlayTypeSelection } from "./components/PlayTypeSelection";
-import { PlayerSelection } from "./components/PlayersSelection";
+import { CourtPlayerSelection } from "./components/CourtPlayerSelection";
 import { ParentSection } from "../../Components/ParentSection";
 import { useAuthUser } from "../../hooks/useAuthUser";
 import { selectcurrentWeekMatchByUniversity } from "../../selectors/data.scheduleSelector";
@@ -35,6 +35,7 @@ function useNextMatchInfo() {
 }
 
 export default function TeamSelection() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const starters = useAppSelector(
     (state: RootState) => state.gameSettings.starters,
@@ -78,12 +79,10 @@ export default function TeamSelection() {
             </div>
           </div>
         )}
-        <PlayTypeSelection />
-        <PlayerSelection />
-        <div className="flex items-center justify-between pt-2">
+        <div className="flex items-center justify-between">
           <span className="text-[12px] text-text2">
             {ready
-              ? "Elenco pronto. Boa sorte!"
+              ? t("generalLocale.rosterReady")
               : `Selecione mais ${5 - starters.length} titular(es) para continuar.`}
           </span>
           <button
@@ -95,9 +94,10 @@ export default function TeamSelection() {
                 : "bg-white/4 text-text2 border-white/8 cursor-not-allowed"
             }`}
           >
-            Iniciar Jogo
+            {t("generalLocale.startGame")}
           </button>
         </div>
+        <CourtPlayerSelection />
       </div>
     </ParentSection>
   );

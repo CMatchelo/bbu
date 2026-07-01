@@ -8,6 +8,7 @@ import { setStarters } from "../../../store/slices/gameSettingsSlice";
 import { Player } from "../../../types/Player";
 import { PlayerGameStats } from "../../../types/PlayerGameStats";
 import { Icons } from "../../../utils/icons";
+import { PlayerAvatar } from "../../../Components/PlayerAvatar";
 
 interface PlayerSelectionProps {
   playerStats?: Record<string, PlayerGameStats>;
@@ -84,6 +85,8 @@ export const PlayerSelection = ({ playerStats }: PlayerSelectionProps) => {
                 } 
               `}
             >
+              <PlayerAvatar seed={p.id} size={32} />
+
               <span
                 className={`text-[10px] font-medium border rounded px-1.5 py-0.5 tracking-wider shrink-0 ${
                   isStarter

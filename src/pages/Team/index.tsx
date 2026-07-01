@@ -2,25 +2,18 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { ParentSection } from "../../Components/ParentSection";
 import { useAuthUser } from "../../hooks/useAuthUser";
-import { SkillsTable } from "./Components/SkillsTable";
 import { selectPlayersFromUniversity } from "../../selectors/data.selectors";
 import { useState, useEffect } from "react";
-import { PlayerStats } from "../../Components/PlayerStats";
 import { RootState } from "../../store";
 import { TopMenuBtn } from "../../Components/TopMenuBtn";
-import { EduTable } from "./Components/EduTable";
 import { DraftTable } from "./Components/DraftTable";
 import { DRAFT_WEEKS } from "../../constants/game.constants";
 import { useLocation } from "react-router-dom";
-import { Player } from "../../types/Player";
-import { updatePlayers } from "../../store/slices/dataSlice";
-import { useAppDispatch } from "../../hooks/useAppDispatch";
-import { savePlayers } from "../../utils/saveGame";
+import { PlayerCardGrid } from "./Components/PlayerCardGrid";
 
 export default function Team() {
   const { t } = useTranslation();
   const user = useAuthUser();
-  const dispatch = useAppDispatch();
   const location = useLocation();
 
   const players = useSelector((state: RootState) =>
@@ -29,17 +22,10 @@ export default function Team() {
 
   const currentWeek = useSelector((state: RootState) => state.schedule.currentWeek);
 
-  const [table, setTable] = useState<string>("skills");
+  const [table, setTable] = useState<"skills" | "stats">("skills");
   const [showDraft, setShowDraft] = useState(
     () => !!(location.state as { showDraft?: boolean } | null)?.showDraft,
   );
-  const [changedPlayers, setChangedPlayers] = useState<{ id: string; changes: Partial<Player> }[]>([]);
-
-  const handleSaveTutoring = async () => {
-    dispatch(updatePlayers(changedPlayers));
-    setChangedPlayers([]);
-    await savePlayers(`${user.name}_${user.id}`);
-  };
 
   useEffect(() => {
     if (currentWeek !== DRAFT_WEEKS) return;
@@ -59,36 +45,30 @@ export default function Team() {
   }
 
   return (
-    <ParentSection backgroundImg='/teamBg.png'>
+    <ParentSection backgroundImg="/teamBg.png">
       <div className="flex flex-col gap-2 mb-4">
-        <div className="flex items-center gap-4">
-          <div className="flex self-center bg-cardbg/75 border border-highlights1/20 rounded-lg w-fit">
-            <TopMenuBtn onClick={() => setTable("skills")} tableId="skills" currentTable={table} className="w-40" />
-            <TopMenuBtn onClick={() => setTable("stats")} tableId="stats" currentTable={table} className="w-40" />
-            <TopMenuBtn onClick={() => setTable("education")} tableId="education" currentTable={table} className="w-40" />
-          </div>
-          {table === "education" && (
-            <button
-              onClick={handleSaveTutoring}
-              disabled={changedPlayers.length === 0}
-              className="ml-auto px-4 py-1.5 rounded-lg text-[12px] font-semibold uppercase tracking-wider bg-highlights1 text-mainbgdark hover:bg-highlights1light transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              {t("systemGeneral.saveChanges")}
-            </button>
-          )}
+        <div className="flex self-center bg-cardbg/75 border border-highlights1/20 rounded-lg w-fit">
+          <TopMenuBtn
+            onClick={() => setTable("skills")}
+            tableId="skills"
+            currentTable={table}
+            className="w-40"
+          />
+          <TopMenuBtn
+            onClick={() => setTable("stats")}
+            tableId="stats"
+            currentTable={table}
+            className="w-40"
+          />
         </div>
       </div>
       <div className="flex-1 min-h-0 overflow-auto">
-        {table === "skills" && <SkillsTable players={players} />}
-        {/* {table === "skills" && <PlayerStatsTwo players={players} />} */}
-        {table === "stats" && <PlayerStats players={players} />}
-        {table === "education" && (
-          <EduTable
-            players={players}
-            changedPlayers={changedPlayers}
-            onChangedPlayers={setChangedPlayers}
-          />
-        )}
+        <PlayerCardGrid
+          players={players}
+          flipped={table === "stats"}
+          currentSeason={user.currentSeason}
+          universityName={user.currentUniversity.name}
+        />
       </div>
     </ParentSection>
   );

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useAppDispatch";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
@@ -27,7 +28,13 @@ function swap<T>(arr: T[], i: number, j: number): T[] {
   return next;
 }
 
-export const PlayTypeSelection = () => {
+interface PlayTypeSelectionProps {
+  direction?: "row" | "column";
+  show?: "both" | "offensive" | "defensive";
+}
+
+export const PlayTypeSelection = ({ direction = "row", show = "both" }: PlayTypeSelectionProps) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const user = useAuthUser();
 
@@ -79,23 +86,27 @@ export const PlayTypeSelection = () => {
     );
 
   return (
-    <div className="flex gap-3">
-      <PlayOrderTable
-        title="Offense"
-        order={offensivePlayOrder}
-        labels={OFFENSIVE_PLAY_LABELS}
-        familiarity={offFamiliarity}
-        onMoveUp={moveOffUp}
-        onMoveDown={moveOffDown}
-      />
-      <PlayOrderTable
-        title="Defense"
-        order={defensivePlayOrder}
-        labels={DEFENSIVE_PLAY_LABELS}
-        familiarity={defFamiliarity}
-        onMoveUp={moveDefUp}
-        onMoveDown={moveDefDown}
-      />
+    <div className={`flex gap-3 h-full ${direction === "column" ? "flex-col" : ""}`}>
+      {show !== "defensive" && (
+        <PlayOrderTable
+          title={t("generalLocale.offense")}
+          order={offensivePlayOrder}
+          labels={OFFENSIVE_PLAY_LABELS}
+          familiarity={offFamiliarity}
+          onMoveUp={moveOffUp}
+          onMoveDown={moveOffDown}
+        />
+      )}
+      {show !== "offensive" && (
+        <PlayOrderTable
+          title={t("generalLocale.defense")}
+          order={defensivePlayOrder}
+          labels={DEFENSIVE_PLAY_LABELS}
+          familiarity={defFamiliarity}
+          onMoveUp={moveDefUp}
+          onMoveDown={moveDefDown}
+        />
+      )}
     </div>
   );
 };
