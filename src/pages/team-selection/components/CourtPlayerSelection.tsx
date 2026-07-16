@@ -17,6 +17,7 @@ import { selectHeadToHeadMatches } from "../../../selectors/data.scheduleSelecto
 import { selectGameContext } from "../../../selectors/inGameTeam.selector";
 import { RootState } from "../../../store";
 import { setStarters } from "../../../store/slices/gameSettingsSlice";
+import { playerAverage } from "../../../game/skillsAverage";
 import { Player } from "../../../types/Player";
 import { PlayerAvatar } from "../../../Components/PlayerAvatar";
 import { CourtImage } from "./CourtImage";
@@ -81,6 +82,17 @@ export const CourtPlayerSelection = () => {
     dispatch(setStarters(next.filter((player): player is Player => player !== null)));
   };
 
+  const handleAutoSelect = () => {
+    const next = COURT_SLOTS.map((slot) => {
+      const candidates = players.filter((p) => p.inCourtPosition === slot.position);
+      if (candidates.length === 0) return null;
+      return candidates.reduce((best, p) =>
+        playerAverage(p) > playerAverage(best) ? p : best,
+      );
+    });
+    commit(next);
+  };
+
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(String(event.active.id));
     document.body.style.cursor = "none";
@@ -141,10 +153,10 @@ export const CourtPlayerSelection = () => {
             <CourtImage slotted={slotted} />
           </div>
           <div className="col-span-2 min-w-0 h-full">
-            <PlayerBenchList players={players} slotted={slotted} />
+            <PlayerBenchList players={players} slotted={slotted} onAutoSelect={handleAutoSelect} />
           </div>
         </div>
-
+        
         <div className="grid grid-cols-3 gap-3 items-stretch">
           <div className="min-w-0">
             <PlayTypeSelection direction="column" show="offensive" />
@@ -163,7 +175,7 @@ export const CourtPlayerSelection = () => {
           </div>
         </div>
       </div>
-
+    
       <DragOverlay>
         {activePlayer ? (
           <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-cardbg border border-highlights1/40 shadow-lg">

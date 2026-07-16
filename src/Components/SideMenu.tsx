@@ -70,15 +70,12 @@ export const SideMenu = () => {
       </div>
 
       <nav className="flex-1 overflow-y-auto py-2 scrollbar-thin scrollbar-thumb-highlights1/20">
-        {/* News */}
         <NavItem goTo="/news" text={t("mainMenu.news")} icon={Icons.news} />
         <Divider />
 
-        {/* Dashboard */}
         <NavItem goTo="/coachDashboard" text={t("mainMenu.coachDashboard")} icon={Icons.dashboard} />
         <Divider />
 
-        {/* Team */}
         <SectionLabel>{t("mainMenu.sections.team")}</SectionLabel>
         <NavItem goTo="/team" text={t("mainMenu.team")} icon={Icons.roster} />
         <NavItem
@@ -103,7 +100,6 @@ export const SideMenu = () => {
         />
 
         <Divider />
-        {/* Draft */}
         <SectionLabel>{t("mainMenu.sections.recruiting")}</SectionLabel>
         <NavItem goTo="/scouting" text={t("mainMenu.scouts")} icon={Icons.scouts} />
         <NavItem
@@ -118,7 +114,6 @@ export const SideMenu = () => {
         />
 
         <Divider />
-        {/* League */}
         <SectionLabel>{t("mainMenu.sections.league")}</SectionLabel>
         <NavItem goTo="/stats" text={t("mainMenu.stats")} icon={Icons.stats} />
         <NavItem
@@ -155,7 +150,6 @@ export const SideMenu = () => {
         </button>
 
         <Divider />
-        {/* University */}
         <SectionLabel>{t("mainMenu.sections.club")}</SectionLabel>
         <NavItem
           goTo="/team"
@@ -169,7 +163,6 @@ export const SideMenu = () => {
         />
       </nav>
 
-      {/* Bottom */}
       <div className="p-3 border-t border-highlights1/12 bg-mainbgdark flex flex-col gap-1.5">
         <div className="flex gap-1.5">
           <button

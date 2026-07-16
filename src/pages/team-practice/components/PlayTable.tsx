@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { PlaytypeEntry } from "../../../types/PlaySystem";
+import { PlaytypeEntry, OFFENSIVE_PLAY_LABELS, DefensivePlaySystem, OffensivePlaySystem } from "../../../types/PlaySystem";
 import { RadarData } from "../../../types/RadarData";
+import { MATCHUP_TABLE } from "../../../game/playSelection";
 import RadarCustom from "./RadarPractice";
 
 const MAX_POINTS = 10;
@@ -9,14 +10,29 @@ const MAX_PER_PLAY = 5;
 
 interface PlayTableProps {
   title: string;
+  variant: "offensive" | "defensive";
   labels: Record<string, string>;
   system: Record<string, PlaytypeEntry>;
   onAdjust: (key: string, delta: 1 | -1) => void;
   usedPoints: number;
 }
 
+function getDefenseMatchups(defenseKey: keyof DefensivePlaySystem) {
+  const strongVs: string[] = [];
+  const weakVs: string[] = [];
+
+  (Object.keys(MATCHUP_TABLE) as (keyof OffensivePlaySystem)[]).forEach((offenseKey) => {
+    const value = MATCHUP_TABLE[offenseKey][defenseKey];
+    if (value < 0) strongVs.push(OFFENSIVE_PLAY_LABELS[offenseKey]);
+    else if (value > 0) weakVs.push(OFFENSIVE_PLAY_LABELS[offenseKey]);
+  });
+
+  return { strongVs, weakVs };
+}
+
 export function PlayTable({
   title,
+  variant,
   labels,
   system,
   onAdjust,
@@ -63,9 +79,37 @@ export function PlayTable({
           const canIncrease = pts < MAX_PER_PLAY && remaining > 0;
           const canDecrease = pts > MIN_PER_PLAY;
 
+          const matchups =
+            variant === "defensive"
+              ? getDefenseMatchups(key as keyof DefensivePlaySystem)
+              : null;
+
           return (
             <div key={key} className="flex items-center gap-3 px-5 py-3">
-              <span className="text-[13px] text-text1 flex-1">{label}</span>
+              <div className="flex-1 min-w-0">
+                <span className="text-[13px] text-text1">{label}</span>
+
+                {variant === "offensive" && (
+                  <p className="text-[10.5px] text-text2 mt-0.5">
+                    {t(`teamPractice.offTendency.${key}`)}
+                  </p>
+                )}
+
+                {variant === "defensive" && matchups && (
+                  <div className="flex flex-col gap-0.5 mt-1">
+                    {matchups.strongVs.length > 0 && (
+                      <p className="text-[10.5px] text-highlights1">
+                        {t("teamPractice.strongVs")}: {matchups.strongVs.join(", ")}
+                      </p>
+                    )}
+                    {matchups.weakVs.length > 0 && (
+                      <p className="text-[10.5px] text-highlights2">
+                        {t("teamPractice.weakVs")}: {matchups.weakVs.join(", ")}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
 
               <div className="flex items-center gap-1.5 w-28">
                 <div className="flex-1 h-1.5 bg-white/8 rounded-full overflow-hidden">

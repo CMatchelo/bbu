@@ -3,6 +3,7 @@ import { MatchNews } from "../../../types/MatchNews";
 import { University } from "../../../types/University";
 import { Player } from "../../../types/Player";
 import { PlayerAvatar } from "../../../Components/PlayerAvatar";
+import { AVATAR_OPTIONS_UNRESTRICTED } from "../../../utils/avatarOptions";
 import { Icons } from "../../../utils/icons";
 import { getNewsPostText, getNewsComments } from "../../../utils/newsSocial";
 
@@ -29,7 +30,7 @@ export function NewsPost({
     <div className="flex flex-col shrink-0 rounded-lg border border-highlights1/12 bg-mainbgdark overflow-hidden">
       <div className="flex flex-col gap-2.5 px-4 py-3.5">
         <div className="flex flex-row items-start gap-2.5">
-          <PlayerAvatar seed={item.reporterHandle} size={36} />
+          <PlayerAvatar seed={item.reporterHandle} size={36} options={AVATAR_OPTIONS_UNRESTRICTED} />
           <div className="flex-1 min-w-0">
             <div className="text-[12px] font-semibold text-text1 text-left">
               {item.reporterHandle}
@@ -63,7 +64,7 @@ export function NewsPost({
           {comments.map((comment, i) => (
             <div key={i} className="flex gap-2.5 px-4 py-2.5 pl-6 relative">
               <div className="absolute left-3 top-0 bottom-0 w-px bg-highlights1/15" />
-              <PlayerAvatar seed={comment.username} size={28} />
+              <PlayerAvatar seed={comment.username} size={28} options={AVATAR_OPTIONS_UNRESTRICTED} />
               <div className="flex flex-col items-start gap-0.5 flex-1 min-w-0">
                 <p className="text-[11.5px] text-text2">
                   <span className="font-semibold text-text1">

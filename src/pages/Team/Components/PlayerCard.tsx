@@ -91,7 +91,13 @@ export function PlayerCard({
                     </span>
                     <span className="text-[11px] text-text2">
                       {t("generalLocale.yearToGraduate")}:{" "}
-                      <span className="font-semibold text-text1">
+                      <span className={`font-semibold
+                        ${
+                          player.yearsToGraduate <= 1
+                            ? "text-red-400"
+                            : "text-text1"
+                        }
+                        `}>
                         {player.yearsToGraduate}y
                       </span>
                     </span>
