@@ -1,4 +1,4 @@
-import { OutcomeOccasion } from "../../utils/newsOccasion";
+import { OutcomeOccasion } from "../../types/MatchOccasion";
 
 export const subtitlesEN: Record<OutcomeOccasion, string[]> = {
   homeWins: [

@@ -1,12 +1,4 @@
-export type TitleOccasion =
-  | "homeWinsTight" | "homeLosesTight"
-  | "visitorWinsTight" | "visitorLosesTight"
-  | "homeWinsComfortable" | "homeLosesComfortable"
-  | "visitorWinsComfortable" | "visitorLosesComfortable"
-  | "homeWinsLarge" | "homeLosesLarge"
-  | "visitorWinsLarge" | "visitorLosesLarge";
-
-export type OutcomeOccasion = "homeWins" | "homeLoses" | "visitorWins" | "visitorLoses";
+import { OutcomeOccasion, TitleOccasion } from "../types/MatchOccasion";
 
 const TIGHT_MAX = 8;
 const COMFORTABLE_MAX = 16;

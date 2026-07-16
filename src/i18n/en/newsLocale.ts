@@ -10,4 +10,5 @@ export const newsLocale = {
   week: "Week",
   weekNews: "Week {{week}} — Match Results",
   noNews: "No news for this week.",
+  readMore: "Read More...",
 }

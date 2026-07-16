@@ -13,7 +13,6 @@ export default function Calendar() {
 
   return (
     <ParentSection className="pb-4">
-      {/* <StandingsTable leagueId={user!.currentUniversity.leagueId} /> */}
       <MatchesTable schedule={teamSchedule} />
     </ParentSection>
   );

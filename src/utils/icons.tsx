@@ -1,6 +1,12 @@
 export const Icons = {
   dashboard: (
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-full h-full">
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      className="w-full h-full"
+    >
       <rect x="2" y="2" width="5" height="5" rx="0.5" />
       <rect x="9" y="2" width="5" height="5" rx="0.5" />
       <rect x="2" y="9" width="5" height="5" rx="0.5" />
@@ -349,6 +355,28 @@ export const Icons = {
     >
       <circle cx="8" cy="8" r="2" />
       <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.1 3.1l1.4 1.4M11.5 11.5l1.4 1.4M11.5 3.1l1.4 1.4M3.1 11.5l1.4 1.4" />
+    </svg>
+  ),
+  heart: (
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      className="w-full h-full"
+    >
+      <path d="M8 13.5S1.5 9.6 1.5 5.4A2.9 2.9 0 0 1 8 4.3a2.9 2.9 0 0 1 6.5 1.1c0 4.2-6.5 8.1-6.5 8.1z" />
+    </svg>
+  ),
+  comment: (
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      className="w-full h-full"
+    >
+      <path d="M2 3h12v8H6l-3 3v-3H2z" />
     </svg>
   ),
   AcademicWarning: (

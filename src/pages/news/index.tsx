@@ -6,11 +6,10 @@ import { MatchNews } from "../../types/MatchNews";
 import { selectAllUniversities, selectAllPlayers } from "../../selectors/data.selectors";
 import { ParentSection } from "../../Components/ParentSection";
 import { NewsPopup } from "./components/NewsPopup";
-import { getNewsTitle } from "../../utils/newsContent";
+import { NewsPost } from "./components/NewsPost";
 
 export default function NewsPage() {
-  const { t, i18n } = useTranslation();
-  const lang = i18n.language;
+  const { t } = useTranslation();
   const newsByWeek = useSelector((state: RootState) => state.news.newsByWeek);
   const currentWeek = useSelector((state: RootState) => state.schedule.currentWeek);
   const universities = useSelector(selectAllUniversities);
@@ -33,9 +32,6 @@ export default function NewsPage() {
 
   const items: MatchNews[] = newsByWeek[selectedWeek] ?? [];
 
-  const getTeamName = (id: string) =>
-    universities.find((u) => u.id === id)?.nickname ?? id;
-
   return (
     <ParentSection>
       <div className="relative flex flex-col h-full">
@@ -46,7 +42,6 @@ export default function NewsPage() {
           onClose={() => setOpenItem(null)}
         />
 
-        {/* Page header */}
         <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-highlights1/12">
           <div>
             <p className="text-[9px] font-medium tracking-[0.12em] uppercase text-text2 opacity-70">
@@ -57,7 +52,6 @@ export default function NewsPage() {
             </h1>
           </div>
 
-          {/* Week navigator */}
           <div className="flex items-center gap-2">
             <button
               onClick={() => setSelectedWeek(weeksWithNews[currentIndex + 1])}
@@ -79,41 +73,21 @@ export default function NewsPage() {
           </div>
         </div>
 
-        {/* News list */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-2">
+        <div className="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-3">
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center flex-1 gap-2 text-text2">
               <p className="text-[13px]">{t("newsLocale.noNews")}</p>
             </div>
           ) : (
-            items.map((item) => {
-              const homeTeam = getTeamName(item.homeTeamId);
-              const awayTeam = getTeamName(item.awayTeamId);
-              const title = getNewsTitle(item, lang, universities);
-
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setOpenItem(item)}
-                  className="flex items-start justify-between px-4 py-3 rounded-lg border border-highlights1/12 bg-mainbgdark hover:border-highlights1/30 hover:bg-highlights1/4 transition-all text-left group"
-                >
-                  <div className="flex items-start gap-3 flex-1 min-w-0">
-                    <div className="w-1.5 h-1.5 rounded-full shrink-0 bg-highlights1 opacity-60 mt-[5px]" />
-                    <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-                      <span className="text-[13px] font-medium text-text1 leading-snug">
-                        {title}
-                      </span>
-                      <span className="text-[11px] text-text2 opacity-60">
-                        {homeTeam} {item.homeScore} – {item.awayScore} {awayTeam}
-                      </span>
-                    </div>
-                  </div>
-                  <span className="text-[11px] text-text2 opacity-60 group-hover:opacity-100 ml-3 shrink-0 mt-0.5">
-                    →
-                  </span>
-                </button>
-              );
-            })
+            items.map((item) => (
+              <NewsPost
+                key={item.id}
+                item={item}
+                universities={universities}
+                players={players}
+                onReadMore={() => setOpenItem(item)}
+              />
+            ))
           )}
         </div>
       </div>

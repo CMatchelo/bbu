@@ -10,4 +10,5 @@ export const newsLocale = {
   week: "Semana",
   weekNews: "Semana {{week}} — Resultados",
   noNews: "Sem notícias para esta semana.",
+  readMore: "Leia Mais...",
 }
