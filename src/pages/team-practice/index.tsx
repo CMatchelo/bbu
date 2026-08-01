@@ -93,6 +93,7 @@ export default function TeamPractice() {
       <div className="flex gap-4 overflow-auto">
         <PlayTable
           title="Offensive"
+          variant="offensive"
           labels={OFFENSIVE_PLAY_LABELS}
           system={offensive}
           onAdjust={adjustOffensive}
@@ -100,6 +101,7 @@ export default function TeamPractice() {
         />
         <PlayTable
           title="Defensive"
+          variant="defensive"
           labels={DEFENSIVE_PLAY_LABELS}
           system={defensive}
           onAdjust={adjustDefensive}

@@ -112,11 +112,11 @@ export function simulatePossession(
   const rngDelta = randomFloat(-0.015, 0.015);
 
   // ====================================================
-  // 8. Play system bonus/penalty (clamped to ±0.1 total)
+  // 8. Play system bonus/penalty (clamped to ±0.15 total)
   // ====================================================
-  const matchupBonus = MATCHUP_TABLE[offensivePlay][defensivePlay] / 100;
+  const matchupBonus = MATCHUP_TABLE[offensivePlay][defensivePlay] / 40;
   const familiarityBonus = (offenseFamiliarity - defenseFamiliarity) / 2000;
-  const playSystemDelta = clamp(matchupBonus + familiarityBonus, -0.1, 0.1);
+  const playSystemDelta = clamp(matchupBonus + familiarityBonus, -0.15, 0.15);
 
   // ====================================================
   // 9. Final probability
@@ -129,8 +129,6 @@ export function simulatePossession(
     homeDelta +
     rngDelta +
     playSystemDelta;
-  
-  console.log(playSystemDelta, rawProb)
 
   const finalProb = clamp(sigmoid(rawProb), 0.15, 0.92);
 

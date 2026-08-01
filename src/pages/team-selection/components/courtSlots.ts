@@ -8,8 +8,8 @@ export interface CourtSlotDefinition {
 
 export const COURT_SLOTS: CourtSlotDefinition[] = [
   { position: "PG", x: 50, y: 28 },
-  { position: "SF", x: 23, y: 38 },
-  { position: "SG", x: 78, y: 38 },
-  { position: "PF", x: 73, y: 56 },
+  { position: "SF", x: 22.4, y: 37.4 },
+  { position: "SG", x: 77.8, y: 37.5 },
+  { position: "PF", x: 73.3, y: 56.2 },
   { position: "C", x: 50, y: 67 },
 ];

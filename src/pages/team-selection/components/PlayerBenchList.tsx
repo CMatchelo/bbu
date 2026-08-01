@@ -6,9 +6,10 @@ import { COURT_SLOTS } from "./courtSlots";
 interface PlayerBenchListProps {
   players: Player[];
   slotted: (Player | null)[];
+  onAutoSelect: () => void;
 }
 
-export const PlayerBenchList = ({ players, slotted }: PlayerBenchListProps) => {
+export const PlayerBenchList = ({ players, slotted, onAutoSelect }: PlayerBenchListProps) => {
   const { t } = useTranslation();
   const count = slotted.filter(Boolean).length;
 
@@ -17,7 +18,13 @@ export const PlayerBenchList = ({ players, slotted }: PlayerBenchListProps) => {
       <div className="flex items-center gap-2.5 px-5 py-3.5 bg-cardbg border-b border-highlights1/25 shrink-0 rounded-t-lg">
         <div className="w-1.5 h-1.5 rounded-full bg-highlights1 shrink-0" />
         <span className="text-[13px] font-medium tracking-widest uppercase text-text2">
-          {t("generalLocale.selectStarters")}
+          {t("generalLocale.selectStarters")}{" "}
+          <button
+            onClick={onAutoSelect}
+            className="rounded bg-cardbglight text-text1 cursor-pointer text-[9px]! py-1 px-2 hover:bg-cardbglight/50"
+          >
+            Selecionar automaticamente
+          </button>
         </span>
         <div className="ml-auto flex items-center gap-2">
           <div className="flex gap-1">

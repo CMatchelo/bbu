@@ -1,9 +1,9 @@
 import { selectTeamSchedule } from "../../selectors/data.scheduleSelector";
 import { useSelector } from "react-redux";
 import { useUser } from "../../Context/UserContext";
-import { MatchesTable } from "../../Components/MatchesTable";
 import { ParentSection } from "../../Components/ParentSection";
 import { useMemo } from "react";
+import { GameCard } from "./components/GameCard";
 
 export default function Calendar() {
   const { user } = useUser();
@@ -13,8 +13,13 @@ export default function Calendar() {
 
   return (
     <ParentSection className="pb-4">
-      {/* <StandingsTable leagueId={user!.currentUniversity.leagueId} /> */}
-      <MatchesTable schedule={teamSchedule} />
+      <div className="grid gap-4 grid-cols-3 xl:grid-cols-4">
+        {teamSchedule.map((match, idx) => (
+          <div key={idx}>
+            <GameCard match={match} />
+          </div>
+        ))}
+      </div>
     </ParentSection>
   );
 }

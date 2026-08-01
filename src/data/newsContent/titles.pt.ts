@@ -1,4 +1,4 @@
-import { TitleOccasion } from "../../utils/newsOccasion";
+import { TitleOccasion } from "../../types/MatchOccasion";
 
 export const titlesPT: Record<TitleOccasion, string[]> = {
   homeWinsTight: [

@@ -55,3 +55,7 @@ export const AVATAR_OPTIONS: Options = {
   ],
   backgroundColor: ["b6e3f4", "c0aede", "d1d4f9", "ffd5dc", "ffdfbf"],
 };
+
+export const AVATAR_OPTIONS_UNRESTRICTED: Options = {
+  style: ["circle"],
+};

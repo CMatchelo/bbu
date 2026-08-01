@@ -1,3 +1,15 @@
+import { TitleOccasion } from "./MatchOccasion";
+
+export type NewsCommentSource =
+  | { kind: "match"; occasion: TitleOccasion; index: number }
+  | { kind: "player"; stat: "points" | "rebounds" | "assists" | "steals"; index: number };
+
+export type NewsComment = {
+  username: string;
+  likes: number;
+  source: NewsCommentSource;
+};
+
 export type MatchNews = {
   id: string;
   matchId: string;
@@ -23,6 +35,9 @@ export type MatchNews = {
   rebTextId: number;
   astTextId: number;
   stlTextId: number;
+  reporterHandle: string;
+  likes: number;
+  comments: NewsComment[];
 };
 
 export type WeeklyNews = MatchNews[];

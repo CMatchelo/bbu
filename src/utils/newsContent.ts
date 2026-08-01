@@ -11,7 +11,7 @@ import { matchTextsPT } from "../data/newsContent/matchTexts.pt";
 import { playerTextsEN } from "../data/newsContent/playerTexts.en";
 import { playerTextsPT } from "../data/newsContent/playerTexts.pt";
 
-function interpolate(template: string, vars: Record<string, string | number>): string {
+export function interpolate(template: string, vars: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (_, key) => String(vars[key] ?? `{${key}}`));
 }
 

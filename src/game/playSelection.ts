@@ -27,13 +27,15 @@ export function getCpuDefensiveOrder(system: DefensivePlaySystem | undefined): (
     .map(([key]) => key);
 }
 
+// Every row and every column sums to exactly 0 — no play or coverage is a net-positive
+// or net-negative pick on average, each one just trades who it's good/bad against.
 export const MATCHUP_TABLE: Record<keyof OffensivePlaySystem, Record<keyof DefensivePlaySystem, number>> = {
-  PickAndRoll:  { ManToMan: 0,  Zone: 2,  PerimeterPressure: -2, FullCourtPress: 2,  SwitchEverything: -4, PackedPaint: 2  },
-  Motion:       { ManToMan: 2,  Zone: -2, PerimeterPressure: 0,  FullCourtPress: 2,  SwitchEverything: -2, PackedPaint: 2  },
-  Isolation:    { ManToMan: 0,  Zone: 2,  PerimeterPressure: -2, FullCourtPress: -2, SwitchEverything: -4, PackedPaint: 2  },
-  FiveOut:      { ManToMan: 2,  Zone: 4,  PerimeterPressure: -4, FullCourtPress: -2, SwitchEverything: -2, PackedPaint: 4  },
-  PostUp:       { ManToMan: -2, Zone: 2,  PerimeterPressure: 4,  FullCourtPress: -2, SwitchEverything: 0,  PackedPaint: -4 },
-  FastBreak:    { ManToMan: 2,  Zone: -2, PerimeterPressure: 0,  FullCourtPress: -4, SwitchEverything: 2,  PackedPaint: 2  },
+  PickAndRoll:  { ManToMan: 0,  Zone: 2,  PerimeterPressure: 0,  FullCourtPress: 0,  SwitchEverything: -2, PackedPaint: 0  },
+  Motion:       { ManToMan: 2,  Zone: -2, PerimeterPressure: 0,  FullCourtPress: 0,  SwitchEverything: 0,  PackedPaint: 0  },
+  Isolation:    { ManToMan: 0,  Zone: 2,  PerimeterPressure: 0,  FullCourtPress: 0,  SwitchEverything: -2, PackedPaint: 0  },
+  FiveOut:      { ManToMan: -2, Zone: 0,  PerimeterPressure: -4, FullCourtPress: 2,  SwitchEverything: 0,  PackedPaint: 4  },
+  PostUp:       { ManToMan: -2, Zone: 0,  PerimeterPressure: 4,  FullCourtPress: 0,  SwitchEverything: 2,  PackedPaint: -4 },
+  FastBreak:    { ManToMan: 2,  Zone: -2, PerimeterPressure: 0,  FullCourtPress: -2, SwitchEverything: 2,  PackedPaint: 0  },
 };
 
 export const SHOT_DIST: Record<keyof OffensivePlaySystem, [number, number, number]> = {
