@@ -27,4 +27,5 @@ export type HighSchoolPlayer = {
   maxSkills: Skill;
   skillsRevealed: Record<keyof Skill, boolean>;
   signedWith: string | null;
+  rejectedLetter: boolean;
 };

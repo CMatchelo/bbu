@@ -15,6 +15,7 @@ interface ScoutingBoardTableProps {
   pendingTutoring?: Record<string, boolean>;
   onScoutChange?: (id: string, value: boolean) => void;
   onTutoringChange?: (id: string, value: boolean) => void;
+  onSendLetter?: (id: string) => void;
 }
 
 const COLUMNS = "50px minmax(200px,3fr) minmax(140px,2fr) 90px 70px 70px minmax(140px,1fr)";
@@ -25,6 +26,7 @@ export const ScoutingBoardTable = ({
   pendingTutoring = {},
   onScoutChange = () => {},
   onTutoringChange = () => {},
+  onSendLetter = () => {},
 }: ScoutingBoardTableProps) => {
   const { t } = useTranslation();
   const { user } = useUser();
@@ -78,7 +80,10 @@ export const ScoutingBoardTable = ({
               const effectiveTutoring = pendingTutoring[player.id] ?? player.tutoring;
               const isSigned = signedAnywhere.has(player.id);
               const letterDisabled =
-                isSigned || allLettersDisabled || player.playerKnowledge < 50;
+                isSigned ||
+                allLettersDisabled ||
+                player.playerKnowledge < 50 ||
+                player.rejectedLetter;
 
               return (
                 <div
@@ -98,8 +103,9 @@ export const ScoutingBoardTable = ({
                     <input
                       type="checkbox"
                       checked={effectiveScouted}
+                      disabled={player.rejectedLetter}
                       onChange={(e) => onScoutChange(player.id, e.target.checked)}
-                      className="accent-highlights1 w-4 h-4 cursor-pointer"
+                      className="accent-highlights1 w-4 h-4 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                     />
                   </div>
 
@@ -139,7 +145,7 @@ export const ScoutingBoardTable = ({
                     ) : (
                       <button
                         disabled={letterDisabled}
-                        onClick={() => console.log("Function called")}
+                        onClick={() => onSendLetter(player.id)}
                         className="
                           px-3 py-1 rounded-md text-[11px] font-semibold uppercase tracking-wider
                           bg-highlights1/10 border border-highlights1/30 text-highlights1

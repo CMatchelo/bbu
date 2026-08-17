@@ -8,4 +8,10 @@ export const scouting = {
   letter: "Letter of Commitment",
   letterBtn: "Send letter",
   confirmChanges: "Confirm Changes",
+  letterAcceptedTitle: "Letter of Intent Accepted",
+  letterAcceptedMessage: "Great news, coach! The player has accepted your letter of intent and will join your program next season.",
+  letterDeclinedOtherTitle: "Letter of Intent Declined",
+  letterDeclinedOtherMessage: "The player has decided to commit to {{university}} instead of your program.",
+  letterDeclinedWaitTitle: "Letter of Intent Declined",
+  letterDeclinedWaitMessage: "The player has decided to wait and consider other options before committing anywhere.",
 };

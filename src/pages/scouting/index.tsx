@@ -1,14 +1,16 @@
 import { useSelector } from "react-redux";
-import { selectAllHighSchoolPlayers } from "../../selectors/data.selectors";
+import { selectAllHighSchoolPlayers, selectAllUniversities } from "../../selectors/data.selectors";
 import { useTranslation } from "react-i18next";
 import { ParentSection } from "../../Components/ParentSection";
 import { ScoutingBoardTable } from "./components/ScoutingBoardTable";
 import { ScoutingSkillsTable } from "./components/ScoutingSkillsTable";
+import { LetterResponseModal, LetterModalResult } from "./components/LetterResponseModal";
 import { TopMenuBtn } from "../../Components/TopMenuBtn";
 import { useState } from "react";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
-import { updateHighSchoolPlayers } from "../../store/slices/dataSlice";
-import { saveHighSchoolPlayers } from "../../utils/saveGame";
+import { updateHighSchoolPlayers, updateUniversities } from "../../store/slices/dataSlice";
+import { saveHighSchoolPlayers, saveUniversities } from "../../utils/saveGame";
+import { sendLetterOfIntent } from "../../game/sendLetter";
 import { useUser } from "../../Context/UserContext";
 
 export default function ScoutingPage() {
@@ -16,9 +18,11 @@ export default function ScoutingPage() {
   const dispatch = useAppDispatch();
   const { user } = useUser();
   const allPlayers = useSelector(selectAllHighSchoolPlayers);
+  const universities = useSelector(selectAllUniversities);
   const [table, setTable] = useState<"board" | "skills">("board");
   const [pendingScout, setPendingScout] = useState<Record<string, boolean>>({});
   const [pendingTutoring, setPendingTutoring] = useState<Record<string, boolean>>({});
+  const [letterResult, setLetterResult] = useState<LetterModalResult | null>(null);
 
   const hasPending =
     Object.keys(pendingScout).length > 0 || Object.keys(pendingTutoring).length > 0;
@@ -59,6 +63,27 @@ export default function ScoutingPage() {
     setPendingTutoring({});
   };
 
+  const handleSendLetter = async (playerId: string) => {
+    if (!user) return;
+    const player = allPlayers.find((p) => p.id === playerId);
+    if (!player) return;
+
+    const { outcome, otherUniversityName, playerUpdates, uniUpdates } = sendLetterOfIntent(
+      player,
+      universities,
+      user.currentUniversity.id,
+    );
+
+    dispatch(updateHighSchoolPlayers(playerUpdates));
+    if (uniUpdates.length > 0) dispatch(updateUniversities(uniUpdates));
+
+    const folderName = `${user.name}_${user.id}`;
+    await saveHighSchoolPlayers(folderName);
+    if (uniUpdates.length > 0) await saveUniversities(folderName);
+
+    setLetterResult({ outcome, otherUniversityName });
+  };
+
   return (
     <ParentSection className="pb-10" backgroundImg='scoutBg.png'>
       <div className="flex flex-col gap-2">
@@ -84,10 +109,12 @@ export default function ScoutingPage() {
             pendingTutoring={pendingTutoring}
             onScoutChange={handleScoutChange}
             onTutoringChange={handleTutoringChange}
+            onSendLetter={handleSendLetter}
           />
         )}
         {table === "skills" && <ScoutingSkillsTable players={allPlayers} />}
       </div>
+      <LetterResponseModal result={letterResult} onClose={() => setLetterResult(null)} />
     </ParentSection>
   );
 }

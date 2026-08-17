@@ -64,7 +64,7 @@ export function simulatePossession(
   const skillDelta = (skillValue - 0.5) * 0.24;
 
   const baseMultiplier =
-    playType === "THREE" ? 0.6 : playType === "TWO" ? 0.7 : 0.95;
+    playType === "THREE" ? 0.35 : playType === "TWO" ? 0.45 : 0.65;
 
   // ====================================================
   // 4. Team averages

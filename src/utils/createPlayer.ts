@@ -362,6 +362,7 @@ export function generateHighSchoolPlayers(): HighSchoolPlayer[] {
         maxSkills,
         skillsRevealed,
         signedWith: null,
+        rejectedLetter: false,
       });
     }
   }

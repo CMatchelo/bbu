@@ -8,4 +8,10 @@ export const scouting = {
   letter: "Carta de Compromisso",
   letterBtn: "Enviar carta",
   confirmChanges: "Confirmar Alterações",
+  letterAcceptedTitle: "Carta de Intenção Aceita",
+  letterAcceptedMessage: "Ótimas notícias, técnico! O jogador aceitou sua carta de intenção e se juntará ao seu programa na próxima temporada.",
+  letterDeclinedOtherTitle: "Carta de Intenção Recusada",
+  letterDeclinedOtherMessage: "O jogador decidiu se comprometer com {{university}} em vez do seu programa.",
+  letterDeclinedWaitTitle: "Carta de Intenção Recusada",
+  letterDeclinedWaitMessage: "O jogador decidiu esperar e considerar outras opções antes de se comprometer com alguém.",
 };
